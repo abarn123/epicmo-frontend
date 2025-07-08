@@ -5,20 +5,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100">
       <div className="bg-white/90 backdrop-blur-md p-10 rounded-2xl shadow-2xl w-full max-w-md border border-blue-100">
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-blue-600 rounded-full p-3 mb-3 shadow-lg">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"
-              />
-            </svg>
+          <div className="w-30 h-30 flex items-center justify-center mb-2">
+            <img
+              src="/epicmo.logo.png"
+              alt="User Avatar"
+              className="w-full h-full object-contain rounded-full "
+            />
           </div>
           <h2 className="text-3xl font-extrabold text-blue-700 mb-1">
             Welcome Back
