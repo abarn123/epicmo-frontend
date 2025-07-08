@@ -30,40 +30,37 @@ const tools = [
 
 export default function ToolsPage() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
       <Sidebar />
-      <main className="flex-1 bg-gradient-to-br from-gray-50 to-blue-100 py-12 px-4 ml-64">
-        <section className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">
+      <main className="flex-1 py-14 px-6 ml-64">
+        <section className="max-w-5xl mx-auto">
+          <h1 className="text-5xl font-extrabold text-indigo-800 mb-3 text-center drop-shadow-lg tracking-tight">
             🚀 Tools Dashboard
           </h1>
-          <p className="text-lg text-gray-600 mb-10 text-center">
+          <p className="text-xl text-gray-700 mb-12 text-center">
             Explore a suite of professional tools to boost your productivity.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {tools.map((tool) => (
               <div
                 key={tool.name}
-                className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition-shadow"
+                className="relative bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 flex flex-col items-center border border-indigo-100 hover:scale-105 hover:shadow-2xl transition-all duration-300"
               >
+                <div className="absolute top-4 right-4 bg-indigo-50 px-3 py-1 rounded-full text-xs font-semibold text-indigo-600 shadow">
+                  Stock: <span className="font-bold">{tool.stock}</span>
+                </div>
                 <img
                   src={tool.image}
                   alt={tool.name}
-                  className="w-28 h-28 object-cover rounded-lg mb-4 border border-gray-200 shadow"
+                  className="w-28 h-28 object-cover rounded-xl mb-6 border-4 border-indigo-100 shadow-md"
                 />
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                <h2 className="text-2xl font-bold text-indigo-800 mb-2 text-center">
                   {tool.name}
                 </h2>
-                <p className="text-gray-500 text-center mb-2">
+                <p className="text-gray-600 text-center mb-6">
                   {tool.description}
                 </p>
-                <div className="text-sm text-gray-600 mb-4">
-                  Stok:{" "}
-                  <span className="font-bold text-indigo-700">
-                    {tool.stock}
-                  </span>
-                </div>
-                <button className="mt-auto px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                <button className="mt-auto px-6 py-2 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-lg font-semibold shadow hover:from-indigo-600 hover:to-blue-600 transition-all duration-200">
                   Open
                 </button>
               </div>
