@@ -412,6 +412,10 @@
     height: calc(var(--spacing) * 30);
   }
 
+  .h-50 {
+    height: calc(var(--spacing) * 50);
+  }
+
   .h-full {
     height: 100%;
   }
@@ -446,6 +450,10 @@
 
   .w-30 {
     width: calc(var(--spacing) * 30);
+  }
+
+  .w-50 {
+    width: calc(var(--spacing) * 50);
   }
 
   .w-full {
@@ -891,6 +899,10 @@
   .antialiased {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  .placeholder-gray-400::placeholder {
+    color: var(--color-gray-400);
   }
 
   .opacity-0 {

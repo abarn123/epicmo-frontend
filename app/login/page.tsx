@@ -5,16 +5,14 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100">
       <div className="bg-white/90 backdrop-blur-md p-10 rounded-2xl shadow-2xl w-full max-w-md border border-blue-100">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-30 h-30 flex items-center justify-center mb-2">
+          <div className="w-50 h-50 flex items-center justify-center mb-2">
             <img
               src="/epicmo.logo.png"
               alt="User Avatar"
               className="w-full h-full object-contain rounded-full "
             />
           </div>
-          <h2 className="text-3xl font-extrabold text-blue-700 mb-1">
-            Welcome
-          </h2>
+
           <p className="text-gray-500 text-sm">Sign in to your account</p>
         </div>
         <form className="space-y-6">
@@ -23,13 +21,13 @@ export default function LoginPage() {
               htmlFor="email"
               className="block text-sm font-semibold text-gray-700 mb-1"
             >
-              Email Address
+              username
             </label>
             <input
               type="email"
               id="email"
-              className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-              placeholder="you@example.com"
+              className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400"
+              placeholder="username"
               required
             />
           </div>
@@ -43,8 +41,8 @@ export default function LoginPage() {
             <input
               type="password"
               id="password"
-              className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-              placeholder="••••••••"
+              className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400"
+              placeholder="password"
               required
             />
           </div>
