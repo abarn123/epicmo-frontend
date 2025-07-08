@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 
 type User = {
@@ -68,12 +68,29 @@ function UserCard({
 }
 
 export default function UserManagement({
-  users = [], // default value agar tidak undefined
+  users: initialUsers = [],
   onEdit,
   onDelete,
   onAdd,
 }: UserGridProps) {
+  const [users, setUsers] = useState<User[]>(initialUsers);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/users") // Ganti URL sesuai endpoint API Slim Anda
+      .then((res) => res.json())
+      .then((data) => {
+        // Mapping jika field API berbeda
+        const mapped = data.map((u: any) => ({
+          id: u.id,
+          name: u.name,
+          phone: u.phone,
+          address: u.address,
+          role: u.role,
+        }));
+        setUsers(mapped);
+      });
+  }, []);
 
   const filteredUsers = users.filter(
     (u) =>

@@ -395,15 +395,30 @@ function UserCard({ user, onEdit, onDelete }) {
         columnNumber: 5
     }, this);
 }
-function UserManagement({ users = [], onEdit, onDelete, onAdd }) {
+function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
+    const [users, setUsers] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(initialUsers);
     const [search, setSearch] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        fetch("http://localhost:8000/api/users") // Ganti URL sesuai endpoint API Slim Anda
+        .then((res)=>res.json()).then((data)=>{
+            // Mapping jika field API berbeda
+            const mapped = data.map((u)=>({
+                    id: u.id,
+                    name: u.name,
+                    phone: u.phone,
+                    address: u.address,
+                    role: u.role
+                }));
+            setUsers(mapped);
+        });
+    }, []);
     const filteredUsers = users.filter((u)=>u.name.toLowerCase().includes(search.toLowerCase()) || u.phone.includes(search) || u.address.toLowerCase().includes(search.toLowerCase()) || u.role.toLowerCase().includes(search.toLowerCase()));
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$Sidebar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/user/page.tsx",
-                lineNumber: 88,
+                lineNumber: 105,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -419,7 +434,7 @@ function UserManagement({ users = [], onEdit, onDelete, onAdd }) {
                                         children: "Manajemen User"
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 92,
+                                        lineNumber: 109,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -427,13 +442,13 @@ function UserManagement({ users = [], onEdit, onDelete, onAdd }) {
                                         children: "Kelola data user aplikasi Anda dengan mudah."
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 95,
+                                        lineNumber: 112,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/user/page.tsx",
-                                lineNumber: 91,
+                                lineNumber: 108,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -447,7 +462,7 @@ function UserManagement({ users = [], onEdit, onDelete, onAdd }) {
                                         className: "px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 100,
+                                        lineNumber: 117,
                                         columnNumber: 13
                                     }, this),
                                     onAdd && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -456,19 +471,19 @@ function UserManagement({ users = [], onEdit, onDelete, onAdd }) {
                                         children: "+ Tambah User"
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 108,
+                                        lineNumber: 125,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/user/page.tsx",
-                                lineNumber: 99,
+                                lineNumber: 116,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/user/page.tsx",
-                        lineNumber: 90,
+                        lineNumber: 107,
                         columnNumber: 9
                     }, this),
                     filteredUsers.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -478,12 +493,12 @@ function UserManagement({ users = [], onEdit, onDelete, onAdd }) {
                             children: "Tidak ada user ditemukan."
                         }, void 0, false, {
                             fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 119,
+                            lineNumber: 136,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/user/page.tsx",
-                        lineNumber: 118,
+                        lineNumber: 135,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8",
@@ -493,24 +508,24 @@ function UserManagement({ users = [], onEdit, onDelete, onAdd }) {
                                 onDelete: onDelete
                             }, user.id, false, {
                                 fileName: "[project]/app/user/page.tsx",
-                                lineNumber: 126,
+                                lineNumber: 143,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/app/user/page.tsx",
-                        lineNumber: 124,
+                        lineNumber: 141,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/user/page.tsx",
-                lineNumber: 89,
+                lineNumber: 106,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/user/page.tsx",
-        lineNumber: 87,
+        lineNumber: 104,
         columnNumber: 5
     }, this);
 }
