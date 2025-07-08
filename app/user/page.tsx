@@ -87,30 +87,7 @@ export default function UserManagement({
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://192.168.110.100:8080/data1");
-<<<<<<< HEAD
-        
-        // Improved data extraction with better type safety
-        const responseData = response.data;
-        let usersData = Array.isArray(responseData) 
-          ? responseData 
-          : Array.isArray(responseData?.data) 
-            ? responseData.data 
-            : Array.isArray(responseData?.users) 
-              ? responseData.users 
-              : [];
 
-        if (!usersData.length && !Array.isArray(responseData)) {
-          console.warn("Unexpected API response format:", responseData);
-        }
-
-        const mappedUsers = usersData.map((u: any) => ({
-          id: u.id?.toString() || Math.random().toString(36).substring(2, 9),
-          name: u.name || 'No name',
-          phone: u.phone || 'No phone',
-          address: u.address || 'No address',
-          role: u.role || 'user',
-          email: u.email || '',
-=======
         console.log("API Response:", response.data); // Add this to inspect the actual response
 
         // Handle different response formats
@@ -140,18 +117,14 @@ export default function UserManagement({
           address: u.address || "No address",
           role: u.role || "user",
           email: u.email || "",
->>>>>>> 98b1d5da6c5289cf6e50e72eace359e7470d75b2
         }));
 
         setUsers(mappedUsers);
       } catch (err) {
         console.error("Fetch error:", err);
-<<<<<<< HEAD
-        setError(err instanceof Error ? err.message : 'Unknown error occurred');
-=======
+
         setError(err instanceof Error ? err.message : "Unknown error occurred");
         setUsers([]);
->>>>>>> 98b1d5da6c5289cf6e50e72eace359e7470d75b2
       } finally {
         setLoading(false);
       }
@@ -160,19 +133,7 @@ export default function UserManagement({
     fetchUsers();
   }, []);
 
-<<<<<<< HEAD
-  const filteredUsers = React.useMemo(() => {
-    const searchTerm = search.toLowerCase();
-    return users.filter(
-      (u) =>
-        u.name.toLowerCase().includes(searchTerm) ||
-        u.phone.includes(search) ||
-        u.address.toLowerCase().includes(searchTerm) ||
-        u.role.toLowerCase().includes(searchTerm) ||
-        (u.email && u.email.toLowerCase().includes(searchTerm))
-    );
-  }, [users, search]);
-=======
+
   const filteredUsers = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -181,7 +142,7 @@ export default function UserManagement({
       u.role.toLowerCase().includes(search.toLowerCase()) ||
       (u.email && u.email.toLowerCase().includes(search.toLowerCase()))
   );
->>>>>>> 98b1d5da6c5289cf6e50e72eace359e7470d75b2
+
 
   if (loading) {
     return (
@@ -246,15 +207,11 @@ export default function UserManagement({
         {filteredUsers.length === 0 ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-gray-400 text-lg">
-<<<<<<< HEAD
-              {users.length === 0 
-                ? "Tidak ada user tersedia" 
-                : "Tidak ditemukan user yang cocok dengan pencarian"}
-=======
+
               {users.length === 0
                 ? "Tidak ada user tersedia"
                 : "Tidak ada user yang cocok dengan pencarian"}
->>>>>>> 98b1d5da6c5289cf6e50e72eace359e7470d75b2
+
             </div>
           </div>
         ) : (
