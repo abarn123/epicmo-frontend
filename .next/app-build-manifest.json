@@ -13,8 +13,6 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
-<<<<<<< HEAD
-=======
     "/dashboard/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
@@ -45,7 +43,6 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
->>>>>>> 02dc130ceaeb692c4fe22061e1266a25890a5e0b
     "/login/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
@@ -59,8 +56,6 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
-<<<<<<< HEAD
-=======
     "/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
@@ -108,7 +103,6 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
->>>>>>> 02dc130ceaeb692c4fe22061e1266a25890a5e0b
     "/user/add/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
