@@ -12,6 +12,20 @@
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
     ],
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+    "[project]/app/login/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+    ],
+    "[project]/app/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+    ],
+>>>>>>> 23cb7f77e73937fbe7b2a104e027296f41dac050
+>>>>>>> 50a0e1b99e751ad45bf416314c94f38db7150221
     "[project]/app/tools/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
