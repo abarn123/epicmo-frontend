@@ -79,7 +79,7 @@ export default function UserManagement({
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/users") // Ganti URL sesuai endpoint API Slim Anda
+      .get("http://localhost:8080/data1") // Ganti URL sesuai endpoint API Slim Anda
       .then((res) => {
         const data = res.data;
         const mapped = data.map((u: any) => ({
