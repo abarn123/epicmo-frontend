@@ -65,7 +65,7 @@ export default function Sidebar() {
           Tools
         </Link>
         <Link
-          href="/tools"
+          href="/log_tools"
           className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
         >
           <svg

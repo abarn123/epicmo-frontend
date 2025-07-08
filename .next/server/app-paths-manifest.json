@@ -3,6 +3,8 @@
   "/attendance/page": "app/attendance/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/log_tools/page": "app/log_tools/page.js",
   "/page": "app/page.js",
-  "/tools/page": "app/tools/page.js"
+  "/tools/page": "app/tools/page.js",
+  "/user/page": "app/user/page.js"
 }
