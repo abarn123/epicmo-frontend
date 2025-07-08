@@ -9,10 +9,11 @@ type User = {
   phone: string;
   address: string;
   role: string;
+  email?: string; // Added email field
 };
 
 type UserGridProps = {
-  users: User[];
+  users?: User[];
   onEdit?: (user: User) => void;
   onDelete?: (userId: string) => void;
   onAdd?: () => void;
@@ -39,6 +40,9 @@ function UserCard({
         </div>
       </div>
       <div className="text-sm text-gray-600">
+        <div>
+          <span className="font-semibold">Email:</span> {user.email || '-'}
+        </div>
         <div>
           <span className="font-semibold">No. Telepon:</span> {user.phone}
         </div>
@@ -76,30 +80,83 @@ export default function UserManagement({
 }: UserGridProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get("http://192.168.110.100:8080/data1");
+      console.log("API Response:", response.data); // Add this to inspect the actual response
+      
+      // Handle different response formats
+      let usersData = response.data;
+      
+      // If response is an object with a 'data' or 'users' array
+      if (usersData && typeof usersData === 'object' && !Array.isArray(usersData)) {
+        if (Array.isArray(usersData.data)) {
+          usersData = usersData.data;
+        } else if (Array.isArray(usersData.users)) {
+          usersData = usersData.users;
+        }
+      }
 
-    axios.get("http://192.168.110.100").then((res) => {
-      const data = res.data;
-      const mapped = data.map((u: any) => ({
-        id: u.id,
-        name: u.name,
-        phone: u.phone,
-        address: u.address,
-        role: u.role,
+      if (!Array.isArray(usersData)) {
+        throw new Error('API did not return an array of users');
+      }
+
+      const mappedUsers = usersData.map((u: any) => ({
+        id: u.id?.toString() || '', // Ensure id is string
+        name: u.name || 'No name',
+        phone: u.phone || 'No phone',
+        address: u.address || 'No address',
+        role: u.role || 'user',
+        email: u.email || '',
       }));
-      setUsers(mapped);
-    });
 
-  }, []);
+      setUsers(mappedUsers);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchUsers();
+}, []);
 
   const filteredUsers = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.phone.includes(search) ||
       u.address.toLowerCase().includes(search.toLowerCase()) ||
-      u.role.toLowerCase().includes(search.toLowerCase())
+      u.role.toLowerCase().includes(search.toLowerCase()) ||
+      (u.email && u.email.toLowerCase().includes(search.toLowerCase()))
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
+        <Sidebar />
+        <main className="flex-1 p-8 ml-64 flex items-center justify-center">
+          <div>Loading users...</div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
+        <Sidebar />
+        <main className="flex-1 p-8 ml-64">
+          <div className="text-red-500">Error: {error}</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
@@ -135,7 +192,7 @@ export default function UserManagement({
         {filteredUsers.length === 0 ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-gray-400 text-lg">
-              Tidak ada user ditemukan.
+              {users.length === 0 ? "Tidak ada user tersedia" : "Tidak ada user yang cocok dengan pencarian"}
             </div>
           </div>
         ) : (
