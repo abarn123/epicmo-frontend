@@ -49,7 +49,11 @@ function log_tools() {
                             children: "Form Peminjaman Barang"
                         }, void 0, false, {
                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                             lineNumber: 9,
+=======
+                            lineNumber: 16,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -57,13 +61,21 @@ function log_tools() {
                             children: "Isi form berikut untuk meminjam barang"
                         }, void 0, false, {
                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                             lineNumber: 10,
+=======
+                            lineNumber: 19,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                     lineNumber: 8,
+=======
+                    lineNumber: 15,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -77,7 +89,11 @@ function log_tools() {
                                     children: "Cari Barang"
                                 }, void 0, false, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 16,
+=======
+                                    lineNumber: 27,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -89,12 +105,20 @@ function log_tools() {
                                                 className: "h-5 w-5 text-gray-400"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                 lineNumber: 19,
+=======
+                                                lineNumber: 32,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 18,
+=======
+                                            lineNumber: 31,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -103,7 +127,11 @@ function log_tools() {
                                             placeholder: "Ketik nama atau scan barcode barang"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 21,
+=======
+                                            lineNumber: 34,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -112,24 +140,40 @@ function log_tools() {
                                                 className: "h-5 w-5 text-blue-600"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                 lineNumber: 27,
+=======
+                                                lineNumber: 40,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 26,
+=======
+                                            lineNumber: 39,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 17,
+=======
+                                    lineNumber: 30,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                             lineNumber: 15,
+=======
+                            lineNumber: 26,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -142,7 +186,11 @@ function log_tools() {
                                             className: "h-5 w-5 text-blue-500 mr-2"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 35,
+=======
+                                            lineNumber: 48,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -150,13 +198,21 @@ function log_tools() {
                                             children: "Informasi Barang"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 36,
+=======
+                                            lineNumber: 49,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 34,
+=======
+                                    lineNumber: 47,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -169,7 +225,11 @@ function log_tools() {
                                                     children: "Nama Barang"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 41,
+=======
+                                                    lineNumber: 54,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -177,13 +237,21 @@ function log_tools() {
                                                     children: "-"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 42,
+=======
+                                                    lineNumber: 55,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 40,
+=======
+                                            lineNumber: 53,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -193,7 +261,11 @@ function log_tools() {
                                                     children: "Kode Barang"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 45,
+=======
+                                                    lineNumber: 58,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -201,13 +273,21 @@ function log_tools() {
                                                     children: "-"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 46,
+=======
+                                                    lineNumber: 59,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 44,
+=======
+                                            lineNumber: 57,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -217,7 +297,11 @@ function log_tools() {
                                                     children: "Kategori"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 49,
+=======
+                                                    lineNumber: 62,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -225,13 +309,21 @@ function log_tools() {
                                                     children: "-"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 50,
+=======
+                                                    lineNumber: 63,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 48,
+=======
+                                            lineNumber: 61,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -241,7 +333,11 @@ function log_tools() {
                                                     children: "Stok Tersedia"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 53,
+=======
+                                                    lineNumber: 66,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -249,25 +345,41 @@ function log_tools() {
                                                     children: "-"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 54,
+=======
+                                                    lineNumber: 67,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 52,
+=======
+                                            lineNumber: 65,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 39,
+=======
+                                    lineNumber: 52,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                             lineNumber: 33,
+=======
+                            lineNumber: 46,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -280,7 +392,11 @@ function log_tools() {
                                             children: "Peminjam"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 62,
+=======
+                                            lineNumber: 75,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -292,12 +408,20 @@ function log_tools() {
                                                         className: "h-5 w-5 text-gray-400"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                         lineNumber: 65,
+=======
+                                                        lineNumber: 80,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 64,
+=======
+                                                    lineNumber: 79,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -306,19 +430,31 @@ function log_tools() {
                                                     placeholder: "Nama peminjam"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 67,
+=======
+                                                    lineNumber: 82,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 63,
+=======
+                                            lineNumber: 78,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 61,
+=======
+                                    lineNumber: 74,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -331,7 +467,11 @@ function log_tools() {
                                                     children: "Tanggal Pinjam"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 77,
+=======
+                                                    lineNumber: 92,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -343,12 +483,20 @@ function log_tools() {
                                                                 className: "h-5 w-5 text-gray-400"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                                 lineNumber: 80,
+=======
+                                                                lineNumber: 97,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                             lineNumber: 79,
+=======
+                                                            lineNumber: 96,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -356,19 +504,31 @@ function log_tools() {
                                                             className: "block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                             lineNumber: 82,
+=======
+                                                            lineNumber: 99,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 78,
+=======
+                                                    lineNumber: 95,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 76,
+=======
+                                            lineNumber: 91,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -378,7 +538,11 @@ function log_tools() {
                                                     children: "Tanggal Kembali"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 90,
+=======
+                                                    lineNumber: 107,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -390,12 +554,20 @@ function log_tools() {
                                                                 className: "h-5 w-5 text-gray-400"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                                 lineNumber: 93,
+=======
+                                                                lineNumber: 112,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                             lineNumber: 92,
+=======
+                                                            lineNumber: 111,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -403,25 +575,41 @@ function log_tools() {
                                                             className: "block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                             lineNumber: 95,
+=======
+                                                            lineNumber: 114,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                                     lineNumber: 91,
+=======
+                                                    lineNumber: 110,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 89,
+=======
+                                            lineNumber: 106,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 75,
+=======
+                                    lineNumber: 90,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -431,7 +619,11 @@ function log_tools() {
                                             children: "Keperluan"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 104,
+=======
+                                            lineNumber: 123,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -440,13 +632,21 @@ function log_tools() {
                                             placeholder: "Tujuan peminjaman barang"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 105,
+=======
+                                            lineNumber: 126,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 103,
+=======
+                                    lineNumber: 122,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -458,7 +658,11 @@ function log_tools() {
                                             className: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 113,
+=======
+                                            lineNumber: 134,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -467,31 +671,51 @@ function log_tools() {
                                             children: "Saya bertanggung jawab penuh atas barang yang dipinjam"
                                         }, void 0, false, {
                                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                             lineNumber: 118,
+=======
+                                            lineNumber: 139,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 112,
+=======
+                                    lineNumber: 133,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                             lineNumber: 60,
+=======
+                            lineNumber: 73,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "mt-8 flex flex-col sm:flex-row sm:justify-end gap-3",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
+<<<<<<< HEAD
                                     href: "/",
+=======
+                                    href: "/tools",
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     className: "px-4 py-2 border border-gray-300 rounded-lg text-gray-700 text-center hover:bg-gray-50 transition",
                                     children: "Batal"
                                 }, void 0, false, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 126,
+=======
+                                    lineNumber: 150,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -500,30 +724,50 @@ function log_tools() {
                                     children: "Ajukan Peminjaman"
                                 }, void 0, false, {
                                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                                     lineNumber: 132,
+=======
+                                    lineNumber: 156,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                             lineNumber: 125,
+=======
+                            lineNumber: 149,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
                     lineNumber: 13,
+=======
+                    lineNumber: 24,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
             lineNumber: 7,
+=======
+            lineNumber: 14,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/log_tools/page.tsx",
+<<<<<<< HEAD
         lineNumber: 6,
+=======
+        lineNumber: 13,
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
         columnNumber: 5
     }, this);
 }

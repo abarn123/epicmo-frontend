@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Sidebar from "../components/Sidebar";
 
 const tools = [
@@ -37,9 +38,19 @@ export default function ToolsPage() {
           <h1 className="text-5xl font-extrabold text-indigo-800 mb-3 text-center drop-shadow-lg tracking-tight">
             🚀 Tools Dashboard
           </h1>
-          <p className="text-xl text-gray-700 mb-12 text-center">
+          <p className="text-xl text-gray-700 mb-6 text-center">
             Explore a suite of professional tools to boost your productivity.
           </p>
+          <div className="flex justify-center mb-8">
+            <div className="w-full flex justify-end">
+              <Link
+                href="/log_tools"
+                className="inline-flex items-center gap-2 px-7 py-2 bg-gradient-to-r from-indigo-600 via-blue-500 to-indigo-700 text-white rounded-full font-semibold shadow-lg hover:from-indigo-700 hover:to-blue-800 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              >
+                <span className="material-icons text-lg">Log Tools</span>
+              </Link>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {tools.map((tool) => (
               <div

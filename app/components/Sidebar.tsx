@@ -64,6 +64,7 @@ export default function Sidebar() {
           </svg>
           Tools
         </Link>
+<<<<<<< HEAD
         <Link
           href="/log_tools"
           className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
@@ -80,6 +81,9 @@ export default function Sidebar() {
           </svg>
           Log_Tools
         </Link>
+=======
+
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
         <Link
           href="/user"
           className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors font-medium text-gray-700 dark:text-gray-200 group"

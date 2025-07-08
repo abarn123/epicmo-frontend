@@ -4,6 +4,10 @@
   "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/log_tools/page": "app/log_tools/page.js",
+<<<<<<< HEAD
+=======
+  "/login/page": "app/login/page.js",
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
   "/page": "app/page.js",
   "/tools/page": "app/tools/page.js",
   "/user/page": "app/user/page.js"
