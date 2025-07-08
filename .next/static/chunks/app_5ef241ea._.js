@@ -662,7 +662,7 @@ function AddUserModal({ onSave, onCancel }) {
         columnNumber: 5
     }, this);
 }
-_s(AddUserModal, "PUYrWNdbFH5MFV9lYxptLnpJCz8=");
+_s(AddUserModal, "qkJ/5iAdJvIY2LtKPRQfdYozTHI=");
 _c1 = AddUserModal;
 function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
     _s1();

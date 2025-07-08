@@ -41,7 +41,7 @@ function AddUserPage() {
         setSubmitting(true);
         setError(null);
         try {
-            const response = await fetch("http://192.168.110.100:8080/data1", {
+            const response = await fetch("http://192.168.110.100:8080/data1/add", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -221,7 +221,7 @@ function AddUserPage() {
                                                         value: formData.name,
                                                         onChange: handleChange,
                                                         required: true,
-                                                        className: "block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm",
+                                                        className: "block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
                                                         placeholder: "Masukkan nama lengkap"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/user/add/page.tsx",
@@ -302,7 +302,7 @@ function AddUserPage() {
                                                             value: formData.email,
                                                             onChange: handleChange,
                                                             required: true,
-                                                            className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm",
+                                                            className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
                                                             placeholder: "Masukkan email"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
@@ -375,7 +375,7 @@ function AddUserPage() {
                                                             value: formData.phone,
                                                             onChange: handleChange,
                                                             required: true,
-                                                            className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm",
+                                                            className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
                                                             placeholder: "Masukkan nomor telepon"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
@@ -450,7 +450,7 @@ function AddUserPage() {
                                                             value: formData.address,
                                                             onChange: handleChange,
                                                             required: true,
-                                                            className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm",
+                                                            className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
                                                             placeholder: "Masukkan alamat"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
@@ -496,7 +496,7 @@ function AddUserPage() {
                                                     value: formData.role,
                                                     onChange: handleChange,
                                                     required: true,
-                                                    className: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm sm:text-sm",
+                                                    className: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm sm:text-sm text-black",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                             value: "",
@@ -517,7 +517,7 @@ function AddUserPage() {
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                             value: "user",
-                                                            children: "User"
+                                                            children: "Staff"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
                                                             lineNumber: 256,
@@ -525,7 +525,7 @@ function AddUserPage() {
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                             value: "guest",
-                                                            children: "Guest"
+                                                            children: "Freelance"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
                                                             lineNumber: 257,
@@ -645,7 +645,7 @@ function AddUserPage() {
         columnNumber: 5
     }, this);
 }
-_s(AddUserPage, "NzMAYX3uNWCSiRJjQfCuHv7t3D0=", false, function() {
+_s(AddUserPage, "KIBeysHIuEbXT65XrXZxv7bDmig=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
