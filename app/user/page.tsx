@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 
 type User = {
@@ -77,10 +78,10 @@ export default function UserManagement({
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/users") // Ganti URL sesuai endpoint API Slim Anda
-      .then((res) => res.json())
-      .then((data) => {
-        // Mapping jika field API berbeda
+    axios
+      .get("http://localhost:8000/api/users") // Ganti URL sesuai endpoint API Slim Anda
+      .then((res) => {
+        const data = res.data;
         const mapped = data.map((u: any) => ({
           id: u.id,
           name: u.name,
