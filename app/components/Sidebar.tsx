@@ -33,7 +33,7 @@ export default function Sidebar() {
           Dashboard
         </Link>
         <Link
-          href="/projects"
+          href="/attendance"
           className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
         >
           <svg
@@ -46,7 +46,7 @@ export default function Sidebar() {
             <rect x="3" y="7" width="18" height="13" rx="2" />
             <path d="M16 3v4M8 3v4" />
           </svg>
-          Projects
+          attendance
         </Link>
         <Link
           href="/tools"
