@@ -1,6 +1,18 @@
+<<<<<<< HEAD
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/user/page": "app/user/page.js"
 }
+=======
+<<<<<<< HEAD
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js"
+}
+=======
+{}
+>>>>>>> 75b3fe9bd60536c9b7fb88c888e0354d4e7e86a6
+>>>>>>> babbf7135023d97baab9e08e1a034436b0a73209
