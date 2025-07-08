@@ -72,6 +72,7 @@
 
 @layer theme {
   :root, :host {
+    --color-red-50: oklch(97.1% .013 17.38);
     --color-red-100: oklch(93.6% .032 17.717);
     --color-red-300: oklch(80.8% .114 19.571);
     --color-red-500: oklch(63.7% .237 25.331);
@@ -711,6 +712,10 @@
     animation: var(--animate-spin);
   }
 
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
   .appearance-none {
     appearance: none;
   }
@@ -981,6 +986,10 @@
 
   .bg-indigo-600 {
     background-color: var(--color-indigo-600);
+  }
+
+  .bg-red-50 {
+    background-color: var(--color-red-50);
   }
 
   .bg-red-500 {

@@ -423,10 +423,9 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                 "UserManagement.useEffect.fetchUsers": async ()=>{
                     try {
                         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("http://192.168.110.100:8080/data1");
-                        console.log("API Response:", response.data); // Add this to inspect the actual response
+                        console.log("API Response:", response.data);
                         // Handle different response formats
                         let usersData = response.data;
-                        // If response is an object with a 'data' or 'users' array
                         if (usersData && typeof usersData === "object" && !Array.isArray(usersData)) {
                             if (Array.isArray(usersData.data)) {
                                 usersData = usersData.data;
@@ -437,17 +436,38 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                         if (!Array.isArray(usersData)) {
                             throw new Error("API did not return an array of users");
                         }
-                        const mappedUsers = usersData.map({
-                            "UserManagement.useEffect.fetchUsers.mappedUsers": (u)=>({
-                                    id: u.id?.toString() || "",
+                        // Process users with guaranteed unique IDs
+                        const processedUsers = usersData.map({
+                            "UserManagement.useEffect.fetchUsers.processedUsers": (u, index)=>{
+                                // Generate a unique ID if not provided
+                                const id = u.id?.toString() || `generated-${index}-${Date.now()}`;
+                                return {
+                                    id,
                                     name: u.name || "No name",
                                     phone: u.phone || "No phone",
                                     address: u.address || "No address",
                                     role: u.role || "user",
                                     email: u.email || ""
-                                })
-                        }["UserManagement.useEffect.fetchUsers.mappedUsers"]);
-                        setUsers(mappedUsers);
+                                };
+                            }
+                        }["UserManagement.useEffect.fetchUsers.processedUsers"]);
+                        // Verify uniqueness of IDs
+                        const idSet = new Set();
+                        const duplicates = processedUsers.filter({
+                            "UserManagement.useEffect.fetchUsers.duplicates": (user)=>{
+                                if (idSet.has(user.id)) {
+                                    console.warn(`Duplicate user ID detected: ${user.id}`);
+                                    return true;
+                                }
+                                idSet.add(user.id);
+                                return false;
+                            }
+                        }["UserManagement.useEffect.fetchUsers.duplicates"]);
+                        if (duplicates.length > 0) {
+                            console.error("Duplicate users found:", duplicates);
+                            throw new Error("Duplicate user IDs detected in API response");
+                        }
+                        setUsers(processedUsers);
                     } catch (err) {
                         console.error("Fetch error:", err);
                         setError(err instanceof Error ? err.message : "Unknown error occurred");
@@ -460,14 +480,24 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
             fetchUsers();
         }
     }["UserManagement.useEffect"], []);
-    const filteredUsers = users.filter((u)=>u.name.toLowerCase().includes(search.toLowerCase()) || u.phone.includes(search) || u.address.toLowerCase().includes(search.toLowerCase()) || u.role.toLowerCase().includes(search.toLowerCase()) || u.email && u.email.toLowerCase().includes(search.toLowerCase()));
+    const filteredUsers = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].useMemo({
+        "UserManagement.useMemo[filteredUsers]": ()=>{
+            const searchTerm = search.toLowerCase();
+            return users.filter({
+                "UserManagement.useMemo[filteredUsers]": (u)=>u.name.toLowerCase().includes(searchTerm) || u.phone.includes(search) || u.address.toLowerCase().includes(searchTerm) || u.role.toLowerCase().includes(searchTerm) || u.email && u.email.toLowerCase().includes(searchTerm)
+            }["UserManagement.useMemo[filteredUsers]"]);
+        }
+    }["UserManagement.useMemo[filteredUsers]"], [
+        users,
+        search
+    ]);
     if (loading) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$Sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/user/page.tsx",
-                    lineNumber: 150,
+                    lineNumber: 164,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -477,18 +507,18 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                         children: "Memuat data user..."
                     }, void 0, false, {
                         fileName: "[project]/app/user/page.tsx",
-                        lineNumber: 152,
+                        lineNumber: 166,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/user/page.tsx",
-                    lineNumber: 151,
+                    lineNumber: 165,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/user/page.tsx",
-            lineNumber: 149,
+            lineNumber: 163,
             columnNumber: 7
         }, this);
     }
@@ -498,7 +528,7 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$Sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/user/page.tsx",
-                    lineNumber: 161,
+                    lineNumber: 175,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -512,7 +542,7 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 163,
+                            lineNumber: 177,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -521,19 +551,19 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                             children: "Coba Lagi"
                         }, void 0, false, {
                             fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 164,
+                            lineNumber: 178,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/user/page.tsx",
-                    lineNumber: 162,
+                    lineNumber: 176,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/user/page.tsx",
-            lineNumber: 160,
+            lineNumber: 174,
             columnNumber: 7
         }, this);
     }
@@ -542,7 +572,7 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$Sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/user/page.tsx",
-                lineNumber: 177,
+                lineNumber: 191,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -558,7 +588,7 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                                         children: "Manajemen User"
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 181,
+                                        lineNumber: 195,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -566,13 +596,13 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                                         children: "Kelola data user aplikasi Anda dengan mudah."
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 184,
+                                        lineNumber: 198,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/user/page.tsx",
-                                lineNumber: 180,
+                                lineNumber: 194,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -586,7 +616,7 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                                         className: "px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition flex-grow"
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 189,
+                                        lineNumber: 203,
                                         columnNumber: 13
                                     }, this),
                                     onAdd && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -595,19 +625,19 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                                         children: "+ Tambah User"
                                     }, void 0, false, {
                                         fileName: "[project]/app/user/page.tsx",
-                                        lineNumber: 197,
+                                        lineNumber: 211,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/user/page.tsx",
-                                lineNumber: 188,
+                                lineNumber: 202,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/user/page.tsx",
-                        lineNumber: 179,
+                        lineNumber: 193,
                         columnNumber: 9
                     }, this),
                     filteredUsers.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -617,12 +647,12 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                             children: users.length === 0 ? "Tidak ada user tersedia" : "Tidak ada user yang cocok dengan pencarian"
                         }, void 0, false, {
                             fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 209,
+                            lineNumber: 223,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/user/page.tsx",
-                        lineNumber: 208,
+                        lineNumber: 222,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
@@ -630,30 +660,30 @@ function UserManagement({ users: initialUsers = [], onEdit, onDelete, onAdd }) {
                                 user: user,
                                 onEdit: onEdit,
                                 onDelete: onDelete
-                            }, user.id, false, {
+                            }, `user-${user.id}`, false, {
                                 fileName: "[project]/app/user/page.tsx",
-                                lineNumber: 220,
+                                lineNumber: 232,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/app/user/page.tsx",
-                        lineNumber: 218,
+                        lineNumber: 230,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/user/page.tsx",
-                lineNumber: 178,
+                lineNumber: 192,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/user/page.tsx",
-        lineNumber: 176,
+        lineNumber: 190,
         columnNumber: 5
     }, this);
 }
-_s(UserManagement, "CvG+Os/aOXrzjk4PrtxBke66Ny8=");
+_s(UserManagement, "UHaYg1lipVhltn+tKkE/u96JP8U=");
 _c1 = UserManagement;
 var _c, _c1;
 __turbopack_context__.k.register(_c, "UserCard");
