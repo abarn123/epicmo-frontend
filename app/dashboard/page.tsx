@@ -54,7 +54,7 @@ const stats = [
     ),
   },
   {
-    label: "Projects",
+    label: "attendance",
     value: 5,
     icon: (
       <svg
