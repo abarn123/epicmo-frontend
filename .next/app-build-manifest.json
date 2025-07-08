@@ -13,8 +13,6 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
-<<<<<<< HEAD
-=======
     "/dashboard/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
@@ -92,7 +90,6 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
->>>>>>> be3ba37ba0cfa69aa848612bd161cda9032fc8d7
     "/user/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
