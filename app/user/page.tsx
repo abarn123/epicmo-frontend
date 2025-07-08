@@ -78,21 +78,7 @@ export default function UserManagement({
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-<<<<<<< HEAD
-    axios
-      .get("http://localhost:8080/data1") // Ganti URL sesuai endpoint API Slim Anda
-      .then((res) => {
-        const data = res.data;
-        const mapped = data.map((u: any) => ({
-          id: u.id,
-          name: u.name,
-          phone: u.phone,
-          address: u.address,
-          role: u.role,
-        }));
-        setUsers(mapped);
-      });
-=======
+
     axios.get("http://192.168.110.100").then((res) => {
       const data = res.data;
       const mapped = data.map((u: any) => ({
@@ -104,7 +90,7 @@ export default function UserManagement({
       }));
       setUsers(mapped);
     });
->>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
+
   }, []);
 
   const filteredUsers = users.filter(

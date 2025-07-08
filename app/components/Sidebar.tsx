@@ -1,18 +1,26 @@
+"use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 export default function Sidebar() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    // For example: clear auth tokens, cookies, etc.
+    console.log("User logged out");
+    
+    // Redirect to login page
+    router.push("/login");
+  };
+
   return (
     <aside className="fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-8 px-4 shadow-md z-30">
       <div className="mb-8 text-2xl font-bold text-blue-600 text-center">
         Epicmo
       </div>
-      <nav className="flex flex-col gap-4">
-        <Link
-          href="/"
-          className="px-4 py-2 rounded hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors font-medium"
-        >
-          Home
-        </Link>
+      <nav className="flex flex-col gap-4 flex-grow">
         <Link
           href="/dashboard"
           className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
@@ -46,7 +54,7 @@ export default function Sidebar() {
             <rect x="3" y="7" width="18" height="13" rx="2" />
             <path d="M16 3v4M8 3v4" />
           </svg>
-          attendance
+          Attendance
         </Link>
         <Link
           href="/tools"
@@ -64,7 +72,6 @@ export default function Sidebar() {
           </svg>
           Tools
         </Link>
-
         <Link
           href="/user"
           className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
@@ -81,14 +88,17 @@ export default function Sidebar() {
           </svg>
           User
         </Link>
-        <Link
-          href="/login"
-          className="px-4 py-2 rounded hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors font-medium"
-        >
-          Login
-        </Link>
-        {/* Tambahkan menu lain di sini */}
       </nav>
+
+      {/* Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="mt-4 flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
+      >
+        <LogOut className="w-5 h-5 text-red-500 group-hover:text-red-700 transition-colors" />
+        Logout
+      </button>
+
       <div className="mt-auto text-xs text-gray-400 text-center pt-8">
         © {new Date().getFullYear()} Epicmo
       </div>
