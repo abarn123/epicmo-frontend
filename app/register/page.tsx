@@ -200,13 +200,7 @@ export default function RegisterPage() {
             Sign in
           </Link>
         </p>
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center w-full mt-4 text-sm text-gray-500 hover:text-gray-700"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to home
-        </Link>
+     
       </div>
     </div>
   );
