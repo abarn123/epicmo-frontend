@@ -58,6 +58,8 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
+<<<<<<< HEAD
+=======
     "/login/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
@@ -71,6 +73,7 @@
       "static/chunks/_e69f0d32._.js",
       "static/chunks/_a894171a._.js"
     ],
+>>>>>>> f785e0cf1e15c506df4094f50c1f3d9d55c505c5
     "/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
       "static/chunks/app_favicon_ico_mjs_13ae323c._.js",
