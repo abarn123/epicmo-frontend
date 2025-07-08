@@ -9,7 +9,7 @@ type User = {
   phone: string;
   address: string;
   role: string;
-  email?: string; // Added email field
+  email?: string;
 };
 
 type UserGridProps = {
@@ -84,64 +84,63 @@ export default function UserManagement({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get("http://192.168.110.100:8080/data1");
-      console.log("API Response:", response.data); // Add this to inspect the actual response
-      
-      // Handle different response formats
-      let usersData = response.data;
-      
-      // If response is an object with a 'data' or 'users' array
-      if (usersData && typeof usersData === 'object' && !Array.isArray(usersData)) {
-        if (Array.isArray(usersData.data)) {
-          usersData = usersData.data;
-        } else if (Array.isArray(usersData.users)) {
-          usersData = usersData.users;
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://192.168.110.100:8080/data1");
+        
+        // Improved data extraction with better type safety
+        const responseData = response.data;
+        let usersData = Array.isArray(responseData) 
+          ? responseData 
+          : Array.isArray(responseData?.data) 
+            ? responseData.data 
+            : Array.isArray(responseData?.users) 
+              ? responseData.users 
+              : [];
+
+        if (!usersData.length && !Array.isArray(responseData)) {
+          console.warn("Unexpected API response format:", responseData);
         }
+
+        const mappedUsers = usersData.map((u: any) => ({
+          id: u.id?.toString() || Math.random().toString(36).substring(2, 9),
+          name: u.name || 'No name',
+          phone: u.phone || 'No phone',
+          address: u.address || 'No address',
+          role: u.role || 'user',
+          email: u.email || '',
+        }));
+
+        setUsers(mappedUsers);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      if (!Array.isArray(usersData)) {
-        throw new Error('API did not return an array of users');
-      }
+    fetchUsers();
+  }, []);
 
-      const mappedUsers = usersData.map((u: any) => ({
-        id: u.id?.toString() || '', // Ensure id is string
-        name: u.name || 'No name',
-        phone: u.phone || 'No phone',
-        address: u.address || 'No address',
-        role: u.role || 'user',
-        email: u.email || '',
-      }));
-
-      setUsers(mappedUsers);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      setUsers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchUsers();
-}, []);
-
-  const filteredUsers = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.phone.includes(search) ||
-      u.address.toLowerCase().includes(search.toLowerCase()) ||
-      u.role.toLowerCase().includes(search.toLowerCase()) ||
-      (u.email && u.email.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredUsers = React.useMemo(() => {
+    const searchTerm = search.toLowerCase();
+    return users.filter(
+      (u) =>
+        u.name.toLowerCase().includes(searchTerm) ||
+        u.phone.includes(search) ||
+        u.address.toLowerCase().includes(searchTerm) ||
+        u.role.toLowerCase().includes(searchTerm) ||
+        (u.email && u.email.toLowerCase().includes(searchTerm))
+    );
+  }, [users, search]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
         <Sidebar />
         <main className="flex-1 p-8 ml-64 flex items-center justify-center">
-          <div>Loading users...</div>
+          <div className="animate-pulse">Memuat data user...</div>
         </main>
       </div>
     );
@@ -151,8 +150,14 @@ export default function UserManagement({
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
         <Sidebar />
-        <main className="flex-1 p-8 ml-64">
-          <div className="text-red-500">Error: {error}</div>
+        <main className="flex-1 p-8 ml-64 flex flex-col items-center justify-center">
+          <div className="text-red-500 mb-4">Error: {error}</div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md"
+          >
+            Coba Lagi
+          </button>
         </main>
       </div>
     );
@@ -162,7 +167,7 @@ export default function UserManagement({
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
       <Sidebar />
       <main className="flex-1 p-8 ml-64">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-indigo-800 mb-1">
               Manajemen User
@@ -171,17 +176,17 @@ export default function UserManagement({
               Kelola data user aplikasi Anda dengan mudah.
             </p>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <input
               type="text"
               placeholder="Cari user..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
+              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition flex-grow"
             />
             {onAdd && (
               <button
-                className="px-5 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition"
+                className="px-5 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition whitespace-nowrap"
                 onClick={onAdd}
               >
                 + Tambah User
@@ -189,14 +194,17 @@ export default function UserManagement({
             )}
           </div>
         </div>
+
         {filteredUsers.length === 0 ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-gray-400 text-lg">
-              {users.length === 0 ? "Tidak ada user tersedia" : "Tidak ada user yang cocok dengan pencarian"}
+              {users.length === 0 
+                ? "Tidak ada user tersedia" 
+                : "Tidak ditemukan user yang cocok dengan pencarian"}
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map((user) => (
               <UserCard
                 key={user.id}

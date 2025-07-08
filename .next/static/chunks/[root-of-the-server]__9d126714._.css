@@ -251,11 +251,13 @@
     --tracking-tight: -.025em;
     --tracking-wider: .05em;
     --leading-relaxed: 1.625;
+    --radius-md: .375rem;
     --radius-lg: .5rem;
     --radius-xl: .75rem;
     --radius-2xl: 1rem;
     --drop-shadow-lg: 0 4px 4px #00000026;
     --animate-spin: spin 1s linear infinite;
+    --animate-pulse: pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;
     --blur-sm: 8px;
     --blur-md: 12px;
     --blur-3xl: 64px;
@@ -795,6 +797,10 @@
     transform: var(--tw-rotate-x, ) var(--tw-rotate-y, ) var(--tw-rotate-z, ) var(--tw-skew-x, ) var(--tw-skew-y, );
   }
 
+  .animate-pulse {
+    animation: var(--animate-pulse);
+  }
+
   .animate-spin {
     animation: var(--animate-spin);
   }
@@ -931,6 +937,10 @@
 
   .rounded-lg {
     border-radius: var(--radius-lg);
+  }
+
+  .rounded-md {
+    border-radius: var(--radius-md);
   }
 
   .rounded-xl {
@@ -1410,6 +1420,10 @@
     letter-spacing: var(--tracking-wider);
   }
 
+  .whitespace-nowrap {
+    white-space: nowrap;
+  }
+
   .text-blue-500 {
     color: var(--color-blue-500);
   }
@@ -1859,6 +1873,12 @@
 
   .disabled\:opacity-50:disabled {
     opacity: .5;
+  }
+
+  @media (width >= 40rem) {
+    .sm\:w-auto {
+      width: auto;
+    }
   }
 
   @media (width >= 40rem) {
@@ -2442,6 +2462,12 @@ body {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
   }
 }
 
