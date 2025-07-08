@@ -20,7 +20,7 @@ export default function Home() {
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-6 text-gray-900 dark:text-white">
             <span className="text-blue-600">Epicmo</span> Photobooth
           </h1>
-          <h4>
+          <h4 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-700 dark:text-blue-300">
             Buat Setiap Momen Jadi Tak Terlupakan dengan EPICMO Photobooth!
           </h4>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
