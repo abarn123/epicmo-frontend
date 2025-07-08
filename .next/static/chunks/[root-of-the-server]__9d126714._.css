@@ -168,7 +168,6 @@
     --color-amber-600: oklch(66.6% .179 58.318);
     --color-amber-700: oklch(55.5% .163 48.998);
     --color-green-500: oklch(72.3% .219 149.579);
-    --color-green-600: oklch(62.7% .194 149.214);
     --color-green-700: oklch(52.7% .154 150.069);
     --color-emerald-600: oklch(59.6% .145 163.225);
     --color-emerald-700: oklch(50.8% .118 165.612);
@@ -494,10 +493,6 @@
     margin-inline: auto;
   }
 
-  .mt-0\.5 {
-    margin-top: calc(var(--spacing) * .5);
-  }
-
   .mt-1 {
     margin-top: calc(var(--spacing) * 1);
   }
@@ -614,10 +609,6 @@
     height: calc(var(--spacing) * 5);
   }
 
-  .h-6 {
-    height: calc(var(--spacing) * 6);
-  }
-
   .h-7 {
     height: calc(var(--spacing) * 7);
   }
@@ -680,10 +671,6 @@
 
   .w-5 {
     width: calc(var(--spacing) * 5);
-  }
-
-  .w-6 {
-    width: calc(var(--spacing) * 6);
   }
 
   .w-7 {
@@ -984,14 +971,18 @@
     border-color: var(--color-indigo-400);
   }
 
+<<<<<<< HEAD
   .bg-blue-50 {
     background-color: var(--color-blue-50);
   }
 
+=======
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
   .bg-blue-800 {
     background-color: var(--color-blue-800);
   }
 
+<<<<<<< HEAD
   .bg-gray-50 {
     background-color: var(--color-gray-50);
   }
@@ -1004,6 +995,8 @@
     background-color: var(--color-gray-300);
   }
 
+=======
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
   .bg-indigo-50 {
     background-color: var(--color-indigo-50);
   }
@@ -1448,10 +1441,13 @@
     color: var(--color-red-600);
   }
 
+<<<<<<< HEAD
   .text-white {
     color: var(--color-white);
   }
 
+=======
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
   .uppercase {
     text-transform: uppercase;
   }
@@ -1705,12 +1701,15 @@
   }
 
   @media (hover: hover) {
+<<<<<<< HEAD
     .hover\:text-blue-800:hover {
       color: var(--color-blue-800);
     }
   }
 
   @media (hover: hover) {
+=======
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
     .hover\:text-indigo-800:hover {
       color: var(--color-indigo-800);
     }
@@ -1736,6 +1735,7 @@
     }
   }
 
+<<<<<<< HEAD
   @media (hover: hover) {
     .hover\:shadow-xl:hover {
       --tw-shadow: 0 20px 25px -5px var(--tw-shadow-color, #0000001a), 0 8px 10px -6px var(--tw-shadow-color, #0000001a);
@@ -1743,6 +1743,8 @@
     }
   }
 
+=======
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
   .focus\:border-indigo-500:focus {
     border-color: var(--color-indigo-500);
   }
@@ -1872,12 +1874,15 @@
     }
   }
 
+<<<<<<< HEAD
   @media (width >= 64rem) {
     .lg\:grid-cols-4 {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
+=======
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
   @media (width >= 80rem) {
     .xl\:grid-cols-4 {
       grid-template-columns: repeat(4, minmax(0, 1fr));

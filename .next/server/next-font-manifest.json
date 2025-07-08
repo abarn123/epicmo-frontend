@@ -1,9 +1,27 @@
 {
   "app": {
+<<<<<<< HEAD
+=======
+    "[project]/app/_not-found/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+    ],
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
     "[project]/app/dashboard/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
     ],
+<<<<<<< HEAD
+=======
+    "[project]/app/log_tools/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+    ],
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
     "[project]/app/login/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
@@ -11,6 +29,19 @@
     "[project]/app/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+<<<<<<< HEAD
+=======
+    ],
+>>>>>>> 23cb7f77e73937fbe7b2a104e027296f41dac050
+>>>>>>> 50a0e1b99e751ad45bf416314c94f38db7150221
+    "[project]/app/tools/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+    ],
+    "[project]/app/user/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+>>>>>>> 2416bb7903e79ee9d8662880890e81ceb4b9e6bb
     ]
   },
   "appUsingSizeAdjust": true,
