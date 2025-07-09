@@ -10,15 +10,19 @@ export default function Sidebar() {
     // Add your logout logic here
     // For example: clear auth tokens, cookies, etc.
     console.log("User logged out");
-    
+
     // Redirect to login page
     router.push("/login");
   };
 
   return (
     <aside className="fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-8 px-4 shadow-md z-30">
-      <div className="mb-8 text-2xl font-bold text-blue-600 text-center">
-        Epicmo
+      <div className="mb-4 text-center">
+        <img
+          src="/epicmo.logo.png"
+          alt="Epicmo Logo"
+          className="h-8 w-auto mx-auto"
+        />
       </div>
       <nav className="flex flex-col gap-4 flex-grow">
         <Link

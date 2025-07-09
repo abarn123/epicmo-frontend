@@ -32,7 +32,7 @@ export default function UserGrid({ users, onEdit, loading }: UserGridProps) {
   }
 
   // Validate and filter users
-  const validUsers = users.filter(user => {
+  const validUsers = users.filter((user) => {
     if (!user.id) {
       console.warn("User missing ID:", user);
       return false;
@@ -42,7 +42,7 @@ export default function UserGrid({ users, onEdit, loading }: UserGridProps) {
 
   // Check for duplicate IDs
   const userIds = new Set();
-  const hasDuplicateIds = validUsers.some(user => {
+  const hasDuplicateIds = validUsers.some((user) => {
     if (userIds.has(user.id)) {
       console.error(`Duplicate user ID found: ${user.id}`);
       return true;
@@ -54,7 +54,9 @@ export default function UserGrid({ users, onEdit, loading }: UserGridProps) {
   if (hasDuplicateIds) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-500 text-lg">Error: Duplicate user IDs detected</div>
+        <div className="text-red-500 text-lg">
+          Error: Duplicate user IDs detected
+        </div>
       </div>
     );
   }
@@ -63,11 +65,7 @@ export default function UserGrid({ users, onEdit, loading }: UserGridProps) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {validUsers.map((user) => (
-          <UserCard 
-            key={`user-card-${user.id}`}
-            user={user} 
-            onEdit={onEdit} 
-          />
+          <UserCard key={`user-card-${user.id}`} user={user} onEdit={onEdit} />
         ))}
       </div>
     </div>
@@ -85,7 +83,11 @@ function UserCard({ user, onEdit }: UserCardProps) {
       <h2 className="text-xl font-bold text-gray-800">{user.name}</h2>
       <UserInfo label="No. Telepon" value={user.phone} />
       <UserInfo label="Alamat" value={user.address} />
-      <UserInfo label="Role" value={user.role} className="text-indigo-600 font-semibold" />
+      <UserInfo
+        label="Role"
+        value={user.role}
+        className="text-indigo-600 font-semibold"
+      />
       {onEdit && (
         <button
           className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition"
@@ -110,20 +112,20 @@ function UserInfo({ label, value, className = "" }: UserInfoProps) {
     <div>
       <span className="text-gray-500 text-sm">{label}: </span>
       <span className={`font-medium text-gray-700 ${className}`}>
-        {value || '-'}
+        {value || "-"}
       </span>
     </div>
   );
 }
 
-type UserManagementProps = {
+type userProps = {
   users: User[];
   onUserSelect?: (user: User) => void;
 };
 
-export function UserManagement({ users, onUserSelect }: UserManagementProps) {
+export function user({ users, onUserSelect }: userProps) {
   // Validate and filter users
-  const validUsers = users.filter(user => {
+  const validUsers = users.filter((user) => {
     if (!user.id) {
       console.warn("User missing ID:", user);
       return false;
@@ -133,7 +135,7 @@ export function UserManagement({ users, onUserSelect }: UserManagementProps) {
 
   // Check for duplicate IDs
   const userIds = new Set();
-  const hasDuplicateIds = validUsers.some(user => {
+  const hasDuplicateIds = validUsers.some((user) => {
     if (userIds.has(user.id)) {
       console.error(`Duplicate user ID found: ${user.id}`);
       return true;
@@ -158,7 +160,7 @@ export function UserManagement({ users, onUserSelect }: UserManagementProps) {
       ) : (
         <div className="space-y-4">
           {validUsers.map((user) => (
-            <div 
+            <div
               key={`management-user-${user.id}`}
               className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
               onClick={() => onUserSelect?.(user)}

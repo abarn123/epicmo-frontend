@@ -1,11 +1,6 @@
 {
-<<<<<<< HEAD
   "app": {
-    "[project]/app/dashboard/page": [
-      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
-      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
-    ],
-    "[project]/app/login/page": [
+    "[project]/app/_not-found/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
     ],
@@ -17,16 +12,16 @@
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
     ],
+    "[project]/app/user/edit/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+    ],
     "[project]/app/user/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
     ]
   },
   "appUsingSizeAdjust": true,
-=======
-  "app": {},
-  "appUsingSizeAdjust": false,
->>>>>>> 552e3cf8f58b530bbc28e5945d0a971173d564d7
   "pages": {},
   "pagesUsingSizeAdjust": false
 }

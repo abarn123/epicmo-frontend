@@ -38,7 +38,7 @@ module.exports = mod;
 var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "default": (()=>AddUserPage)
+    "default": (()=>AddPage)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
@@ -49,7 +49,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 ;
 ;
-function AddUserPage() {
+function AddPage() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
         name: "",
@@ -79,11 +79,16 @@ function AddUserPage() {
                 body: JSON.stringify(formData)
             });
             if (!response.ok) {
-                throw new Error("Gagal menambahkan user");
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to add user");
             }
             router.push("/user");
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("An unknown error occurred");
+            }
         } finally{
             setSubmitting(false);
         }
@@ -99,6 +104,7 @@ function AddUserPage() {
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                             onClick: ()=>router.back(),
                             className: "mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors",
+                            "aria-label": "Go back",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                 xmlns: "http://www.w3.org/2000/svg",
                                 className: "h-5 w-5 text-gray-500",
@@ -110,36 +116,36 @@ function AddUserPage() {
                                     clipRule: "evenodd"
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/add/page.tsx",
-                                    lineNumber: 65,
+                                    lineNumber: 71,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/user/add/page.tsx",
-                                lineNumber: 59,
+                                lineNumber: 65,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/user/add/page.tsx",
-                            lineNumber: 55,
+                            lineNumber: 60,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                             className: "text-2xl font-bold text-gray-800",
-                            children: "Tambah User Baru"
+                            children: "Add New User"
                         }, void 0, false, {
                             fileName: "[project]/app/user/add/page.tsx",
-                            lineNumber: 72,
+                            lineNumber: 78,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/user/add/page.tsx",
-                    lineNumber: 54,
+                    lineNumber: 59,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/user/add/page.tsx",
-                lineNumber: 53,
+                lineNumber: 58,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -152,24 +158,24 @@ function AddUserPage() {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                     className: "text-lg font-semibold text-gray-800",
-                                    children: "Informasi User"
+                                    children: "User Information"
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/add/page.tsx",
-                                    lineNumber: 81,
+                                    lineNumber: 87,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-gray-600 mt-1",
-                                    children: "Silakan lengkapi form berikut untuk menambahkan user baru"
+                                    children: "Please fill out the form below to add a new user"
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/add/page.tsx",
-                                    lineNumber: 84,
+                                    lineNumber: 90,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/user/add/page.tsx",
-                            lineNumber: 80,
+                            lineNumber: 86,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -191,12 +197,12 @@ function AddUserPage() {
                                                     clipRule: "evenodd"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 99,
+                                                    lineNumber: 105,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/user/add/page.tsx",
-                                                lineNumber: 94,
+                                                lineNumber: 100,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -204,18 +210,18 @@ function AddUserPage() {
                                                 children: error
                                             }, void 0, false, {
                                                 fileName: "[project]/app/user/add/page.tsx",
-                                                lineNumber: 105,
+                                                lineNumber: 111,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/user/add/page.tsx",
-                                        lineNumber: 93,
+                                        lineNumber: 99,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/add/page.tsx",
-                                    lineNumber: 92,
+                                    lineNumber: 98,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -227,19 +233,19 @@ function AddUserPage() {
                                                     htmlFor: "name",
                                                     className: "block text-sm font-medium text-gray-700 mb-1",
                                                     children: [
-                                                        "Nama Lengkap",
+                                                        "Full Name",
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             className: "text-red-500 ml-1",
                                                             children: "*"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 118,
+                                                            lineNumber: 124,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 113,
+                                                    lineNumber: 119,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -252,21 +258,21 @@ function AddUserPage() {
                                                         onChange: handleChange,
                                                         required: true,
                                                         className: "block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
-                                                        placeholder: "Masukkan nama lengkap"
+                                                        placeholder: "Enter full name"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/user/add/page.tsx",
-                                                        lineNumber: 121,
+                                                        lineNumber: 127,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 120,
+                                                    lineNumber: 126,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/user/add/page.tsx",
-                                            lineNumber: 112,
+                                            lineNumber: 118,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -281,13 +287,13 @@ function AddUserPage() {
                                                             children: "*"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 141,
+                                                            lineNumber: 147,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 136,
+                                                    lineNumber: 142,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -304,25 +310,25 @@ function AddUserPage() {
                                                                         d: "M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/user/add/page.tsx",
-                                                                        lineNumber: 150,
+                                                                        lineNumber: 156,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                                         d: "M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/user/add/page.tsx",
-                                                                        lineNumber: 151,
+                                                                        lineNumber: 157,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/user/add/page.tsx",
-                                                                lineNumber: 145,
+                                                                lineNumber: 151,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 144,
+                                                            lineNumber: 150,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -333,22 +339,22 @@ function AddUserPage() {
                                                             onChange: handleChange,
                                                             required: true,
                                                             className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
-                                                            placeholder: "Masukkan email"
+                                                            placeholder: "Enter email"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 154,
+                                                            lineNumber: 160,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 143,
+                                                    lineNumber: 149,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/user/add/page.tsx",
-                                            lineNumber: 135,
+                                            lineNumber: 141,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -357,19 +363,19 @@ function AddUserPage() {
                                                     htmlFor: "phone",
                                                     className: "block text-sm font-medium text-gray-700 mb-1",
                                                     children: [
-                                                        "No. Telepon",
+                                                        "Phone Number",
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             className: "text-red-500 ml-1",
                                                             children: "*"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 174,
+                                                            lineNumber: 180,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 169,
+                                                    lineNumber: 175,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -385,17 +391,17 @@ function AddUserPage() {
                                                                     d: "M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                                    lineNumber: 183,
+                                                                    lineNumber: 189,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/user/add/page.tsx",
-                                                                lineNumber: 178,
+                                                                lineNumber: 184,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 177,
+                                                            lineNumber: 183,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -406,22 +412,22 @@ function AddUserPage() {
                                                             onChange: handleChange,
                                                             required: true,
                                                             className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
-                                                            placeholder: "Masukkan nomor telepon"
+                                                            placeholder: "Enter phone number"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 186,
+                                                            lineNumber: 192,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 176,
+                                                    lineNumber: 182,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/user/add/page.tsx",
-                                            lineNumber: 168,
+                                            lineNumber: 174,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -430,19 +436,19 @@ function AddUserPage() {
                                                     htmlFor: "address",
                                                     className: "block text-sm font-medium text-gray-700 mb-1",
                                                     children: [
-                                                        "Alamat",
+                                                        "Address",
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                             className: "text-red-500 ml-1",
                                                             children: "*"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 206,
+                                                            lineNumber: 212,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 201,
+                                                    lineNumber: 207,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -460,17 +466,17 @@ function AddUserPage() {
                                                                     clipRule: "evenodd"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                                    lineNumber: 215,
+                                                                    lineNumber: 221,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/user/add/page.tsx",
-                                                                lineNumber: 210,
+                                                                lineNumber: 216,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 209,
+                                                            lineNumber: 215,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -481,22 +487,22 @@ function AddUserPage() {
                                                             onChange: handleChange,
                                                             required: true,
                                                             className: "block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800",
-                                                            placeholder: "Masukkan alamat"
+                                                            placeholder: "Enter address"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 222,
+                                                            lineNumber: 228,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 208,
+                                                    lineNumber: 214,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/user/add/page.tsx",
-                                            lineNumber: 200,
+                                            lineNumber: 206,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -511,13 +517,13 @@ function AddUserPage() {
                                                             children: "*"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 242,
+                                                            lineNumber: 248,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 237,
+                                                    lineNumber: 243,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -531,10 +537,10 @@ function AddUserPage() {
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                             value: "",
                                                             disabled: true,
-                                                            children: "Pilih role"
+                                                            children: "Select role"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 252,
+                                                            lineNumber: 258,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -542,7 +548,7 @@ function AddUserPage() {
                                                             children: "Admin"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 255,
+                                                            lineNumber: 261,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -550,7 +556,7 @@ function AddUserPage() {
                                                             children: "Staff"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 256,
+                                                            lineNumber: 262,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -558,25 +564,25 @@ function AddUserPage() {
                                                             children: "Freelance"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 257,
+                                                            lineNumber: 263,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                    lineNumber: 244,
+                                                    lineNumber: 250,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/user/add/page.tsx",
-                                            lineNumber: 236,
+                                            lineNumber: 242,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/user/add/page.tsx",
-                                    lineNumber: 110,
+                                    lineNumber: 116,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -587,10 +593,10 @@ function AddUserPage() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                                 href: "/user",
                                                 className: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-                                                children: "Batal"
+                                                children: "Cancel"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/user/add/page.tsx",
-                                                lineNumber: 265,
+                                                lineNumber: 271,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -614,7 +620,7 @@ function AddUserPage() {
                                                                     strokeWidth: "4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                                    lineNumber: 284,
+                                                                    lineNumber: 290,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -623,55 +629,55 @@ function AddUserPage() {
                                                                     d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/user/add/page.tsx",
-                                                                    lineNumber: 292,
+                                                                    lineNumber: 298,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/user/add/page.tsx",
-                                                            lineNumber: 278,
+                                                            lineNumber: 284,
                                                             columnNumber: 23
                                                         }, this),
-                                                        "Menyimpan..."
+                                                        "Saving..."
                                                     ]
-                                                }, void 0, true) : "Simpan"
+                                                }, void 0, true) : "Save"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/user/add/page.tsx",
-                                                lineNumber: 271,
+                                                lineNumber: 277,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/user/add/page.tsx",
-                                        lineNumber: 264,
+                                        lineNumber: 270,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/add/page.tsx",
-                                    lineNumber: 263,
+                                    lineNumber: 269,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/user/add/page.tsx",
-                            lineNumber: 90,
+                            lineNumber: 96,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/user/add/page.tsx",
-                    lineNumber: 78,
+                    lineNumber: 84,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/user/add/page.tsx",
-                lineNumber: 77,
+                lineNumber: 83,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/user/add/page.tsx",
-        lineNumber: 51,
+        lineNumber: 56,
         columnNumber: 5
     }, this);
 }
