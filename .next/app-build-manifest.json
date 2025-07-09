@@ -1,4 +1,7 @@
 {
+<<<<<<< HEAD
+  "pages": {}
+=======
   "pages": {
     "/login/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
@@ -63,4 +66,5 @@
       "static/chunks/_a894171a._.js"
     ]
   }
+>>>>>>> 84b9b344be46705eea0a86bd11074564bc816728
 }

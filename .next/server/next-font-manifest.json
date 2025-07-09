@@ -1,4 +1,8 @@
 {
+<<<<<<< HEAD
+  "app": {},
+  "appUsingSizeAdjust": false,
+=======
   "app": {
     "[project]/app/login/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
@@ -18,6 +22,7 @@
     ]
   },
   "appUsingSizeAdjust": true,
+>>>>>>> 84b9b344be46705eea0a86bd11074564bc816728
   "pages": {},
   "pagesUsingSizeAdjust": false
 }
