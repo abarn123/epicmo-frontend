@@ -29,7 +29,7 @@ export default function LoginPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: formData.username,
+          username: formData.name,
           password: formData.password,
         }),
       });
@@ -45,7 +45,6 @@ export default function LoginPage() {
       // Example: localStorage.setItem('token', data.token);
       // Redirect to dashboard or home page
       // window.location.href = '/dashboard';
-
     } catch (err) {
       setError(err.message || "An error occurred during login");
     } finally {
@@ -86,7 +85,7 @@ export default function LoginPage() {
               className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400"
               placeholder="username"
               required
-              value={formData.username}
+              value={formData.name}
               onChange={handleChange}
             />
           </div>

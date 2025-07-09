@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "app": {
     "[project]/app/dashboard/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
@@ -22,6 +23,10 @@
     ]
   },
   "appUsingSizeAdjust": true,
+=======
+  "app": {},
+  "appUsingSizeAdjust": false,
+>>>>>>> 552e3cf8f58b530bbc28e5945d0a971173d564d7
   "pages": {},
   "pagesUsingSizeAdjust": false
 }
