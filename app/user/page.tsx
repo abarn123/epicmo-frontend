@@ -87,18 +87,11 @@ export default function UserManagement({
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://192.168.110.100:8080/data1");
-
-        console.log("API Response:", response.data); // Add this to inspect the actual response
+        console.log("API Response:", response.data);
 
         // Handle different response formats
         let usersData = response.data;
-
-        // If response is an object with a 'data' or 'users' array
-        if (
-          usersData &&
-          typeof usersData === "object" &&
-          !Array.isArray(usersData)
-        ) {
+        if (usersData && typeof usersData === "object" && !Array.isArray(usersData)) {
           if (Array.isArray(usersData.data)) {
             usersData = usersData.data;
           } else if (Array.isArray(usersData.users)) {
@@ -110,19 +103,39 @@ export default function UserManagement({
           throw new Error("API did not return an array of users");
         }
 
-        const mappedUsers = usersData.map((u: any) => ({
-          id: u.id?.toString() || "", // Ensure id is string
-          name: u.name || "No name",
-          phone: u.phone || "No phone",
-          address: u.address || "No address",
-          role: u.role || "user",
-          email: u.email || "",
-        }));
+        // Process users with guaranteed unique IDs
+        const processedUsers = usersData.map((u: any, index: number) => {
+          // Generate a unique ID if not provided
+          const id = u.id?.toString() || `generated-${index}-${Date.now()}`;
+          return {
+            id,
+            name: u.name || "No name",
+            phone: u.phone || "No phone",
+            address: u.address || "No address",
+            role: u.role || "user",
+            email: u.email || "",
+          };
+        });
 
-        setUsers(mappedUsers);
+        // Verify uniqueness of IDs
+        const idSet = new Set();
+        const duplicates = processedUsers.filter(user => {
+          if (idSet.has(user.id)) {
+            console.warn(`Duplicate user ID detected: ${user.id}`);
+            return true;
+          }
+          idSet.add(user.id);
+          return false;
+        });
+
+        if (duplicates.length > 0) {
+          console.error("Duplicate users found:", duplicates);
+          throw new Error("Duplicate user IDs detected in API response");
+        }
+
+        setUsers(processedUsers);
       } catch (err) {
         console.error("Fetch error:", err);
-
         setError(err instanceof Error ? err.message : "Unknown error occurred");
         setUsers([]);
       } finally {
@@ -133,16 +146,17 @@ export default function UserManagement({
     fetchUsers();
   }, []);
 
-
-  const filteredUsers = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.phone.includes(search) ||
-      u.address.toLowerCase().includes(search.toLowerCase()) ||
-      u.role.toLowerCase().includes(search.toLowerCase()) ||
-      (u.email && u.email.toLowerCase().includes(search.toLowerCase()))
-  );
-
+  const filteredUsers = React.useMemo(() => {
+    const searchTerm = search.toLowerCase();
+    return users.filter(
+      (u) =>
+        u.name.toLowerCase().includes(searchTerm) ||
+        u.phone.includes(search) ||
+        u.address.toLowerCase().includes(searchTerm) ||
+        u.role.toLowerCase().includes(searchTerm) ||
+        (u.email && u.email.toLowerCase().includes(searchTerm))
+    );
+  }, [users, search]);
 
   if (loading) {
     return (
@@ -207,18 +221,16 @@ export default function UserManagement({
         {filteredUsers.length === 0 ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-gray-400 text-lg">
-
               {users.length === 0
                 ? "Tidak ada user tersedia"
                 : "Tidak ada user yang cocok dengan pencarian"}
-
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map((user) => (
               <UserCard
-                key={user.id}
+                key={`user-${user.id}`}  // Added prefix to ensure uniqueness
                 user={user}
                 onEdit={onEdit}
                 onDelete={onDelete}
