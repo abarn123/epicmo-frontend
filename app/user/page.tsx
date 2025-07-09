@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
+import Link from "next/link";
 
 type User = {
   id: string;
@@ -91,7 +92,11 @@ export default function UserManagement({
 
         // Handle different response formats
         let usersData = response.data;
-        if (usersData && typeof usersData === "object" && !Array.isArray(usersData)) {
+        if (
+          usersData &&
+          typeof usersData === "object" &&
+          !Array.isArray(usersData)
+        ) {
           if (Array.isArray(usersData.data)) {
             usersData = usersData.data;
           } else if (Array.isArray(usersData.users)) {
@@ -119,7 +124,7 @@ export default function UserManagement({
 
         // Verify uniqueness of IDs
         const idSet = new Set();
-        const duplicates = processedUsers.filter(user => {
+        const duplicates = processedUsers.filter((user) => {
           if (idSet.has(user.id)) {
             console.warn(`Duplicate user ID detected: ${user.id}`);
             return true;
@@ -175,7 +180,7 @@ export default function UserManagement({
         <Sidebar />
         <main className="flex-1 p-8 ml-64 flex flex-col items-center justify-center">
           <div className="text-red-500 mb-4">Error: {error}</div>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-indigo-600 text-white rounded-md"
           >
@@ -191,7 +196,7 @@ export default function UserManagement({
       <Sidebar />
       <main className="flex-1 p-8 ml-64">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-          <div>
+          <div className="flex-1">
             <h1 className="text-3xl font-bold text-indigo-800 mb-1">
               Manajemen User
             </h1>
@@ -199,23 +204,25 @@ export default function UserManagement({
               Kelola data user aplikasi Anda dengan mudah.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <input
-              type="text"
-              placeholder="Cari user..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition flex-grow"
-            />
-            {onAdd && (
-              <button
-                className="px-5 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition whitespace-nowrap"
-                onClick={onAdd}
+          {onAdd && (
+            <div className="mb-4 md:mb-0 md:ml-4 flex justify-end">
+              <Link
+                href="/user/add"
+                className="px-5 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition whitespace-nowrap inline-flex items-center justify-center"
               >
                 + Tambah User
-              </button>
-            )}
-          </div>
+              </Link>
+            </div>
+          )}
+        </div>
+        <div className="mb-4 w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="Cari user..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition w-full text-gray-900"
+          />
         </div>
 
         {filteredUsers.length === 0 ? (
@@ -230,7 +237,7 @@ export default function UserManagement({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map((user) => (
               <UserCard
-                key={`user-${user.id}`}  // Added prefix to ensure uniqueness
+                key={`user-${user.id}`} // Added prefix to ensure uniqueness
                 user={user}
                 onEdit={onEdit}
                 onDelete={onDelete}
