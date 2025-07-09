@@ -1,9 +1,9 @@
 {
-<<<<<<< HEAD
-  "app": {},
-  "appUsingSizeAdjust": false,
-=======
   "app": {
+    "[project]/app/dashboard/page": [
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+    ],
     "[project]/app/login/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
@@ -22,7 +22,6 @@
     ]
   },
   "appUsingSizeAdjust": true,
->>>>>>> 84b9b344be46705eea0a86bd11074564bc816728
   "pages": {},
   "pagesUsingSizeAdjust": false
 }
