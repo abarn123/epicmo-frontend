@@ -92,7 +92,7 @@ export default function RegisterPage() {
                 className={`block w-full pl-10 pr-3 py-2 border ${
                   errors.name ? "border-red-300" : "border-gray-200"
                 } rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400`}
-                placeholder="John Doe"
+                placeholder="Username"
               />
             </div>
             {errors.name && (
@@ -122,7 +122,7 @@ export default function RegisterPage() {
                 className={`block w-full pl-10 pr-10 py-2 border ${
                   errors.password ? "border-red-300" : "border-gray-200"
                 } rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400`}
-                placeholder="At least 8 characters"
+                placeholder="password"
               />
               <button
                 type="button"
