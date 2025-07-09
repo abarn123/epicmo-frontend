@@ -18,14 +18,14 @@ export default function LoginPage() {
         <form className="space-y-6">
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-semibold text-gray-700 mb-1"
             >
               username
             </label>
             <input
-              type="email"
-              id="email"
+              type="text"
+              id="username"
               className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400"
               placeholder="username"
               required
@@ -73,7 +73,10 @@ export default function LoginPage() {
         </form>
         <p className="mt-8 text-center text-sm text-gray-500">
           Don't have an account?{" "}
-          <a href="register" className="text-blue-600 font-semibold hover:underline">
+          <a
+            href="register"
+            className="text-blue-600 font-semibold hover:underline"
+          >
             Sign up
           </a>
         </p>

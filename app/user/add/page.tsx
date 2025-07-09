@@ -253,8 +253,8 @@ export default function AddUserPage() {
                     Pilih role
                   </option>
                   <option value="admin">Admin</option>
-                  <option value="user">Staff</option>
-                  <option value="guest">Freelance</option>
+                  <option value="Staff">Staff</option>
+                  <option value="Freelance">Freelance</option>
                 </select>
               </div>
             </div>
