@@ -78,6 +78,7 @@ export default function UserManagement({
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+
     axios.get("http://192.168.110.100").then((res) => {
       const data = res.data;
       const mapped = data.map((u: any) => ({
@@ -89,6 +90,7 @@ export default function UserManagement({
       }));
       setUsers(mapped);
     });
+
   }, []);
 
   const filteredUsers = users.filter(
