@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     password: "",
   });
   const [error, setError] = useState("");
@@ -29,7 +29,7 @@ export default function LoginPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: formData.name,
+          name: formData.name,
           password: formData.password,
         }),
       });
@@ -37,14 +37,14 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || "Username atau password tidak sesuai");
       }
 
-      // Handle successful login (e.g., store token, redirect, etc.)
+      // Handle successful login
       console.log("Login successful", data);
-      // Example: localStorage.setItem('token', data.token);
-      // Redirect to dashboard or home page
-      // window.location.href = '/dashboard';
+
+      // Redirect to dashboard
+      window.location.href = "/dashboard"; // Ganti dengan URL dashboard Anda
     } catch (err) {
       setError(err.message || "An error occurred during login");
     } finally {
@@ -60,10 +60,9 @@ export default function LoginPage() {
             <img
               src="/epicmo.logo.png"
               alt="User Avatar"
-              className="w-full h-full object-contain rounded-full "
+              className="w-full h-full object-contain rounded-full"
             />
           </div>
-
           <p className="text-gray-500 text-sm">Sign in to your account</p>
         </div>
         {error && (
@@ -74,16 +73,16 @@ export default function LoginPage() {
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label
-              htmlFor="username"
+              htmlFor="name"
               className="block text-sm font-semibold text-gray-700 mb-1"
             >
-              username
+              Username
             </label>
             <input
               type="text"
-              id="username"
+              id="name"
               className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400"
-              placeholder="username"
+              placeholder="Username"
               required
               value={formData.name}
               onChange={handleChange}
@@ -100,7 +99,7 @@ export default function LoginPage() {
               type="password"
               id="password"
               className="block w-full px-4 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition text-gray-900 placeholder-gray-400"
-              placeholder="password"
+              placeholder="Password"
               required
               value={formData.password}
               onChange={handleChange}
