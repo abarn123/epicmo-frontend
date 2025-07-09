@@ -1,7 +1,16 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+<<<<<<< HEAD
   "/login/page": "app/login/page.js",
+=======
+  "/log_tools/page": "app/log_tools/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/register/page": "app/register/page.js",
+  "/tools/page": "app/tools/page.js",
+>>>>>>> 02dc130ceaeb692c4fe22061e1266a25890a5e0b
   "/user/add/page": "app/user/add/page.js",
   "/user/page": "app/user/page.js"
 }
