@@ -1,11 +1,1 @@
-<<<<<<< HEAD
 {}
-=======
-{
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/login/page": "app/login/page.js",
-  "/page": "app/page.js",
-  "/user/add/page": "app/user/add/page.js",
-  "/user/page": "app/user/page.js"
-}
->>>>>>> 84b9b344be46705eea0a86bd11074564bc816728
