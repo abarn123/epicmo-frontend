@@ -1,11 +1,10 @@
-"use client"; // Tambahkan ini di baris paling atas
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { Camera, User, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Sidebar from "../components/Sidebar";
 
-// ... kode selanjutnya tetap sama ...
 export default function Attendance() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isCameraLoading, setIsCameraLoading] = useState(true);
@@ -25,8 +24,8 @@ export default function Attendance() {
           video: {
             facingMode: "user", // Use front camera
             width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
+            height: { ideal: 720 },
+          },
         });
 
         if (videoRef.current) {
@@ -46,21 +45,21 @@ export default function Attendance() {
     return () => {
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
 
   const capturePhoto = () => {
     if (videoRef.current) {
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext('2d');
-      
+      const ctx = canvas.getContext("2d");
+
       if (ctx) {
         ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const photoUrl = canvas.toDataURL('image/png');
+        const photoUrl = canvas.toDataURL("image/png");
         setPhotoData(photoUrl);
         setPhotoTaken(true);
       }
@@ -85,7 +84,8 @@ export default function Attendance() {
               👤 Face Verification
             </h1>
             <p className="text-xl text-gray-700 mb-6 text-center">
-              Please position your face in front of the camera for identification
+              Please position your face in front of the camera for
+              identification
             </p>
           </div>
 
@@ -104,9 +104,9 @@ export default function Attendance() {
                 </div>
               ) : photoTaken ? (
                 <div className="relative w-full h-full">
-                  <img 
-                    src={photoData || ''} 
-                    alt="Captured" 
+                  <img
+                    src={photoData || ""}
+                    alt="Captured"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 border-4 border-dashed border-indigo-300/50 rounded-xl m-4 pointer-events-none flex items-center justify-center">
@@ -133,7 +133,9 @@ export default function Attendance() {
             <div className="mb-6 p-4 bg-indigo-50 rounded-lg flex items-center shadow-inner">
               <Loader2 className="h-5 w-5 text-indigo-600 animate-spin mr-3" />
               <span className="text-indigo-700 font-medium">
-                {photoTaken ? "Photo captured. Ready for verification" : "Processing: Waiting for face verification..."}
+                {photoTaken
+                  ? "Photo captured. Ready for verification"
+                  : "Processing: Waiting for face verification..."}
               </span>
             </div>
 
@@ -141,21 +143,19 @@ export default function Attendance() {
             <div className="flex flex-col space-y-4">
               {photoTaken ? (
                 <>
-                  <button 
+                  <button
                     onClick={retakePhoto}
                     className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     Retake Photo
                   </button>
-                  <button 
-                    className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
+                  <button className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
                     <CheckCircle2 className="h-5 w-5" />
                     Verify Face
                   </button>
                 </>
               ) : (
-                <button 
+                <button
                   onClick={capturePhoto}
                   disabled={isCameraLoading || !!error}
                   className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"

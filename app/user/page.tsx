@@ -123,6 +123,7 @@ function UserCard({
       </div>
 
       <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100">
+<<<<<<< HEAD
        {onEdit && (
   <Link
     href={`/user/edit`}
@@ -144,6 +145,30 @@ function UserCard({
     Edit
   </Link>
 )}
+=======
+        {onEdit && (
+          <button
+            onClick={() => onEdit(user)}
+            disabled={isDeleting}
+            className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
+          >
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Edit
+          </button>
+        )}
+>>>>>>> 8c3c8cb607710f44fde9ac422434a45bbd192c88
 
         {onDelete && (
           <>
@@ -365,10 +390,17 @@ function AddUserModal({
   onSave,
   onCancel,
 }: {
+<<<<<<< HEAD
   onSave: (user: UserFormData) => void;
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState<UserFormData>({
+=======
+  onSave: (user: Omit<User, "id">) => void;
+  onCancel: () => void;
+}) {
+  const [formData, setFormData] = useState<Omit<User, "id">>({
+>>>>>>> 8c3c8cb607710f44fde9ac422434a45bbd192c88
     name: "",
     phone: "",
     address: "",
@@ -572,7 +604,11 @@ export default function UserManagement() {
     setShowAddModal(true);
   };
 
+<<<<<<< HEAD
   const handleSaveNewUser = async (newUser: UserFormData) => {
+=======
+  const handleSaveNewUser = async (newUser: Omit<User, "id">) => {
+>>>>>>> 8c3c8cb607710f44fde9ac422434a45bbd192c88
     try {
       const response = await axios.post(
         "http://192.168.110.100:8080/data1",
@@ -714,6 +750,7 @@ export default function UserManagement() {
             </p>
           </div>
           <div className="mb-4 md:mb-0 md:ml-4 flex justify-end">
+<<<<<<< HEAD
             <Link href="/user/add" passHref>
               <button className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center">
                 <svg
@@ -732,6 +769,27 @@ export default function UserManagement() {
                 Tambah Pengguna
               </button>
             </Link>
+=======
+            <button
+              onClick={handleAddUser}
+              className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              Tambah Pengguna
+            </button>
+>>>>>>> 8c3c8cb607710f44fde9ac422434a45bbd192c88
           </div>
         </div>
 
