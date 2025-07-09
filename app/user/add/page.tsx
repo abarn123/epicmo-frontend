@@ -27,7 +27,7 @@ export default function AddUserPage() {
     setError(null);
 
     try {
-      const response = await fetch("http://192.168.110.100:8080/data1", {
+      const response = await fetch("http://192.168.110.100:8080/data1/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +125,7 @@ export default function AddUserPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                     placeholder="Masukkan nama lengkap"
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function AddUserPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm"
+                    className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                     placeholder="Masukkan email"
                   />
                 </div>
@@ -190,7 +190,7 @@ export default function AddUserPage() {
                     value={formData.phone}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm"
+                    className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                     placeholder="Masukkan nomor telepon"
                   />
                 </div>
@@ -226,7 +226,7 @@ export default function AddUserPage() {
                     value={formData.address}
                     onChange={handleChange}
                     required
-                    className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 transition duration-150 ease-in-out sm:text-sm"
+                    className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                     placeholder="Masukkan alamat"
                   />
                 </div>
@@ -247,14 +247,14 @@ export default function AddUserPage() {
                   value={formData.role}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm sm:text-sm"
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm sm:text-sm text-black"
                 >
                   <option value="" disabled>
                     Pilih role
                   </option>
                   <option value="admin">Admin</option>
-                  <option value="user">User</option>
-                  <option value="guest">Guest</option>
+                  <option value="user">Staff</option>
+                  <option value="guest">Freelance</option>
                 </select>
               </div>
             </div>
