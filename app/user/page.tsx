@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type User = {
   id: string;
@@ -73,6 +74,124 @@ function UserCard({
   );
 }
 
+function AddUserModal({ 
+  onSave, 
+  onCancel 
+}: {
+  onSave: (user: Omit<User, 'id'>) => void;
+  onCancel: () => void;
+}) {
+  const [formData, setFormData] = useState<Omit<User, 'id'>>({
+    name: "",
+    phone: "",
+    address: "",
+    role: "user",
+    email: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold mb-4">Tambah User Baru</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nama
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              No. Telepon
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Alamat
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Role
+            </label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+            </select>
+          </div>
+          <div className="flex justify-end space-x-2 pt-4">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 border rounded-md"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md"
+            >
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export default function UserManagement({
   users: initialUsers = [],
   onEdit,
@@ -83,6 +202,8 @@ export default function UserManagement({
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -90,13 +211,8 @@ export default function UserManagement({
         const response = await axios.get("http://192.168.110.100:8080/data1");
         console.log("API Response:", response.data);
 
-        // Handle different response formats
         let usersData = response.data;
-        if (
-          usersData &&
-          typeof usersData === "object" &&
-          !Array.isArray(usersData)
-        ) {
+        if (usersData && typeof usersData === "object" && !Array.isArray(usersData)) {
           if (Array.isArray(usersData.data)) {
             usersData = usersData.data;
           } else if (Array.isArray(usersData.users)) {
@@ -108,9 +224,7 @@ export default function UserManagement({
           throw new Error("API did not return an array of users");
         }
 
-        // Process users with guaranteed unique IDs
         const processedUsers = usersData.map((u: any, index: number) => {
-          // Generate a unique ID if not provided
           const id = u.id?.toString() || `generated-${index}-${Date.now()}`;
           return {
             id,
@@ -122,9 +236,8 @@ export default function UserManagement({
           };
         });
 
-        // Verify uniqueness of IDs
         const idSet = new Set();
-        const duplicates = processedUsers.filter((user) => {
+        const duplicates = processedUsers.filter(user => {
           if (idSet.has(user.id)) {
             console.warn(`Duplicate user ID detected: ${user.id}`);
             return true;
@@ -150,6 +263,35 @@ export default function UserManagement({
 
     fetchUsers();
   }, []);
+
+  const handleAddUser = () => {
+    if (onAdd) {
+      onAdd();
+    } else {
+      setShowAddModal(true);
+    }
+  };
+
+  const handleSaveNewUser = async (newUser: Omit<User, 'id'>) => {
+    try {
+      const response = await axios.post("http://192.168.110.100:8080/data1", newUser);
+      const createdUser = {
+        ...newUser,
+        id: response.data.id || `generated-${Date.now()}`,
+      };
+      setUsers([...users, createdUser]);
+      setShowAddModal(false);
+    } catch (err) {
+      console.error("Error adding user:", err);
+      setError("Gagal menambahkan user");
+      const createdUser = {
+        ...newUser,
+        id: `generated-${Date.now()}`,
+      };
+      setUsers([...users, createdUser]);
+      setShowAddModal(false);
+    }
+  };
 
   const filteredUsers = React.useMemo(() => {
     const searchTerm = search.toLowerCase();
@@ -204,16 +346,15 @@ export default function UserManagement({
               Kelola data user aplikasi Anda dengan mudah.
             </p>
           </div>
-          {onAdd && (
-            <div className="mb-4 md:mb-0 md:ml-4 flex justify-end">
-              <Link
-                href="/user/add"
-                className="px-5 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition whitespace-nowrap inline-flex items-center justify-center"
-              >
-                + Tambah User
-              </Link>
-            </div>
-          )}
+          <div className="mb-4 md:mb-0 md:ml-4 flex justify-end">
+            <Link href="/user/add">
+  <button
+    className="px-5 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition whitespace-nowrap inline-flex items-center justify-center"
+  >
+    + Tambah User
+  </button>
+</Link>
+          </div>
         </div>
         <div className="mb-4 w-full sm:w-auto">
           <input
@@ -237,13 +378,20 @@ export default function UserManagement({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map((user) => (
               <UserCard
-                key={`user-${user.id}`} // Added prefix to ensure uniqueness
+                key={`user-${user.id}`}
                 user={user}
                 onEdit={onEdit}
                 onDelete={onDelete}
               />
             ))}
           </div>
+        )}
+
+        {showAddModal && (
+          <AddUserModal
+            onSave={handleSaveNewUser}
+            onCancel={() => setShowAddModal(false)}
+          />
         )}
       </main>
     </div>
