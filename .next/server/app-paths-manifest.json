@@ -1,18 +1,4 @@
 {
-<<<<<<< HEAD
-  "/attendance/page": "app/attendance/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js",
-=======
-  "/_not-found/page": "app/_not-found/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/log_tools/page": "app/log_tools/page.js",
-  "/login/page": "app/login/page.js",
->>>>>>> 83c0e0d35604d22be74ba69eb4738e64b58aeb9e
-  "/tools/page": "app/tools/page.js",
-  "/user/add/page": "app/user/add/page.js",
-  "/user/edit/page": "app/user/edit/page.js",
-  "/user/page": "app/user/page.js"
+  "/tools/page": "app/tools/page.js"
 }
