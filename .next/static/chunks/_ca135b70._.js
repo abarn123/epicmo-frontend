@@ -92,12 +92,12 @@ function AddPage() {
                             }, void 0, false, {
                                 fileName: "[project]/app/user/add/page.tsx",
                                 lineNumber: 65,
-                                columnNumber: 13
+                                columnNumber: 6
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/user/add/page.tsx",
                             lineNumber: 60,
-                            columnNumber: 11
+                            columnNumber: 10
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                             className: "text-2xl font-bold text-gray-800",
@@ -651,11 +651,7 @@ function AddPage() {
         columnNumber: 5
     }, this);
 }
-<<<<<<< HEAD
 _s(AddPage, "NzMAYX3uNWCSiRJjQfCuHv7t3D0=", false, function() {
-=======
-_s(AddUserPage, "KIBeysHIuEbXT65XrXZxv7bDmig=", false, function() {
->>>>>>> 8c3c8cb607710f44fde9ac422434a45bbd192c88
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];

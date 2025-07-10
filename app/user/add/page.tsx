@@ -57,12 +57,12 @@ export default function AddPage() {
       {/* Header with Back Button */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center">
-          <button
-            onClick={() => router.back()}
-            className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Go back"
-          >
-            <svg
+         <button
+      onClick={() => router.back()}
+      className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+      aria-label="Go back"
+    >
+     <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 text-gray-500"
               viewBox="0 0 20 20"
@@ -74,7 +74,7 @@ export default function AddPage() {
                 clipRule="evenodd"
               />
             </svg>
-          </button>
+    </button>
           <h1 className="text-2xl font-bold text-gray-800">Add New User</h1>
         </div>
       </div>
