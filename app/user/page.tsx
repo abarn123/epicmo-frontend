@@ -123,29 +123,27 @@ function UserCard({
       </div>
 
       <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100">
-       {onEdit && (
-  <Link
-    href={`/user/edit?id=${user.id}`}
-
-    className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
-  >
-    <svg
-      className="w-4 h-4 mr-1"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-      />
-    </svg>
-    Edit
-  </Link>
-)}
-
+        {onEdit && (
+          <Link
+            href={`/user/edit?id=${user.id}`}
+            className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
+          >
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Edit
+          </Link>
+        )}
 
         {onDelete && (
           <>
@@ -367,12 +365,10 @@ function AddUserModal({
   onSave,
   onCancel,
 }: {
-
   onSave: (user: UserFormData) => void;
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState<UserFormData>({
-
     name: "",
     phone: "",
     address: "",
@@ -600,15 +596,24 @@ export default function UserManagement() {
     setEditingUser(user);
   };
 
-  const handleSaveEditedUser = async (editedUser: User) => {
+  const handleSaveEditedUser = async (updatedUser: User) => {
     try {
-      await axios.put(
-        `http://192.168.110.100:8080/data1/${editedUser.id}`,
-        editedUser
+      const response = await axios.put(
+        `http://192.168.110.100:8080/data1/edit/${updatedUser.id}`,
+        updatedUser
       );
-      setUsers(users.map((u) => (u.id === editedUser.id ? editedUser : u)));
-      setEditingUser(null);
-      toast.success("Perubahan berhasil disimpan");
+
+      if (response.data?.status || response.status === 200) {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === updatedUser.id ? updatedUser : user
+          )
+        );
+        setEditingUser(null);
+        toast.success("Perubahan berhasil disimpan");
+      } else {
+        toast.error("Gagal menyimpan perubahan");
+      }
     } catch (err) {
       console.error("Error updating user:", err);
       toast.error("Gagal menyimpan perubahan");
@@ -617,7 +622,8 @@ export default function UserManagement() {
 
   const handleDeleteUser = async (userId: string) => {
     try {
-      await axios.delete(`http://192.168.110.100:8080/data1/${userId}`);
+      await axios.delete(`http://192.168.110.100:8080/data1/delete/${userId}`);
+
       const updatedUsers = users.filter((u) => u.id !== userId);
       setUsers(updatedUsers);
 

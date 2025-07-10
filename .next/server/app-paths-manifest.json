@@ -1,10 +1,11 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-<<<<<<< HEAD
-  "/login/page": "app/login/page.js"
-=======
-  "/page": "app/page.js",
+  "/log_tools/page": "app/log_tools/page.js",
+  "/login/page": "app/login/page.js",
+  "/tools/page": "app/tools/page.js",
+  "/user/add/page": "app/user/add/page.js",
   "/user/edit/page": "app/user/edit/page.js",
   "/user/page": "app/user/page.js"
->>>>>>> 37dc7c2bdf3f5f2492cf5caaf2bcec3f24810d1c
 }
