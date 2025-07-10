@@ -125,7 +125,8 @@ function UserCard({
       <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100">
        {onEdit && (
   <Link
-    href={`/user/edit`}
+    href={`/user/edit?id=${user.id}`}
+
     className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
   >
     <svg
