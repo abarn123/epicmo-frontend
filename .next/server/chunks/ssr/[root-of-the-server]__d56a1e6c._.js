@@ -166,33 +166,35 @@ const Edit = ()=>{
     const [message, setMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [isSuccess, setIsSuccess] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
-    const [notFound, setNotFound] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!id) {
             setMessage("ID pengguna tidak ditemukan di URL.");
             setIsLoading(false);
-            setNotFound(true);
             return;
         }
         const fetchUserData = async ()=>{
             try {
                 const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`http://192.168.110.100:8080/data1/edit/${id}`);
                 if (response.data) {
-                    // Gunakan default value jika field tidak ada
-                    setFormData({
-                        name: response.data.name || "",
-                        phone: response.data.phone || "",
-                        address: response.data.address || "",
-                        role: response.data.role || ""
-                    });
+                    setFormData(response.data);
                 } else {
-                    setMessage("Data pengguna tidak ditemukan.");
-                    setNotFound(true);
+                    // Jika data kosong, tetap tampilkan form kosong tanpa error
+                    setFormData({
+                        name: "",
+                        phone: "",
+                        address: "",
+                        role: ""
+                    });
                 }
             } catch (error) {
+                // Jika 404, tetap tampilkan form kosong tanpa pesan error
                 if (error.response && error.response.status === 404) {
-                    setMessage("Pengguna tidak ditemukan.");
-                    setNotFound(true);
+                    setFormData({
+                        name: "",
+                        phone: "",
+                        address: "",
+                        role: ""
+                    });
                 } else {
                     setMessage("Gagal memuat data pengguna: " + error.message);
                 }
@@ -233,35 +235,8 @@ const Edit = ()=>{
             children: "Memuat data..."
         }, void 0, false, {
             fileName: "[project]/app/user/edit/page.tsx",
-            lineNumber: 88,
+            lineNumber: 90,
             columnNumber: 12
-        }, this);
-    }
-    if (notFound) {
-        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "container mx-auto p-4 max-w-md",
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                    className: "text-2xl font-bold mb-4 text-red-600",
-                    children: "Data Tidak Ditemukan"
-                }, void 0, false, {
-                    fileName: "[project]/app/user/edit/page.tsx",
-                    lineNumber: 94,
-                    columnNumber: 9
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "bg-red-100 text-red-800 p-3 rounded",
-                    children: message
-                }, void 0, false, {
-                    fileName: "[project]/app/user/edit/page.tsx",
-                    lineNumber: 95,
-                    columnNumber: 9
-                }, this)
-            ]
-        }, void 0, true, {
-            fileName: "[project]/app/user/edit/page.tsx",
-            lineNumber: 93,
-            columnNumber: 7
         }, this);
     }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -272,7 +247,7 @@ const Edit = ()=>{
                 children: "Edit Pengguna"
             }, void 0, false, {
                 fileName: "[project]/app/user/edit/page.tsx",
-                lineNumber: 102,
+                lineNumber: 95,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -286,7 +261,7 @@ const Edit = ()=>{
                                 children: "Nama"
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 105,
+                                lineNumber: 98,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -298,13 +273,13 @@ const Edit = ()=>{
                                 required: true
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 106,
+                                lineNumber: 99,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/user/edit/page.tsx",
-                        lineNumber: 104,
+                        lineNumber: 97,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -314,7 +289,7 @@ const Edit = ()=>{
                                 children: "Nomor Telepon"
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 116,
+                                lineNumber: 109,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -326,13 +301,13 @@ const Edit = ()=>{
                                 required: true
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 117,
+                                lineNumber: 110,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/user/edit/page.tsx",
-                        lineNumber: 115,
+                        lineNumber: 108,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -342,7 +317,7 @@ const Edit = ()=>{
                                 children: "Alamat"
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 127,
+                                lineNumber: 120,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -354,13 +329,13 @@ const Edit = ()=>{
                                 required: true
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 128,
+                                lineNumber: 121,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/user/edit/page.tsx",
-                        lineNumber: 126,
+                        lineNumber: 119,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -370,7 +345,7 @@ const Edit = ()=>{
                                 children: "Role"
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 138,
+                                lineNumber: 131,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -382,13 +357,13 @@ const Edit = ()=>{
                                 required: true
                             }, void 0, false, {
                                 fileName: "[project]/app/user/edit/page.tsx",
-                                lineNumber: 139,
+                                lineNumber: 132,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/user/edit/page.tsx",
-                        lineNumber: 137,
+                        lineNumber: 130,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -397,13 +372,13 @@ const Edit = ()=>{
                         children: "Update"
                     }, void 0, false, {
                         fileName: "[project]/app/user/edit/page.tsx",
-                        lineNumber: 148,
+                        lineNumber: 141,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/user/edit/page.tsx",
-                lineNumber: 103,
+                lineNumber: 96,
                 columnNumber: 7
             }, this),
             message && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -411,13 +386,13 @@ const Edit = ()=>{
                 children: message
             }, void 0, false, {
                 fileName: "[project]/app/user/edit/page.tsx",
-                lineNumber: 156,
+                lineNumber: 149,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/user/edit/page.tsx",
-        lineNumber: 101,
+        lineNumber: 94,
         columnNumber: 5
     }, this);
 };

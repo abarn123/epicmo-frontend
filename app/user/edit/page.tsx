@@ -17,13 +17,11 @@ const Edit = () => {
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     if (!id) {
       setMessage("ID pengguna tidak ditemukan di URL.");
       setIsLoading(false);
-      setNotFound(true);
       return;
     }
 
@@ -31,21 +29,25 @@ const Edit = () => {
       try {
         const response = await axios.get(`http://192.168.110.100:8080/data1/edit/${id}`);
         if (response.data) {
-          // Gunakan default value jika field tidak ada
-          setFormData({
-            name: response.data.name || "",
-            phone: response.data.phone || "",
-            address: response.data.address || "",
-            role: response.data.role || "",
-          });
+          setFormData(response.data);
         } else {
-          setMessage("Data pengguna tidak ditemukan.");
-          setNotFound(true);
+          // Jika data kosong, tetap tampilkan form kosong tanpa error
+          setFormData({
+            name: "",
+            phone: "",
+            address: "",
+            role: "",
+          });
         }
       } catch (error: any) {
+        // Jika 404, tetap tampilkan form kosong tanpa pesan error
         if (error.response && error.response.status === 404) {
-          setMessage("Pengguna tidak ditemukan.");
-          setNotFound(true);
+          setFormData({
+            name: "",
+            phone: "",
+            address: "",
+            role: "",
+          });
         } else {
           setMessage("Gagal memuat data pengguna: " + error.message);
         }
@@ -86,15 +88,6 @@ const Edit = () => {
 
   if (isLoading) {
     return <div>Memuat data...</div>;
-  }
-
-  if (notFound) {
-    return (
-      <div className="container mx-auto p-4 max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-red-600">Data Tidak Ditemukan</h2>
-        <p className="bg-red-100 text-red-800 p-3 rounded">{message}</p>
-      </div>
-    );
   }
 
   return (
