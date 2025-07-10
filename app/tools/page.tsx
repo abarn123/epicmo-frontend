@@ -462,6 +462,7 @@ export default function ToolsPage() {
       try {
         const response = await axios.get("http://192.168.110.100:8080/data2");
         let toolsData = response.data;
+<<<<<<< HEAD
         
         if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
           if (Array.isArray(toolsData.data)) {
@@ -469,6 +470,16 @@ export default function ToolsPage() {
           } else if (Array.isArray(toolsData.tools)) {
             toolsData = toolsData.tools;
           }
+=======
+        if (
+          toolsData &&
+          typeof toolsData === "object" &&
+          !Array.isArray(toolsData)
+        ) {
+          toolsData = Array.isArray(toolsData.data)
+            ? toolsData.data
+            : toolsData.tools;
+>>>>>>> 83c0e0d35604d22be74ba69eb4738e64b58aeb9e
         }
 
         if (!Array.isArray(toolsData)) {
@@ -545,11 +556,16 @@ export default function ToolsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
         <Sidebar />
+<<<<<<< HEAD
         <main className="flex-1 p-8 ml-64 flex items-center justify-center">
           <div className="flex flex-col items-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
             <div className="text-gray-600">Memuat data alat...</div>
           </div>
+=======
+        <main className="flex-1 py-14 px-6 ml-64 flex items-center justify-center">
+          <div className="text-lg font-semibold">Loading tools...</div>
+>>>>>>> 83c0e0d35604d22be74ba69eb4738e64b58aeb9e
         </main>
       </div>
     );
@@ -595,6 +611,7 @@ export default function ToolsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
       <Sidebar />
+<<<<<<< HEAD
       <main className="flex-1 p-8 ml-64">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div className="flex-1">
@@ -684,6 +701,59 @@ export default function ToolsPage() {
                 onEdit={() => setEditingTool(tool)}
                 onDelete={handleDeleteTool}
               />
+=======
+      <main className="flex-1 py-14 px-6 ml-64">
+        <section className="max-w-5xl mx-auto">
+          <h1 className="text-5xl font-extrabold text-indigo-800 mb-3 text-center drop-shadow-lg tracking-tight">
+            🚀 Tools Dashboard
+          </h1>
+          <p className="text-xl text-gray-700 mb-6 text-center">
+            Explore a suite of professional tools to boost your productivity.
+          </p>
+          <div className="flex justify-center mb-8">
+            <div className="flex space-x-4">
+              <Link
+                href="/log_tools"
+                className="inline-flex items-center gap-2 px-7 py-2 bg-gradient-to-r from-indigo-600 via-blue-500 to-indigo-700 text-white rounded-full font-semibold shadow-lg hover:from-indigo-700 hover:to-blue-800 transition-all duration-200"
+              >
+                <span className="material-icons text-lg">Log Tools</span>
+              </Link>
+              <Link
+                href="/add_tool"
+                className="inline-flex items-center gap-2 px-7 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-semibold shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-200"
+              >
+                <span className="material-icons text-lg">Add Tool</span>
+              </Link>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {tools.map((tool, idx) => (
+              <div
+                key={tool.tools || idx}
+                className="relative bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 flex flex-col items-center border border-indigo-200 hover:scale-105 hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="absolute top-4 right-4 bg-indigo-50 px-3 py-1 rounded-full text-xs font-semibold text-indigo-600 shadow">
+                  Stock: <span className="font-bold">{tool.stock}</span>
+                </div>
+                <h2 className="text-2xl font-bold text-indigo-800 mb-2 text-center">
+                  {tool.item_name}
+                </h2>
+                <div className="text-sm text-gray-600 mb-2">
+                  <span className="font-semibold">Kategori:</span>{" "}
+                  {tool.category}
+                </div>
+                <div className="text-sm text-gray-600 mb-2">
+                  <span className="font-semibold">Kondisi:</span>{" "}
+                  {tool.item_condition}
+                </div>
+                <Link
+                  href={`/tools/edit/${tool.tools}`}
+                  className="mt-auto px-6 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg font-semibold shadow hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 text-center"
+                >
+                  Edit
+                </Link>
+              </div>
+>>>>>>> 83c0e0d35604d22be74ba69eb4738e64b58aeb9e
             ))}
           </div>
         )}

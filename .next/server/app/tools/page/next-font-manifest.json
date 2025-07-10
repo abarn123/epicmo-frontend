@@ -2,8 +2,13 @@
   "pages": {},
   "app": {
     "[project]/app/tools/page": [
+<<<<<<< HEAD
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
       "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2"
+=======
+      "static/media/or3nQ6H_1_WfwkMZI_qYFrcdmhHkjko-s.p.be19f591.woff2",
+      "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2"
+>>>>>>> 83c0e0d35604d22be74ba69eb4738e64b58aeb9e
     ]
   },
   "appUsingSizeAdjust": true,

@@ -28,6 +28,7 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // Biar cookie session bisa dikirim dari browser
         body: JSON.stringify({
           name: formData.name,
           password: formData.password,
