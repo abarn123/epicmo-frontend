@@ -22,9 +22,6 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    console.log("Form submitted"); // Debugging log
-    console.log("Form Data:", formData); // Log form data
-
     try {
       const response = await fetch("http://192.168.110.100:8080/login", {
         method: "POST",
@@ -37,21 +34,20 @@ export default function LoginPage() {
         }),
       });
 
-      console.log("Response status:", response.status); // Log response status
-      const data = await response.json();
-      console.log("Response data:", data); // Log response data
+      const data = await response.json(); // ✅ hanya satu kali
 
-      if (!response.ok) {
+      if (!response.ok || !data.status) {
         throw new Error(data.message || "Username atau password tidak sesuai");
       }
 
-      // Handle successful login
       console.log("Login successful", data);
 
-      // Redirect to dashboard
-      window.location.href = "/dashboard"; // Ganti dengan URL dashboard Anda
+      // ✅ Simpan token jika kamu mau pakai untuk autentikasi
+      // localStorage.setItem("token", data.user.key);
+
+      window.location.href = "/dashboard"; // Arahkan ke dashboard
     } catch (err: any) {
-      setError(err.message || "An error occurred during login");
+      setError(err.message || "Terjadi kesalahan saat login");
     } finally {
       setLoading(false);
     }
