@@ -118,12 +118,12 @@ function UserInfo({ label, value, className = "" }: UserInfoProps) {
   );
 }
 
-type UserManagementProps = {
+type userProps = {
   users: User[];
   onUserSelect?: (user: User) => void;
 };
 
-export function UserManagement({ users, onUserSelect }: UserManagementProps) {
+export function user({ users, onUserSelect }: userProps) {
   // Validate and filter users
   const validUsers = users.filter((user) => {
     if (!user.id) {

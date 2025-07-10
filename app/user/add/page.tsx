@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function AddUserPage() {
+export default function AddPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
@@ -36,12 +36,17 @@ export default function AddUserPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Gagal menambahkan user");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add user");
       }
 
       router.push("/user");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -55,6 +60,7 @@ export default function AddUserPage() {
           <button
             onClick={() => router.back()}
             className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            aria-label="Go back"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +75,7 @@ export default function AddUserPage() {
               />
             </svg>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Tambah User Baru</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Add New User</h1>
         </div>
       </div>
 
@@ -79,10 +85,10 @@ export default function AddUserPage() {
           {/* Form Header */}
           <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-blue-50">
             <h2 className="text-lg font-semibold text-gray-800">
-              Informasi User
+              User Information
             </h2>
             <p className="text-sm text-gray-600 mt-1">
-              Silakan lengkapi form berikut untuk menambahkan user baru
+              Please fill out the form below to add a new user
             </p>
           </div>
 
@@ -114,7 +120,7 @@ export default function AddUserPage() {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Nama Lengkap
+                  Full Name
                   <span className="text-red-500 ml-1">*</span>
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -126,7 +132,7 @@ export default function AddUserPage() {
                     onChange={handleChange}
                     required
                     className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                    placeholder="Masukkan nama lengkap"
+                    placeholder="Enter full name"
                   />
                 </div>
               </div>
@@ -159,7 +165,7 @@ export default function AddUserPage() {
                     onChange={handleChange}
                     required
                     className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                    placeholder="Masukkan email"
+                    placeholder="Enter email"
                   />
                 </div>
               </div>
@@ -170,7 +176,7 @@ export default function AddUserPage() {
                   htmlFor="phone"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  No. Telepon
+                  Phone Number
                   <span className="text-red-500 ml-1">*</span>
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -191,7 +197,7 @@ export default function AddUserPage() {
                     onChange={handleChange}
                     required
                     className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                    placeholder="Masukkan nomor telepon"
+                    placeholder="Enter phone number"
                   />
                 </div>
               </div>
@@ -202,7 +208,7 @@ export default function AddUserPage() {
                   htmlFor="address"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Alamat
+                  Address
                   <span className="text-red-500 ml-1">*</span>
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -227,7 +233,7 @@ export default function AddUserPage() {
                     onChange={handleChange}
                     required
                     className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                    placeholder="Masukkan alamat"
+                    placeholder="Enter address"
                   />
                 </div>
               </div>
@@ -250,7 +256,7 @@ export default function AddUserPage() {
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm sm:text-sm text-black"
                 >
                   <option value="" disabled>
-                    Pilih role
+                    Select role
                   </option>
                   <option value="admin">Admin</option>
                   <option value="Staff">Staff</option>
@@ -266,7 +272,7 @@ export default function AddUserPage() {
                   href="/user"
                   className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Batal
+                  Cancel
                 </Link>
                 <button
                   type="submit"
@@ -295,10 +301,10 @@ export default function AddUserPage() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      Menyimpan...
+                      Saving...
                     </>
                   ) : (
-                    "Simpan"
+                    "Save"
                   )}
                 </button>
               </div>

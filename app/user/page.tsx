@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import axios from "axios"; // Tambahkan di bagian atas file
 
 type User = {
   id: string;
@@ -14,12 +15,7 @@ type User = {
   email?: string;
 };
 
-type UserGridProps = {
-  users?: User[];
-  onEdit?: (user: User) => void;
-  onDelete?: (userId: string) => void;
-  onAdd?: () => void;
-};
+type UserFormData = Omit<User, "id">;
 
 function UserCard({
   user,
@@ -127,28 +123,28 @@ function UserCard({
       </div>
 
       <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100">
-        {onEdit && (
-          <button
-            onClick={() => onEdit(user)}
-            disabled={isDeleting}
-            className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
-          >
-            <svg
-              className="w-4 h-4 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            Edit
-          </button>
-        )}
+       {onEdit && (
+  <Link
+    href={`/user/edit`}
+    className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
+  >
+    <svg
+      className="w-4 h-4 mr-1"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+      />
+    </svg>
+    Edit
+  </Link>
+)}
+
 
         {onDelete && (
           <>
@@ -370,10 +366,12 @@ function AddUserModal({
   onSave,
   onCancel,
 }: {
-  onSave: (user: Omit<User, "id">) => void;
+
+  onSave: (user: UserFormData) => void;
   onCancel: () => void;
 }) {
-  const [formData, setFormData] = useState<Omit<User, "id">>({
+  const [formData, setFormData] = useState<UserFormData>({
+
     name: "",
     phone: "",
     address: "",
@@ -499,13 +497,8 @@ function AddUserModal({
   );
 }
 
-export default function UserManagement({
-  users: initialUsers = [],
-  onEdit,
-  onDelete,
-  onAdd,
-}: UserGridProps) {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+export default function UserManagement() {
+  const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -569,7 +562,7 @@ export default function UserManagement({
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err instanceof Error ? err.message : "Unknown error occurred");
-        setUsers([]);
+        toast.error("Gagal memuat data pengguna");
       } finally {
         setLoading(false);
       }
@@ -579,14 +572,10 @@ export default function UserManagement({
   }, []);
 
   const handleAddUser = () => {
-    if (onAdd) {
-      onAdd();
-    } else {
-      setShowAddModal(true);
-    }
+    setShowAddModal(true);
   };
 
-  const handleSaveNewUser = async (newUser: Omit<User, "id">) => {
+  const handleSaveNewUser = async (newUser: UserFormData) => {
     try {
       const response = await axios.post(
         "http://192.168.110.100:8080/data1",
@@ -599,18 +588,15 @@ export default function UserManagement({
       setUsers([...users, createdUser]);
       setShowAddModal(false);
       setCurrentPage(Math.ceil((users.length + 1) / usersPerPage));
+      toast.success("Pengguna berhasil ditambahkan");
     } catch (err) {
       console.error("Error adding user:", err);
-      setError("Gagal menambahkan user");
+      toast.error("Gagal menambahkan pengguna");
     }
   };
 
   const handleEditUser = (user: User) => {
-    if (onEdit) {
-      onEdit(user);
-    } else {
-      setEditingUser(user);
-    }
+    setEditingUser(user);
   };
 
   const handleSaveEditedUser = async (editedUser: User) => {
@@ -621,9 +607,10 @@ export default function UserManagement({
       );
       setUsers(users.map((u) => (u.id === editedUser.id ? editedUser : u)));
       setEditingUser(null);
+      toast.success("Perubahan berhasil disimpan");
     } catch (err) {
       console.error("Error updating user:", err);
-      setError("Gagal mengupdate user");
+      toast.error("Gagal menyimpan perubahan");
     }
   };
 
@@ -639,9 +626,10 @@ export default function UserManagement({
       ) {
         setCurrentPage(Math.ceil(updatedUsers.length / usersPerPage));
       }
+      toast.success("Pengguna berhasil dihapus");
     } catch (err) {
       console.error("Error deleting user:", err);
-      setError("Gagal menghapus user");
+      toast.error("Gagal menghapus pengguna");
     }
   };
 
@@ -729,25 +717,24 @@ export default function UserManagement({
             </p>
           </div>
           <div className="mb-4 md:mb-0 md:ml-4 flex justify-end">
-            <button
-              onClick={handleAddUser}
-              className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center"
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              Tambah Pengguna
-            </button>
+            <Link href="/user/add" passHref>
+              <button className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center">
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Tambah Pengguna
+              </button>
+            </Link>
           </div>
         </div>
 

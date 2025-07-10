@@ -17,144 +17,382 @@ var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.n(__turbopack_context__.i("[project]/app/layout.tsx [app-rsc] (ecmascript)"));
 }}),
-"[project]/app/user/page.tsx [app-rsc] (ecmascript)": ((__turbopack_context__) => {
-"use strict";
+"[project]/app/user/page.tsx [app-rsc] (ecmascript)": (function(__turbopack_context__) {
 
-var { g: global, __dirname } = __turbopack_context__;
+var { g: global, __dirname, m: module, e: exports } = __turbopack_context__;
 {
-__turbopack_context__.s({
-    "default": (()=>UserGrid)
-});
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)");
-;
-function UserGrid({ users, onEdit }) {
-    if (!users || users.length === 0) {
-        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "min-h-screen flex items-center justify-center",
-            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "text-gray-500 text-lg",
-                children: "No users found."
-            }, void 0, false, {
+// UserCard component with the Link for edit button
+const { jsxDEV: _jsxDEV, Fragment: _Fragment } = __turbopack_context__.r("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)");
+function UserCard({ user, onDelete }) {
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const handleDelete = async ()=>{
+        if (!onDelete) return;
+        setIsDeleting(true);
+        try {
+            await onDelete(user.id);
+        } finally{
+            setIsDeleting(false);
+            setShowDeleteConfirm(false);
+        }
+    };
+    return /*#__PURE__*/ _jsxDEV("div", {
+        className: "bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-100",
+        children: [
+            /*#__PURE__*/ _jsxDEV("div", {
+                className: "p-5",
+                children: [
+                    /*#__PURE__*/ _jsxDEV("div", {
+                        className: "flex items-center space-x-4 mb-4",
+                        children: [
+                            /*#__PURE__*/ _jsxDEV("div", {
+                                className: "bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full h-12 w-12 flex items-center justify-center text-white font-bold text-lg",
+                                children: user.name[0]
+                            }, void 0, false, {
+                                fileName: "[project]/app/user/page.tsx",
+                                lineNumber: 28,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ _jsxDEV("div", {
+                                children: [
+                                    /*#__PURE__*/ _jsxDEV("h2", {
+                                        className: "text-lg font-semibold text-gray-800",
+                                        children: user.name
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 32,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ _jsxDEV("span", {
+                                        className: `text-xs px-2 py-1 rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : user.role === 'manager' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`,
+                                        children: user.role
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 33,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/user/page.tsx",
+                                lineNumber: 31,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/user/page.tsx",
+                        lineNumber: 27,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ _jsxDEV("div", {
+                        className: "space-y-2 text-sm text-gray-600",
+                        children: [
+                            /*#__PURE__*/ _jsxDEV("div", {
+                                className: "flex items-start",
+                                children: [
+                                    /*#__PURE__*/ _jsxDEV("svg", {
+                                        className: "w-4 h-4 mt-0.5 mr-2 text-gray-400 flex-shrink-0",
+                                        fill: "none",
+                                        stroke: "currentColor",
+                                        viewBox: "0 0 24 24",
+                                        children: /*#__PURE__*/ _jsxDEV("path", {
+                                            strokeLinecap: "round",
+                                            strokeLinejoin: "round",
+                                            strokeWidth: "2",
+                                            d: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/user/page.tsx",
+                                            lineNumber: 46,
+                                            columnNumber: 15
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 45,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ _jsxDEV("span", {
+                                        children: user.email || "-"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 48,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/user/page.tsx",
+                                lineNumber: 44,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ _jsxDEV("div", {
+                                className: "flex items-start",
+                                children: [
+                                    /*#__PURE__*/ _jsxDEV("svg", {
+                                        className: "w-4 h-4 mt-0.5 mr-2 text-gray-400 flex-shrink-0",
+                                        fill: "none",
+                                        stroke: "currentColor",
+                                        viewBox: "0 0 24 24",
+                                        children: /*#__PURE__*/ _jsxDEV("path", {
+                                            strokeLinecap: "round",
+                                            strokeLinejoin: "round",
+                                            strokeWidth: "2",
+                                            d: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/user/page.tsx",
+                                            lineNumber: 52,
+                                            columnNumber: 15
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 51,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ _jsxDEV("span", {
+                                        children: user.phone
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 54,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/user/page.tsx",
+                                lineNumber: 50,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ _jsxDEV("div", {
+                                className: "flex items-start",
+                                children: [
+                                    /*#__PURE__*/ _jsxDEV("svg", {
+                                        className: "w-4 h-4 mt-0.5 mr-2 text-gray-400 flex-shrink-0",
+                                        fill: "none",
+                                        stroke: "currentColor",
+                                        viewBox: "0 0 24 24",
+                                        children: [
+                                            /*#__PURE__*/ _jsxDEV("path", {
+                                                strokeLinecap: "round",
+                                                strokeLinejoin: "round",
+                                                strokeWidth: "2",
+                                                d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/user/page.tsx",
+                                                lineNumber: 58,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ _jsxDEV("path", {
+                                                strokeLinecap: "round",
+                                                strokeLinejoin: "round",
+                                                strokeWidth: "2",
+                                                d: "M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/user/page.tsx",
+                                                lineNumber: 59,
+                                                columnNumber: 15
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 57,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ _jsxDEV("span", {
+                                        children: user.address
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 61,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/user/page.tsx",
+                                lineNumber: 56,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/user/page.tsx",
+                        lineNumber: 43,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
                 fileName: "[project]/app/user/page.tsx",
-                lineNumber: 20,
-                columnNumber: 9
-            }, this)
-        }, void 0, false, {
-            fileName: "[project]/app/user/page.tsx",
-            lineNumber: 19,
-            columnNumber: 7
-        }, this);
-    }
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8",
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8",
-            children: users.map((user)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "bg-white shadow-lg rounded-xl p-6 flex flex-col space-y-3",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                            className: "text-xl font-bold text-gray-800",
-                            children: user.name
-                        }, void 0, false, {
-                            fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 33,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                lineNumber: 26,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ _jsxDEV("div", {
+                className: "bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100",
+                children: [
+                    /*#__PURE__*/ _jsxDEV(Link, {
+                        href: `/user/edit/${user.id}`,
+                        passHref: true,
+                        children: /*#__PURE__*/ _jsxDEV("button", {
+                            disabled: isDeleting,
+                            className: "px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center",
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "text-gray-500",
-                                    children: "No. Telepon: "
+                                /*#__PURE__*/ _jsxDEV("svg", {
+                                    className: "w-4 h-4 mr-1",
+                                    fill: "none",
+                                    stroke: "currentColor",
+                                    viewBox: "0 0 24 24",
+                                    children: /*#__PURE__*/ _jsxDEV("path", {
+                                        strokeLinecap: "round",
+                                        strokeLinejoin: "round",
+                                        strokeWidth: "2",
+                                        d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 73,
+                                        columnNumber: 15
+                                    }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/page.tsx",
-                                    lineNumber: 35,
-                                    columnNumber: 15
+                                    lineNumber: 72,
+                                    columnNumber: 13
                                 }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "font-medium text-gray-700",
-                                    children: user.phone
+                                "Edit"
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/user/page.tsx",
+                            lineNumber: 68,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/app/user/page.tsx",
+                        lineNumber: 67,
+                        columnNumber: 9
+                    }, this),
+                    onDelete && /*#__PURE__*/ _jsxDEV(_Fragment, {
+                        children: showDeleteConfirm ? /*#__PURE__*/ _jsxDEV("div", {
+                            className: "flex space-x-2",
+                            children: [
+                                /*#__PURE__*/ _jsxDEV("button", {
+                                    onClick: handleDelete,
+                                    disabled: isDeleting,
+                                    className: "px-3 py-1.5 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors flex items-center",
+                                    children: isDeleting ? /*#__PURE__*/ _jsxDEV(_Fragment, {
+                                        children: [
+                                            /*#__PURE__*/ _jsxDEV("svg", {
+                                                className: "animate-spin -ml-1 mr-2 h-4 w-4 text-white",
+                                                xmlns: "http://www.w3.org/2000/svg",
+                                                fill: "none",
+                                                viewBox: "0 0 24 24",
+                                                children: [
+                                                    /*#__PURE__*/ _jsxDEV("circle", {
+                                                        className: "opacity-25",
+                                                        cx: "12",
+                                                        cy: "12",
+                                                        r: "10",
+                                                        stroke: "currentColor",
+                                                        strokeWidth: "4"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/user/page.tsx",
+                                                        lineNumber: 91,
+                                                        columnNumber: 25
+                                                    }, this),
+                                                    /*#__PURE__*/ _jsxDEV("path", {
+                                                        className: "opacity-75",
+                                                        fill: "currentColor",
+                                                        d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/user/page.tsx",
+                                                        lineNumber: 92,
+                                                        columnNumber: 25
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/user/page.tsx",
+                                                lineNumber: 90,
+                                                columnNumber: 23
+                                            }, this),
+                                            "Menghapus..."
+                                        ]
+                                    }, void 0, true) : /*#__PURE__*/ _jsxDEV(_Fragment, {
+                                        children: [
+                                            /*#__PURE__*/ _jsxDEV("svg", {
+                                                className: "w-4 h-4 mr-1",
+                                                fill: "none",
+                                                stroke: "currentColor",
+                                                viewBox: "0 0 24 24",
+                                                children: /*#__PURE__*/ _jsxDEV("path", {
+                                                    strokeLinecap: "round",
+                                                    strokeLinejoin: "round",
+                                                    strokeWidth: "2",
+                                                    d: "M5 13l4 4L19 7"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/user/page.tsx",
+                                                    lineNumber: 99,
+                                                    columnNumber: 25
+                                                }, this)
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/user/page.tsx",
+                                                lineNumber: 98,
+                                                columnNumber: 23
+                                            }, this),
+                                            "Konfirmasi"
+                                        ]
+                                    }, void 0, true)
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/page.tsx",
-                                    lineNumber: 36,
-                                    columnNumber: 15
+                                    lineNumber: 83,
+                                    columnNumber: 17
+                                }, this),
+                                /*#__PURE__*/ _jsxDEV("button", {
+                                    onClick: ()=>setShowDeleteConfirm(false),
+                                    disabled: isDeleting,
+                                    className: "px-3 py-1.5 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 transition-colors",
+                                    children: "Batal"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/user/page.tsx",
+                                    lineNumber: 105,
+                                    columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 34,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            lineNumber: 82,
+                            columnNumber: 15
+                        }, this) : /*#__PURE__*/ _jsxDEV("button", {
+                            onClick: ()=>setShowDeleteConfirm(true),
+                            disabled: isDeleting,
+                            className: "px-3 py-1.5 text-sm font-medium rounded-md text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 transition-colors flex items-center",
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "text-gray-500",
-                                    children: "Alamat: "
+                                /*#__PURE__*/ _jsxDEV("svg", {
+                                    className: "w-4 h-4 mr-1",
+                                    fill: "none",
+                                    stroke: "currentColor",
+                                    viewBox: "0 0 24 24",
+                                    children: /*#__PURE__*/ _jsxDEV("path", {
+                                        strokeLinecap: "round",
+                                        strokeLinejoin: "round",
+                                        strokeWidth: "2",
+                                        d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/user/page.tsx",
+                                        lineNumber: 120,
+                                        columnNumber: 19
+                                    }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/user/page.tsx",
-                                    lineNumber: 39,
-                                    columnNumber: 15
+                                    lineNumber: 119,
+                                    columnNumber: 17
                                 }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "font-medium text-gray-700",
-                                    children: user.address
-                                }, void 0, false, {
-                                    fileName: "[project]/app/user/page.tsx",
-                                    lineNumber: 40,
-                                    columnNumber: 15
-                                }, this)
+                                "Hapus"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 38,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "text-gray-500",
-                                    children: "Role: "
-                                }, void 0, false, {
-                                    fileName: "[project]/app/user/page.tsx",
-                                    lineNumber: 43,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: "font-medium text-indigo-600",
-                                    children: user.role
-                                }, void 0, false, {
-                                    fileName: "[project]/app/user/page.tsx",
-                                    lineNumber: 44,
-                                    columnNumber: 15
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 42,
-                            columnNumber: 13
-                        }, this),
-                        onEdit && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            className: "mt-4 px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition",
-                            onClick: ()=>onEdit(user),
-                            children: "Edit"
-                        }, void 0, false, {
-                            fileName: "[project]/app/user/page.tsx",
-                            lineNumber: 47,
+                            lineNumber: 114,
                             columnNumber: 15
                         }, this)
-                    ]
-                }, user.id, true, {
-                    fileName: "[project]/app/user/page.tsx",
-                    lineNumber: 29,
-                    columnNumber: 11
-                }, this))
-        }, void 0, false, {
-            fileName: "[project]/app/user/page.tsx",
-            lineNumber: 27,
-            columnNumber: 7
-        }, this)
-    }, void 0, false, {
+                    }, void 0, false)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/app/user/page.tsx",
+                lineNumber: 66,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
         fileName: "[project]/app/user/page.tsx",
-        lineNumber: 26,
+        lineNumber: 25,
         columnNumber: 5
     }, this);
 }
