@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "/_not-found/page": "app/_not-found/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
@@ -6,5 +7,13 @@
   "/login/page": "app/login/page.js",
   "/tools/page": "app/tools/page.js",
   "/user/edit/page": "app/user/edit/page.js",
+=======
+  "/attendance/page": "app/attendance/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/tools/page": "app/tools/page.js",
+>>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
   "/user/page": "app/user/page.js"
 }
