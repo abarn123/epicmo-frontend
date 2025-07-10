@@ -1,27 +1,28 @@
-import { notFound } from 'next/navigation';
-import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+"use client";
+import { notFound } from "next/navigation";
+import Link from "next/link";
 
 interface DataItem {
   id: string;
   title: string;
   description: string;
   category: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   createdAt: string;
 }
 
 async function getData(id: string): Promise<DataItem | null> {
   // Implementasi fetch data dari API
   // Contoh dummy data
-  if (id === '1') {
+  if (id === "1") {
     return {
-      id: '1',
-      title: 'Proyek Website Perusahaan',
-      description: 'Pembangunan website perusahaan dengan fitur e-commerce dan blog',
-      category: 'Web Development',
-      status: 'active',
-      createdAt: '2023-05-15'
+      id: "1",
+      title: "Proyek Website Perusahaan",
+      description:
+        "Pembangunan website perusahaan dengan fitur e-commerce dan blog",
+      category: "Web Development",
+      status: "active",
+      createdAt: "2023-05-15",
     };
   }
   return null;
@@ -39,26 +40,28 @@ export default async function EditPage({ params }: { params: { id: string } }) {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4 transition-colors"
           >
-            <ArrowLeftIcon className="h-5 w-5 mr-2" />
+            <span className="material-icons">arrow_back</span>
             Kembali ke Daftar
           </Link>
-          
+
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Edit Item</h1>
               <p className="text-gray-600">ID: {data.id}</p>
             </div>
             <div className="flex items-center space-x-2">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                data.status === 'active' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                {data.status === 'active' ? 'Aktif' : 'Nonaktif'}
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  data.status === "active"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {data.status === "active" ? "Aktif" : "Nonaktif"}
               </span>
               <span className="text-sm text-gray-500">
                 Dibuat: {new Date(data.createdAt).toLocaleDateString()}
@@ -74,7 +77,10 @@ export default async function EditPage({ params }: { params: { id: string } }) {
               <div className="space-y-6">
                 {/* Judul */}
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="title"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Judul <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -89,7 +95,10 @@ export default async function EditPage({ params }: { params: { id: string } }) {
 
                 {/* Deskripsi */}
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Deskripsi
                   </label>
                   <textarea
@@ -104,7 +113,10 @@ export default async function EditPage({ params }: { params: { id: string } }) {
                 {/* Kategori dan Status */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="category"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Kategori <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -116,9 +128,13 @@ export default async function EditPage({ params }: { params: { id: string } }) {
                     >
                       <option value="">Pilih Kategori</option>
                       <option value="Web Development">Web Development</option>
-                      <option value="Mobile Development">Mobile Development</option>
+                      <option value="Mobile Development">
+                        Mobile Development
+                      </option>
                       <option value="UI/UX Design">UI/UX Design</option>
-                      <option value="Digital Marketing">Digital Marketing</option>
+                      <option value="Digital Marketing">
+                        Digital Marketing
+                      </option>
                     </select>
                   </div>
 
@@ -132,7 +148,7 @@ export default async function EditPage({ params }: { params: { id: string } }) {
                           type="radio"
                           name="status"
                           value="active"
-                          defaultChecked={data.status === 'active'}
+                          defaultChecked={data.status === "active"}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                         />
                         <span className="ml-2 text-gray-700">Aktif</span>
@@ -142,7 +158,7 @@ export default async function EditPage({ params }: { params: { id: string } }) {
                           type="radio"
                           name="status"
                           value="inactive"
-                          defaultChecked={data.status === 'inactive'}
+                          defaultChecked={data.status === "inactive"}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                         />
                         <span className="ml-2 text-gray-700">Nonaktif</span>
@@ -164,7 +180,6 @@ export default async function EditPage({ params }: { params: { id: string } }) {
                   type="submit"
                   className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                 >
-                  <CheckCircleIcon className="h-5 w-5 mr-2" />
                   Simpan Perubahan
                 </button>
               </div>

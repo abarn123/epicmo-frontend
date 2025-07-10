@@ -1,23 +1,9 @@
-<<<<<<< HEAD
-{
-  "/dashboard/page": "app/dashboard/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/log_tools/page": "app/log_tools/page.js",
-  "/login/page": "app/login/page.js",
-  "/tools/page": "app/tools/page.js",
-  "/user/page": "app/user/page.js"
-}
-=======
-<<<<<<< HEAD
 {
   "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/login/page": "app/login/page.js",
   "/page": "app/page.js",
   "/user/add/page": "app/user/add/page.js",
+  "/user/edit/page": "app/user/edit/page.js",
   "/user/page": "app/user/page.js"
 }
-=======
-{}
->>>>>>> 552e3cf8f58b530bbc28e5945d0a971173d564d7
->>>>>>> 8f8cb7c58b9aa4dadd8fc6af1880cb8be633c163

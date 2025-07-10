@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -17,10 +17,13 @@ export default function LoginPage() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    console.log("Form submitted"); // Debugging log
+    console.log("Form Data:", formData); // Log form data
 
     try {
       const response = await fetch("http://192.168.110.100:8080/login", {
@@ -34,7 +37,9 @@ export default function LoginPage() {
         }),
       });
 
+      console.log("Response status:", response.status); // Log response status
       const data = await response.json();
+      console.log("Response data:", data); // Log response data
 
       if (!response.ok) {
         throw new Error(data.message || "Username atau password tidak sesuai");
@@ -45,7 +50,7 @@ export default function LoginPage() {
 
       // Redirect to dashboard
       window.location.href = "/dashboard"; // Ganti dengan URL dashboard Anda
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "An error occurred during login");
     } finally {
       setLoading(false);

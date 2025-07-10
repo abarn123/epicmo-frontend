@@ -704,10 +704,6 @@
     height: calc(var(--spacing) * 16);
   }
 
-  .h-20 {
-    height: calc(var(--spacing) * 20);
-  }
-
   .h-32 {
     height: calc(var(--spacing) * 32);
   }
@@ -762,10 +758,6 @@
 
   .w-16 {
     width: calc(var(--spacing) * 16);
-  }
-
-  .w-20 {
-    width: calc(var(--spacing) * 20);
   }
 
   .w-32 {
@@ -2177,10 +2169,6 @@
 
   .disabled\:opacity-50:disabled {
     opacity: .5;
-  }
-
-  .disabled\:opacity-70:disabled {
-    opacity: .7;
   }
 
   @media (width >= 40rem) {
