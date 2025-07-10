@@ -17,7 +17,7 @@ export default function Sidebar() {
 
   return (
     <aside className="fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-8 px-4 shadow-md z-30">
-      <div className="mb-4 text-center">
+      <div className="mb-15 text-center">
         <img
           src="/epicmo.logo.png"
           alt="Epicmo Logo"

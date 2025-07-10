@@ -5,7 +5,6 @@
   "/log_tools/page": "app/log_tools/page.js",
   "/login/page": "app/login/page.js",
   "/tools/page": "app/tools/page.js",
-  "/user/add/page": "app/user/add/page.js",
   "/user/edit/page": "app/user/edit/page.js",
   "/user/page": "app/user/page.js"
 }

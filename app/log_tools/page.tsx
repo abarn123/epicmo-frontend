@@ -36,9 +36,6 @@ export default function LogTools() {
                   className="block w-full pl-10 pr-12 py-3 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-indigo-50/50 shadow-sm"
                   placeholder="Type item name or scan barcode"
                 />
-                <button className="absolute inset-y-0 right-0 px-4 flex items-center bg-indigo-100 rounded-r-xl hover:bg-indigo-200 transition-colors">
-                  <ScanBarcode className="h-5 w-5 text-indigo-600" />
-                </button>
               </div>
             </div>
 
@@ -48,7 +45,9 @@ export default function LogTools() {
                 <div className="p-2 bg-indigo-100 rounded-lg mr-3 shadow-sm">
                   <PackageCheck className="h-5 w-5 text-indigo-600" />
                 </div>
-                <h3 className="font-semibold text-lg text-indigo-800">Item Details</h3>
+                <h3 className="font-semibold text-lg text-indigo-800">
+                  Item Details
+                </h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -56,11 +55,18 @@ export default function LogTools() {
                   { label: "Item Name", value: "-" },
                   { label: "Item Code", value: "-" },
                   { label: "Category", value: "-" },
-                  { label: "Available Stock", value: "-" }
+                  { label: "Available Stock", value: "-" },
                 ].map((item, index) => (
-                  <div key={index} className="bg-white p-3 rounded-lg shadow-sm border border-indigo-50">
-                    <p className="text-xs font-medium text-indigo-500 uppercase tracking-wider">{item.label}</p>
-                    <p className="font-medium text-gray-700 mt-1">{item.value}</p>
+                  <div
+                    key={index}
+                    className="bg-white p-3 rounded-lg shadow-sm border border-indigo-50"
+                  >
+                    <p className="text-xs font-medium text-indigo-500 uppercase tracking-wider">
+                      {item.label}
+                    </p>
+                    <p className="font-medium text-gray-700 mt-1">
+                      {item.value}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -139,7 +145,8 @@ export default function LogTools() {
                   htmlFor="terms-checkbox"
                   className="ml-3 text-sm text-gray-600"
                 >
-                  I agree to take full responsibility for the borrowed item during the borrowing period
+                  I agree to take full responsibility for the borrowed item
+                  during the borrowing period
                 </label>
               </div>
             </div>

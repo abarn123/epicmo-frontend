@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import axios from "axios";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -23,32 +24,25 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch("http://192.168.110.100:8080/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Biar cookie session bisa dikirim dari browser
-        body: JSON.stringify({
-          name: formData.name,
-          password: formData.password,
-        }),
+      const response = await axios.post("http://192.168.110.100:8080/login", {
+        name: formData.name,
+        password: formData.password,
       });
 
-      const data = await response.json(); // ✅ hanya satu kali
+      const data = response.data; // Menggunakan axios langsung untuk mendapatkan data
 
-      if (!response.ok || !data.status) {
+      if (!response.status === 200 || !data.status) {
         throw new Error(data.message || "Username atau password tidak sesuai");
       }
 
       console.log("Login successful", data);
 
-      // ✅ Simpan token jika kamu mau pakai untuk autentikasi
+      // Simpan token jika kamu mau pakai untuk autentikasi
       // localStorage.setItem("token", data.user.key);
 
       window.location.href = "/dashboard"; // Arahkan ke dashboard
     } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan saat login");
+      setError(err.response?.data?.message || "Terjadi kesalahan saat login");
     } finally {
       setLoading(false);
     }

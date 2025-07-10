@@ -1,220 +1,114 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 
-interface UserData {
+type User = {
+  id: string;
   name: string;
+  email?: string;
   phone: string;
   address: string;
   role: string;
-}
-
-const edit = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-
-  const [formData, setFormData] = useState<UserData>({
-    name: "",
-    phone: "",
-    address: "",
-    role: "",
-  });
-  const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Ambil data user saat komponen mount
-  useEffect(() => {
-    if (!id) {
-      setMessage("ID pengguna tidak ditemukan di URL.");
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`http://192.168.110.100:8080/data1/${id}`);
-        
-        // Sesuaikan dengan struktur response backend
-        if (response.data) {
-          setFormData({
-            name: response.data.name || "",
-            phone: response.data.phone || "",
-            address: response.data.address || "",
-            role: response.data.role || "",
-          });
-        } else {
-          setFormData({
-            name: "",
-            phone: "",
-            address: "",
-            role: "",
-          });
-        }
-      } catch (error: any) {
-        // Jika error 404 (data tidak ditemukan), tetap tampilkan form kosong tanpa error
-        if (error.response && error.response.status === 404) {
-          setFormData({
-            name: "",
-            phone: "",
-            address: "",
-            role: "",
-          });
-          setMessage(""); // Tidak tampilkan error
-        } else {
-          setMessage(`Gagal memuat data: ${error.response?.data?.message || error.message}`);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [id]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!id) {
-      setMessage("ID pengguna tidak valid");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      
-      // Sesuaikan dengan endpoint dan format data yang diharapkan backend
-      const response = await axios.put(
-        `http://192.168.110.100:8080/data1/edit/${id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      // Sesuaikan pengecekan response dengan struktur dari backend
-      if (response.data.status === true) {
-        setMessage(response.data.message || "Data berhasil diupdate!");
-        setIsSuccess(true);
-        setTimeout(() => router.push("/user"), 2000);
-      } else {
-        setMessage(response.data.message || "Gagal mengupdate data");
-        setIsSuccess(false);
-      }
-    } catch (error: any) {
-      // Tangani error sesuai response backend
-      if (error.response) {
-        if (error.response.status === 400) {
-          setMessage("Data tidak valid: " + (error.response.data.message || "Silakan periksa input Anda"));
-        } else if (error.response.status === 500) {
-          setMessage("Server error: " + (error.response.data.message || "Terjadi kesalahan pada server"));
-        } else {
-          setMessage(`Error ${error.response.status}: ${error.response.data.message || "Terjadi kesalahan"}`);
-        }
-      } else {
-        setMessage("Error: " + error.message);
-      }
-      setIsSuccess(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-4 max-w-md text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-        <p>Memuat data pengguna...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto p-4 max-w-md">
-      <h2 className="text-2xl font-bold mb-4">Edit Pengguna</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1 font-medium">Nama</label>
-          <input
-            type="text"
-            name="name"
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            disabled={isLoading}
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-medium">Nomor Telepon</label>
-          <input
-            type="tel"
-            name="phone"
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-            disabled={isLoading}
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-medium">Alamat</label>
-          <input
-            type="text"
-            name="address"
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            value={formData.address}
-            onChange={handleChange}
-            required
-            disabled={isLoading}
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-medium">Role</label>
-          <input
-            type="text"
-            name="role"
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            value={formData.role}
-            onChange={handleChange}
-            required
-            disabled={isLoading}
-          />
-        </div>
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 disabled:bg-blue-300"
-            disabled={isLoading}
-          >
-            {isLoading ? "Memproses..." : "Update"}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="bg-gray-500 text-white py-2 px-6 rounded hover:bg-gray-600"
-            disabled={isLoading}
-          >
-            Batal
-          </button>
-        </div>
-      </form>
-      {message && isSuccess && (
-        <div className="mt-4 p-3 rounded bg-green-100 text-green-800">
-          {message}
-        </div>
-      )}
-    </div>
-  );
 };
 
-export default edit;
+export default function EditUserPage() {
+  const params = useSearchParams();
+  const userId = params.get("id");
+
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (userId) {
+      axios
+        .get(`http://192.168.110.100:8080/data1/${userId}`)
+        .then((res) => setUser(res.data))
+        .catch(() => toast.error("Gagal mengambil data pengguna"));
+      console.log("User ID:", userId);
+    }
+  }, [userId]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setUser((prev) => (prev ? { ...prev, [name]: value } : null));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    try {
+      await axios.put(
+        `http://192.168.110.100:8080/data1/edit/${user.id}`,
+        user
+      );
+      toast.success("Pengguna berhasil diperbarui");
+    } catch (err) {
+      toast.error("Gagal memperbarui pengguna");
+    }
+  };
+
+  if (!user) return <div className="p-10">Memuat data pengguna...</div>;
+
+  return (
+    <div className="max-w-xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+      <h2 className="text-2xl font-bold mb-4">Edit Pengguna</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="name"
+          value={user.name}
+          onChange={handleChange}
+          className="w-full border px-4 py-2 rounded"
+          placeholder="Nama"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          value={user.email || ""}
+          onChange={handleChange}
+          className="w-full border px-4 py-2 rounded"
+          placeholder="Email"
+        />
+        <input
+          type="tel"
+          name="phone"
+          value={user.phone}
+          onChange={handleChange}
+          className="w-full border px-4 py-2 rounded"
+          placeholder="Nomor Telepon"
+          required
+        />
+        <input
+          type="text"
+          name="address"
+          value={user.address}
+          onChange={handleChange}
+          className="w-full border px-4 py-2 rounded"
+          placeholder="Alamat"
+          required
+        />
+        <select
+          name="role"
+          value={user.role}
+          onChange={handleChange}
+          className="w-full border px-4 py-2 rounded"
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="manager">Manager</option>
+        </select>
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          Simpan Perubahan
+        </button>
+      </form>
+    </div>
+  );
+}
