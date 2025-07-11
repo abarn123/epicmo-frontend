@@ -28,7 +28,7 @@ function EditUserPage() {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "EditUserPage.useEffect": ()=>{
             if (userId) {
-                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`http://192.168.110.100:8080/data1/${userId}`).then({
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`http://192.168.110.100:8080/data1/edit/{id}`).then({
                     "EditUserPage.useEffect": (res)=>setUser(res.data)
                 }["EditUserPage.useEffect"]).catch({
                     "EditUserPage.useEffect": ()=>__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$toastify$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Gagal mengambil data pengguna")
