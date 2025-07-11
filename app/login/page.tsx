@@ -31,18 +31,18 @@ export default function LoginPage() {
 
       const data = response.data; // Menggunakan axios langsung untuk mendapatkan data
 
-      if (!response.status === 200 || !data.status) {
+      if (response.status !== 200 || !data.status) {
         throw new Error(data.message || "Username atau password tidak sesuai");
       }
 
       console.log("Login successful", data);
 
       // Simpan token jika kamu mau pakai untuk autentikasi
-      // localStorage.setItem("token", data.user.key);
+      localStorage.setItem("token", data.user.key);
 
       window.location.href = "/dashboard"; // Arahkan ke dashboard
     } catch (err: any) {
-      setError(err.response?.data?.message || "Terjadi kesalahan saat login");
+      setError(err.response?.data?.message || "Username atau password salah");
     } finally {
       setLoading(false);
     }

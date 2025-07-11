@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios"; // Tambahkan di bagian atas file
+import { useAuth } from "../context/AuthContext";
 
 type User = {
   id: string;
@@ -504,11 +505,22 @@ export default function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(6);
   const router = useRouter();
+  const { token } = useAuth();
 
   useEffect(() => {
     const fetchUsers = async () => {
+      if (!token) {
+        setError("User is not authenticated");
+        setLoading(false);
+        return;
+      }
+      console.log("Token used for fetchUsers:", token);
       try {
-        const response = await axios.get("http://192.168.110.100:8080/data1");
+        const response = await axios.get("http://192.168.110.100:8080/data1", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         console.log("API Response:", response.data);
 
         let usersData = response.data;
@@ -566,17 +578,26 @@ export default function UserManagement() {
     };
 
     fetchUsers();
-  }, []);
+  }, [token]);
 
   const handleAddUser = () => {
     setShowAddModal(true);
   };
 
   const handleSaveNewUser = async (newUser: UserFormData) => {
+    if (!token) {
+      toast.error("User is not authenticated");
+      return;
+    }
     try {
       const response = await axios.post(
         "http://192.168.110.100:8080/data1",
-        newUser
+        newUser,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       const createdUser = {
         ...newUser,
@@ -597,10 +618,19 @@ export default function UserManagement() {
   };
 
   const handleSaveEditedUser = async (updatedUser: User) => {
+    if (!token) {
+      toast.error("User is not authenticated");
+      return;
+    }
     try {
       const response = await axios.put(
         `http://192.168.110.100:8080/data1/edit/${updatedUser.id}`,
-        updatedUser
+        updatedUser,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (response.data?.status || response.status === 200) {
@@ -621,8 +651,16 @@ export default function UserManagement() {
   };
 
   const handleDeleteUser = async (userId: string) => {
+    if (!token) {
+      toast.error("User is not authenticated");
+      return;
+    }
     try {
-      await axios.delete(`http://192.168.110.100:8080/data1/delete/${userId}`);
+      await axios.delete(`http://192.168.110.100:8080/data1/delete/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const updatedUsers = users.filter((u) => u.id !== userId);
       setUsers(updatedUsers);
