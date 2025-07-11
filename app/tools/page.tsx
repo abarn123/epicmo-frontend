@@ -499,7 +499,7 @@ export default function ToolsPage() {
   const handleSaveNewTool = async (newTool: ToolFormData) => {
     try {
       const response = await axios.post(
-        "http://192.168.110.100:8080/data2",
+        "http://192.168.110.100:8080/data2/add",
         newTool
       );
       const createdTool = {
