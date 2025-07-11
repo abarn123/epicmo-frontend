@@ -159,7 +159,11 @@ function LoginPage() {
             localStorage.setItem("token", data.user.key);
             window.location.href = "/dashboard"; // Arahkan ke dashboard
         } catch (err) {
+<<<<<<< HEAD
             setError(err.response?.data?.message || "Username atau password salah");
+=======
+            setError(err.response?.data?.message || "Terjadi kesalahan saat login");
+>>>>>>> 8f5437a763ecdd7615a08dd738ae5ebf44dd640f
         } finally{
             setLoading(false);
         }

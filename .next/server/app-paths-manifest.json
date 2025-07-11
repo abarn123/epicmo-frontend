@@ -3,6 +3,12 @@
   "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/login/page": "app/login/page.js",
+<<<<<<< HEAD
   "/tools/page": "app/tools/page.js",
+=======
+  "/page": "app/page.js",
+  "/tools/page": "app/tools/page.js",
+  "/user/edit/page": "app/user/edit/page.js",
+>>>>>>> 8f5437a763ecdd7615a08dd738ae5ebf44dd640f
   "/user/page": "app/user/page.js"
 }

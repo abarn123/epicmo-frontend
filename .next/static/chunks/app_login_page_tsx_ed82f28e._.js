@@ -49,7 +49,11 @@ function LoginPage() {
             localStorage.setItem("token", data.user.key);
             window.location.href = "/dashboard"; // Arahkan ke dashboard
         } catch (err) {
+<<<<<<< HEAD
             setError(err.response?.data?.message || "Username atau password salah");
+=======
+            setError(err.response?.data?.message || "Terjadi kesalahan saat login");
+>>>>>>> 8f5437a763ecdd7615a08dd738ae5ebf44dd640f
         } finally{
             setLoading(false);
         }
@@ -257,7 +261,11 @@ function LoginPage() {
         columnNumber: 5
     }, this);
 }
+<<<<<<< HEAD
 _s(LoginPage, "ryGUWd5MTrcDrMEMNa8p4wR70Pc=");
+=======
+_s(LoginPage, "+dS4u5jfe8wlYwIEMSAwa6WnwlM=");
+>>>>>>> 8f5437a763ecdd7615a08dd738ae5ebf44dd640f
 _c = LoginPage;
 var _c;
 __turbopack_context__.k.register(_c, "LoginPage");

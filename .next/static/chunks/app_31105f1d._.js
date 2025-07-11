@@ -1215,7 +1215,7 @@ function ToolsPage() {
     }["ToolsPage.useEffect"], []);
     const handleSaveNewTool = async (newTool)=>{
         try {
-            const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("http://192.168.110.100:8080/data2", newTool);
+            const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("http://192.168.110.100:8080/data2/add", newTool);
             const createdTool = {
                 ...newTool,
                 id: response.data.id || `generated-${Date.now()}`
