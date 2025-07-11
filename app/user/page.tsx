@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios"; // Tambahkan di bagian atas file
 import { useAuth } from "../context/AuthContext";
+import { logTokenUsage } from "../../debug_frontend_token";
 
 type User = {
   id: string;
@@ -508,6 +509,7 @@ export default function UserManagement() {
   const { token } = useAuth();
 
   useEffect(() => {
+    logTokenUsage();
     const fetchUsers = async () => {
       if (!token) {
         setError("User is not authenticated");
