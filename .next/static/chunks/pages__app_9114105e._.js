@@ -12,19 +12,11 @@ const CHUNK_BASE_PATH = "/_next/";
 const CHUNK_SUFFIX_PATH = "";
 const RELATIVE_ROOT_PATH = "/ROOT";
 const RUNTIME_PUBLIC_PATH = "/_next/";
-<<<<<<< HEAD
 /**
  * This file contains runtime types and functions that are shared between all
  * TurboPack ECMAScript runtimes.
  *
  * It will be prepended to the runtime code of each runtime.
-=======
-/**
- * This file contains runtime types and functions that are shared between all
- * TurboPack ECMAScript runtimes.
- *
- * It will be prepended to the runtime code of each runtime.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ /* eslint-disable @typescript-eslint/no-unused-vars */ /// <reference path="./runtime-types.d.ts" />
 const REEXPORTED_OBJECTS = Symbol("reexported objects");
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -32,13 +24,8 @@ const toStringTag = typeof Symbol !== "undefined" && Symbol.toStringTag;
 function defineProp(obj, name, options) {
     if (!hasOwnProperty.call(obj, name)) Object.defineProperty(obj, name, options);
 }
-<<<<<<< HEAD
 /**
  * Adds the getters to the exports object.
-=======
-/**
- * Adds the getters to the exports object.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function esm(exports, getters) {
     defineProp(exports, "__esModule", {
         value: true
@@ -63,13 +50,8 @@ function defineProp(obj, name, options) {
     }
     Object.seal(exports);
 }
-<<<<<<< HEAD
 /**
  * Makes the module an ESM with exports
-=======
-/**
- * Makes the module an ESM with exports
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function esmExport(module, exports, getters) {
     module.namespaceObject = module.exports;
     esm(exports, getters);
@@ -101,13 +83,8 @@ function ensureDynamicExports(module, exports) {
         });
     }
 }
-<<<<<<< HEAD
 /**
  * Dynamically exports properties from an object
-=======
-/**
- * Dynamically exports properties from an object
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function dynamicExport(module, exports, object) {
     ensureDynamicExports(module, exports);
     if (typeof object === "object" && object !== null) {
@@ -123,13 +100,8 @@ function exportNamespace(module, namespace) {
 function createGetter(obj, key) {
     return ()=>obj[key];
 }
-<<<<<<< HEAD
 /**
  * @returns prototype of the object
-=======
-/**
- * @returns prototype of the object
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ const getProto = Object.getPrototypeOf ? (obj)=>Object.getPrototypeOf(obj) : (obj)=>obj.__proto__;
 /** Prototypes that are not expanded for exports */ const LEAF_PROTOTYPES = [
     null,
@@ -137,21 +109,12 @@ function createGetter(obj, key) {
     getProto([]),
     getProto(getProto)
 ];
-<<<<<<< HEAD
 /**
  * @param raw
  * @param ns
  * @param allowExportDefault
  *   * `false`: will have the raw module as default export
  *   * `true`: will have the default property as default export
-=======
-/**
- * @param raw
- * @param ns
- * @param allowExportDefault
- *   * `false`: will have the raw module as default export
- *   * `true`: will have the default property as default export
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function interopEsm(raw, ns, allowExportDefault) {
     const getters = Object.create(null);
     for(let current = raw; (typeof current === "object" || typeof current === "function") && !LEAF_PROTOTYPES.includes(current); current = getProto(current)){
@@ -196,13 +159,8 @@ function commonJsRequire(sourceModule, id) {
     if (module.error) throw module.error;
     return module.exports;
 }
-<<<<<<< HEAD
 /**
  * `require.context` and require/import expression runtime.
-=======
-/**
- * `require.context` and require/import expression runtime.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function moduleContext(map) {
     function moduleContext(id) {
         if (hasOwnProperty.call(map, id)) {
@@ -228,13 +186,8 @@ function commonJsRequire(sourceModule, id) {
     };
     return moduleContext;
 }
-<<<<<<< HEAD
 /**
  * Returns the path of a chunk defined by its data.
-=======
-/**
- * Returns the path of a chunk defined by its data.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function getChunkPath(chunkData) {
     return typeof chunkData === "string" ? chunkData : chunkData.path;
 }
@@ -359,7 +312,6 @@ function asyncModule(module, body, hasAwait) {
         queue.status = 0;
     }
 }
-<<<<<<< HEAD
 /**
  * A pseudo "fake" URL object to resolve to its relative path.
  *
@@ -369,17 +321,6 @@ function asyncModule(module, body, hasAwait) {
  *
  * This is based on webpack's existing implementation:
  * https://github.com/webpack/webpack/blob/87660921808566ef3b8796f8df61bd79fc026108/lib/runtime/RelativeUrlRuntimeModule.js
-=======
-/**
- * A pseudo "fake" URL object to resolve to its relative path.
- *
- * When UrlRewriteBehavior is set to relative, calls to the `new URL()` will construct url without base using this
- * runtime function to generate context-agnostic urls between different rendering context, i.e ssr / client to avoid
- * hydration mismatch.
- *
- * This is based on webpack's existing implementation:
- * https://github.com/webpack/webpack/blob/87660921808566ef3b8796f8df61bd79fc026108/lib/runtime/RelativeUrlRuntimeModule.js
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ const relativeURL = function relativeURL(inputUrl) {
     const realUrl = new URL(inputUrl, "x:/");
     const values = {};
@@ -395,13 +336,8 @@ function asyncModule(module, body, hasAwait) {
     });
 };
 relativeURL.prototype = URL.prototype;
-<<<<<<< HEAD
 /**
  * Utility function to ensure all variants of an enum are handled.
-=======
-/**
- * Utility function to ensure all variants of an enum are handled.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function invariant(never, computeMessage) {
     throw new Error(`Invariant: ${computeMessage(never)}`);
 }
@@ -410,58 +346,32 @@ relativeURL.prototype = URL.prototype;
  */ function requireStub(_moduleId) {
     throw new Error("dynamic usage of require is not supported");
 }
-<<<<<<< HEAD
 /**
  * This file contains runtime types and functions that are shared between all
  * Turbopack *development* ECMAScript runtimes.
  *
  * It will be appended to the runtime code of each runtime right after the
  * shared runtime utils.
-=======
-/**
- * This file contains runtime types and functions that are shared between all
- * Turbopack *development* ECMAScript runtimes.
- *
- * It will be appended to the runtime code of each runtime right after the
- * shared runtime utils.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ /* eslint-disable @typescript-eslint/no-unused-vars */ /// <reference path="../base/globals.d.ts" />
 /// <reference path="../../../shared/runtime-utils.ts" />
 // Used in WebWorkers to tell the runtime about the chunk base path
 var SourceType = /*#__PURE__*/ function(SourceType) {
-<<<<<<< HEAD
     /**
    * The module was instantiated because it was included in an evaluated chunk's
    * runtime.
-=======
-    /**
-   * The module was instantiated because it was included in an evaluated chunk's
-   * runtime.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
    */ SourceType[SourceType["Runtime"] = 0] = "Runtime";
     /**
    * The module was instantiated because a parent module imported it.
    */ SourceType[SourceType["Parent"] = 1] = "Parent";
-<<<<<<< HEAD
     /**
    * The module was instantiated because it was included in a chunk's hot module
    * update.
-=======
-    /**
-   * The module was instantiated because it was included in a chunk's hot module
-   * update.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
    */ SourceType[SourceType["Update"] = 2] = "Update";
     return SourceType;
 }(SourceType || {});
 const moduleFactories = Object.create(null);
-<<<<<<< HEAD
 /**
  * Module IDs that are instantiated as part of the runtime of a chunk.
-=======
-/**
- * Module IDs that are instantiated as part of the runtime of a chunk.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ const runtimeModules = new Set();
 /**
  * Map from module ID to the chunks that contain this module.
@@ -481,13 +391,8 @@ const moduleFactories = Object.create(null);
 /**
  * Map from a chunk list to the chunk paths it contains.
  */ const chunkListChunksMap = new Map();
-<<<<<<< HEAD
 /**
  * Map from a chunk path to the chunk lists it belongs to.
-=======
-/**
- * Map from a chunk path to the chunk lists it belongs to.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ const chunkChunkListsMap = new Map();
 const availableModules = new Map();
 const availableModuleChunks = new Map();
@@ -574,28 +479,17 @@ async function loadChunkPath(source, chunkPath) {
     const url = getChunkRelativeUrl(chunkPath);
     return loadChunkByUrl(source, url);
 }
-<<<<<<< HEAD
 /**
  * Returns an absolute url to an asset.
-=======
-/**
- * Returns an absolute url to an asset.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function createResolvePathFromModule(resolver) {
     return function resolvePathFromModule(moduleId) {
         const exported = resolver(moduleId);
         return exported?.default ?? exported;
     };
 }
-<<<<<<< HEAD
 /**
  * no-op for browser
  * @param modulePath
-=======
-/**
- * no-op for browser
- * @param modulePath
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function resolveAbsolutePath(modulePath) {
     return `/ROOT/${modulePath ?? ""}`;
 }
@@ -610,13 +504,8 @@ importScripts(...self.TURBOPACK_NEXT_CHUNK_URLS.map(c => self.TURBOPACK_WORKER_L
     });
     return URL.createObjectURL(blob);
 }
-<<<<<<< HEAD
 /**
  * Adds a module to a chunk.
-=======
-/**
- * Adds a module to a chunk.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function addModuleToChunk(moduleId, chunkPath) {
     let moduleChunks = moduleChunksMap.get(moduleId);
     if (!moduleChunks) {
@@ -637,17 +526,10 @@ importScripts(...self.TURBOPACK_NEXT_CHUNK_URLS.map(c => self.TURBOPACK_WORKER_L
         chunkModules.add(moduleId);
     }
 }
-<<<<<<< HEAD
 /**
  * Returns the first chunk that included a module.
  * This is used by the Node.js backend, hence why it's marked as unused in this
  * file.
-=======
-/**
- * Returns the first chunk that included a module.
- * This is used by the Node.js backend, hence why it's marked as unused in this
- * file.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function getFirstModuleChunk(moduleId) {
     const moduleChunkPaths = moduleChunksMap.get(moduleId);
     if (moduleChunkPaths == null) {
@@ -655,26 +537,16 @@ importScripts(...self.TURBOPACK_NEXT_CHUNK_URLS.map(c => self.TURBOPACK_WORKER_L
     }
     return moduleChunkPaths.values().next().value;
 }
-<<<<<<< HEAD
 /**
  * Instantiates a runtime module.
-=======
-/**
- * Instantiates a runtime module.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function instantiateRuntimeModule(moduleId, chunkPath) {
     return instantiateModule(moduleId, {
         type: 0,
         chunkPath
     });
 }
-<<<<<<< HEAD
 /**
  * Returns the URL relative to the origin where a chunk can be fetched from.
-=======
-/**
- * Returns the URL relative to the origin where a chunk can be fetched from.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function getChunkRelativeUrl(chunkPath) {
     return `${CHUNK_BASE_PATH}${chunkPath.split("/").map((p)=>encodeURIComponent(p)).join("/")}${CHUNK_SUFFIX_PATH}`;
 }
@@ -687,17 +559,10 @@ function getPathFromScript(chunkScript) {
     const path = src.startsWith(CHUNK_BASE_PATH) ? src.slice(CHUNK_BASE_PATH.length) : src;
     return path;
 }
-<<<<<<< HEAD
 /**
  * Marks a chunk list as a runtime chunk list. There can be more than one
  * runtime chunk list. For instance, integration tests can have multiple chunk
  * groups loaded at runtime, each with its own chunk list.
-=======
-/**
- * Marks a chunk list as a runtime chunk list. There can be more than one
- * runtime chunk list. For instance, integration tests can have multiple chunk
- * groups loaded at runtime, each with its own chunk list.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function markChunkListAsRuntime(chunkListPath) {
     runtimeChunkLists.add(chunkListPath);
 }
@@ -712,45 +577,26 @@ function registerChunk([chunkScript, chunkModules, runtimeParams]) {
     return BACKEND.registerChunk(chunkPath, runtimeParams);
 }
 const regexJsUrl = /\.js(?:\?[^#]*)?(?:#.*)?$/;
-<<<<<<< HEAD
 /**
  * Checks if a given path/URL ends with .js, optionally followed by ?query or #fragment.
-=======
-/**
- * Checks if a given path/URL ends with .js, optionally followed by ?query or #fragment.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function isJs(chunkUrlOrPath) {
     return regexJsUrl.test(chunkUrlOrPath);
 }
 const regexCssUrl = /\.css(?:\?[^#]*)?(?:#.*)?$/;
-<<<<<<< HEAD
 /**
  * Checks if a given path/URL ends with .css, optionally followed by ?query or #fragment.
-=======
-/**
- * Checks if a given path/URL ends with .css, optionally followed by ?query or #fragment.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function isCss(chunkUrl) {
     return regexCssUrl.test(chunkUrl);
 }
 /// <reference path="./dev-globals.d.ts" />
 /// <reference path="./dev-protocol.d.ts" />
 /// <reference path="./dev-extensions.ts" />
-<<<<<<< HEAD
 /**
  * This file contains runtime types and functions that are shared between all
  * Turbopack *development* ECMAScript runtimes.
  *
  * It will be appended to the runtime code of each runtime right after the
  * shared runtime utils.
-=======
-/**
- * This file contains runtime types and functions that are shared between all
- * Turbopack *development* ECMAScript runtimes.
- *
- * It will be appended to the runtime code of each runtime right after the
- * shared runtime utils.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ /* eslint-disable @typescript-eslint/no-unused-vars */ const devModuleCache = Object.create(null);
 class UpdateApplyError extends Error {
     name = "UpdateApplyError";
@@ -760,15 +606,9 @@ class UpdateApplyError extends Error {
         this.dependencyChain = dependencyChain;
     }
 }
-<<<<<<< HEAD
 /**
  * Maps module IDs to persisted data between executions of their hot module
  * implementation (`hot.data`).
-=======
-/**
- * Maps module IDs to persisted data between executions of their hot module
- * implementation (`hot.data`).
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ const moduleHotData = new Map();
 /**
  * Maps module instances to their hot module state.
@@ -776,13 +616,8 @@ class UpdateApplyError extends Error {
 /**
  * Modules that call `module.hot.invalidate()` (while being updated).
  */ const queuedInvalidatedModules = new Set();
-<<<<<<< HEAD
 /**
  * Gets or instantiates a runtime module.
-=======
-/**
- * Gets or instantiates a runtime module.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ // @ts-ignore
 function getOrInstantiateRuntimeModule(moduleId, chunkPath) {
     const module = devModuleCache[moduleId];
@@ -798,13 +633,8 @@ function getOrInstantiateRuntimeModule(moduleId, chunkPath) {
         chunkPath
     });
 }
-<<<<<<< HEAD
 /**
  * Retrieves a module from the cache, or instantiate it if it is not cached.
-=======
-/**
- * Retrieves a module from the cache, or instantiate it if it is not cached.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ // @ts-ignore Defined in `runtime-utils.ts`
 const getOrInstantiateModuleFromParent = (id, sourceModule)=>{
     if (!sourceModule.hot.active) {
@@ -928,17 +758,10 @@ function instantiateModule(id, source) {
     }
     return module;
 }
-<<<<<<< HEAD
 /**
  * NOTE(alexkirsz) Webpack has a "module execution" interception hook that
  * Next.js' React Refresh runtime hooks into to add module context to the
  * refresh registry.
-=======
-/**
- * NOTE(alexkirsz) Webpack has a "module execution" interception hook that
- * Next.js' React Refresh runtime hooks into to add module context to the
- * refresh registry.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function runModuleExecutionHooks(module, executeModule) {
     const cleanupReactRefreshIntercept = typeof globalThis.$RefreshInterceptModuleExecution$ === "function" ? globalThis.$RefreshInterceptModuleExecution$(module.id) : ()=>{};
     try {
@@ -954,13 +777,8 @@ function instantiateModule(id, source) {
         cleanupReactRefreshIntercept();
     }
 }
-<<<<<<< HEAD
 /**
  * This is adapted from https://github.com/vercel/next.js/blob/3466862d9dc9c8bb3131712134d38757b918d1c0/packages/react-refresh-utils/internal/ReactRefreshModule.runtime.ts
-=======
-/**
- * This is adapted from https://github.com/vercel/next.js/blob/3466862d9dc9c8bb3131712134d38757b918d1c0/packages/react-refresh-utils/internal/ReactRefreshModule.runtime.ts
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function registerExportsAndSetupBoundaryForReactRefresh(module, helpers) {
     const currentExports = module.exports;
     const prevExports = module.hot.data.prevExports ?? null;
@@ -1058,17 +876,10 @@ function computeOutdatedSelfAcceptedModules(outdatedModules) {
     }
     return outdatedSelfAcceptedModules;
 }
-<<<<<<< HEAD
 /**
  * Adds, deletes, and moves modules between chunks. This must happen before the
  * dispose phase as it needs to know which modules were removed from all chunks,
  * which we can only compute *after* taking care of added and moved modules.
-=======
-/**
- * Adds, deletes, and moves modules between chunks. This must happen before the
- * dispose phase as it needs to know which modules were removed from all chunks,
- * which we can only compute *after* taking care of added and moved modules.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function updateChunksPhase(chunksAddedModules, chunksDeletedModules) {
     for (const [chunkPath, addedModuleIds] of chunksAddedModules){
         for (const moduleId of addedModuleIds){
@@ -1108,7 +919,6 @@ function disposePhase(outdatedModules, disposedModules) {
         outdatedModuleParents
     };
 }
-<<<<<<< HEAD
 /**
  * Disposes of an instance of a module.
  *
@@ -1121,20 +931,6 @@ function disposePhase(outdatedModules, disposedModules) {
  * parent/child relationships before they are actually removed from the devModuleCache.
  * If this was done in this method, the following disposeModule calls won't find
  * the module from the module id in the cache.
-=======
-/**
- * Disposes of an instance of a module.
- *
- * Returns the persistent hot data that should be kept for the next module
- * instance.
- *
- * NOTE: mode = "replace" will not remove modules from the devModuleCache
- * This must be done in a separate step afterwards.
- * This is important because all modules need to be disposed to update the
- * parent/child relationships before they are actually removed from the devModuleCache.
- * If this was done in this method, the following disposeModule calls won't find
- * the module from the module id in the cache.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function disposeModule(moduleId, mode) {
     const module = devModuleCache[moduleId];
     if (!module) {
@@ -1524,15 +1320,9 @@ function createModuleHot(moduleId, hotData) {
         hotState
     };
 }
-<<<<<<< HEAD
 /**
  * Removes a module from a chunk.
  * Returns `true` if there are no remaining chunks including this module.
-=======
-/**
- * Removes a module from a chunk.
- * Returns `true` if there are no remaining chunks including this module.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function removeModuleFromChunk(moduleId, chunkPath) {
     const moduleChunks = moduleChunksMap.get(moduleId);
     moduleChunks.delete(chunkPath);
@@ -1548,13 +1338,8 @@ function createModuleHot(moduleId, hotData) {
     }
     return noRemainingChunks;
 }
-<<<<<<< HEAD
 /**
  * Disposes of a chunk list and its corresponding exclusive chunks.
-=======
-/**
- * Disposes of a chunk list and its corresponding exclusive chunks.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function disposeChunkList(chunkListPath) {
     const chunkPaths = chunkListChunksMap.get(chunkListPath);
     if (chunkPaths == null) {
@@ -1575,17 +1360,10 @@ function createModuleHot(moduleId, hotData) {
     DEV_BACKEND.unloadChunk?.(chunkListUrl);
     return true;
 }
-<<<<<<< HEAD
 /**
  * Disposes of a chunk and its corresponding exclusive modules.
  *
  * @returns Whether the chunk was disposed of.
-=======
-/**
- * Disposes of a chunk and its corresponding exclusive modules.
- *
- * @returns Whether the chunk was disposed of.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function disposeChunk(chunkPath) {
     const chunkUrl = getChunkRelativeUrl(chunkPath);
     // This should happen whether the chunk has any modules in it or not.
@@ -1608,13 +1386,8 @@ function createModuleHot(moduleId, hotData) {
     }
     return true;
 }
-<<<<<<< HEAD
 /**
  * Subscribes to chunk list updates from the update server and applies them.
-=======
-/**
- * Subscribes to chunk list updates from the update server and applies them.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ function registerChunkList(chunkList) {
     const chunkListScript = chunkList.script;
     const chunkListPath = getPathFromScript(chunkListScript);
@@ -1643,19 +1416,11 @@ function createModuleHot(moduleId, hotData) {
     }
 }
 globalThis.TURBOPACK_CHUNK_UPDATE_LISTENERS ??= [];
-<<<<<<< HEAD
 /**
  * This file contains the runtime code specific to the Turbopack development
  * ECMAScript DOM runtime.
  *
  * It will be appended to the base development runtime code.
-=======
-/**
- * This file contains the runtime code specific to the Turbopack development
- * ECMAScript DOM runtime.
- *
- * It will be appended to the base development runtime code.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ /* eslint-disable @typescript-eslint/no-unused-vars */ /// <reference path="../../../browser/runtime/base/runtime-base.ts" />
 /// <reference path="../../../shared/runtime-types.d.ts" />
 let BACKEND;
@@ -1674,13 +1439,8 @@ async function loadWebAssemblyModule(_source, wasmChunkPath) {
     const req = fetchWebAssembly(wasmChunkPath);
     return await WebAssembly.compileStreaming(req);
 }
-<<<<<<< HEAD
 /**
  * Maps chunk paths to the corresponding resolver.
-=======
-/**
- * Maps chunk paths to the corresponding resolver.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ const chunkResolvers = new Map();
 (()=>{
     BACKEND = {
@@ -1708,15 +1468,9 @@ async function loadWebAssemblyModule(_source, wasmChunkPath) {
                 }
             }
         },
-<<<<<<< HEAD
         /**
      * Loads the given chunk, and returns a promise that resolves once the chunk
      * has been loaded.
-=======
-        /**
-     * Loads the given chunk, and returns a promise that resolves once the chunk
-     * has been loaded.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
     */ loadChunk (chunkUrl, source) {
             return doLoadChunk(chunkUrl, source);
         }
@@ -1743,15 +1497,9 @@ async function loadWebAssemblyModule(_source, wasmChunkPath) {
         }
         return resolver;
     }
-<<<<<<< HEAD
     /**
     * Loads the given chunk, and returns a promise that resolves once the chunk
     * has been loaded.
-=======
-    /**
-    * Loads the given chunk, and returns a promise that resolves once the chunk
-    * has been loaded.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
     */ function doLoadChunk(chunkUrl, source) {
         const resolver = getOrCreateResolver(chunkUrl);
         if (resolver.resolved) {
@@ -1831,19 +1579,11 @@ async function loadWebAssemblyModule(_source, wasmChunkPath) {
         return resolver.promise;
     }
 })();
-<<<<<<< HEAD
 /**
  * This file contains the runtime code specific to the Turbopack development
  * ECMAScript DOM runtime.
  *
  * It will be appended to the base development runtime code.
-=======
-/**
- * This file contains the runtime code specific to the Turbopack development
- * ECMAScript DOM runtime.
- *
- * It will be appended to the base development runtime code.
->>>>>>> 2acdc468cbaa20459b444116c434e2de1b53cce2
  */ /* eslint-disable @typescript-eslint/no-unused-vars */ /// <reference path="../base/runtime-base.ts" />
 /// <reference path="../base/dev-base.ts" />
 /// <reference path="./runtime-backend-dom.ts" />
