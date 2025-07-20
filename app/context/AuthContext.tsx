@@ -8,6 +8,7 @@ interface AuthContextType {
   login: (token: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,6 +17,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (storedToken) {
       setToken(storedToken);
     }
+    setLoading(false);
   }, []);
 
   const login = (newToken: string) => {
@@ -39,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ token, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ token, login, logout, isAuthenticated, loading }}>
       {children}
     </AuthContext.Provider>
   );
