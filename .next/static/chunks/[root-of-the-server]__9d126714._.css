@@ -646,6 +646,10 @@
     margin-left: calc(var(--spacing) * 2);
   }
 
+  .ml-3 {
+    margin-left: calc(var(--spacing) * 3);
+  }
+
   .ml-4 {
     margin-left: calc(var(--spacing) * 4);
   }
@@ -882,6 +886,10 @@
     gap: calc(var(--spacing) * 4);
   }
 
+  .gap-5 {
+    gap: calc(var(--spacing) * 5);
+  }
+
   .gap-6 {
     gap: calc(var(--spacing) * 6);
   }
@@ -1067,8 +1075,20 @@
     border-color: var(--color-gray-300);
   }
 
+  .border-indigo-50 {
+    border-color: var(--color-indigo-50);
+  }
+
   .border-indigo-100 {
     border-color: var(--color-indigo-100);
+  }
+
+  .border-indigo-200 {
+    border-color: var(--color-indigo-200);
+  }
+
+  .border-indigo-300 {
+    border-color: var(--color-indigo-300);
   }
 
   .border-indigo-300\/50 {
@@ -1135,6 +1155,26 @@
 
   .bg-indigo-50 {
     background-color: var(--color-indigo-50);
+  }
+
+  .bg-indigo-50\/30 {
+    background-color: #eef2ff4d;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-indigo-50\/30 {
+      background-color: color-mix(in oklab, var(--color-indigo-50) 30%, transparent);
+    }
+  }
+
+  .bg-indigo-50\/50 {
+    background-color: #eef2ff80;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-indigo-50\/50 {
+      background-color: color-mix(in oklab, var(--color-indigo-50) 50%, transparent);
+    }
   }
 
   .bg-indigo-100 {
@@ -1447,6 +1487,10 @@
     padding-right: calc(var(--spacing) * 10);
   }
 
+  .pr-12 {
+    padding-right: calc(var(--spacing) * 12);
+  }
+
   .pl-3 {
     padding-left: calc(var(--spacing) * 3);
   }
@@ -1605,6 +1649,10 @@
 
   .text-indigo-300 {
     color: var(--color-indigo-300);
+  }
+
+  .text-indigo-400 {
+    color: var(--color-indigo-400);
   }
 
   .text-indigo-500 {
@@ -2127,6 +2175,12 @@
   @media (width >= 40rem) {
     .sm\:flex-row {
       flex-direction: row;
+    }
+  }
+
+  @media (width >= 40rem) {
+    .sm\:justify-end {
+      justify-content: flex-end;
     }
   }
 
