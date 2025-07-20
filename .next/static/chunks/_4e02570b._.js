@@ -1222,7 +1222,7 @@ function AddUserModal({ onSave, onCancel }) {
         columnNumber: 5
     }, this);
 }
-_s2(AddUserModal, "qkJ/5iAdJvIY2LtKPRQfdYozTHI=");
+_s2(AddUserModal, "PUYrWNdbFH5MFV9lYxptLnpJCz8=");
 _c2 = AddUserModal;
 function UserManagement() {
     _s3();

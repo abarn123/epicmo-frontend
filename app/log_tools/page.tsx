@@ -1,173 +1,754 @@
-import {
-  Search,
-  ScanBarcode,
-  CalendarDays,
-  UserRound,
-  PackageCheck,
-} from "lucide-react";
-import Link from "next/link";
+"use client";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
+import axios from "axios";
 
-export default function LogTools() {
+// Placeholder for toast notifications
+const toast = {
+  success: (message: string) => console.log("Sukses:", message),
+  error: (message: string) => console.error("Error:", message),
+};
+
+// Type definitions
+type Tool = {
+  id: number;
+  item_name: string;
+  item_status: string;
+  quantity: number;
+  category: string;
+};
+
+type BorrowRecord = {
+  id: number;
+  user_id: number;
+  user_name: string;
+  tool_id: number;
+  tool_name: string;
+  quantity: number;
+  borrow_date: string;
+  return_date: string | null;
+  status: "borrowed" | "returned";
+};
+
+type BorrowFormData = {
+  user_id: number;
+  tool_id: number;
+  quantity: number;
+  borrow_date: string;
+  return_date: string | null;
+};
+
+// Axios instance
+const api = axios.create({
+  baseURL: "http://192.168.110.100:8080",
+  timeout: 10000,
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      toast.error("Sesi kedaluwarsa. Silakan login kembali.");
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Mock tools data
+const mockTools: Tool[] = [
+  {
+    id: 101,
+    item_name: "Kamera Canon",
+    item_status: "Available",
+    quantity: 10,
+    category: "Electronics",
+  },
+  {
+    id: 102,
+    item_name: "Kain Warna Merah",
+    item_status: "Available",
+    quantity: 15,
+    category: "Textiles",
+  },
+  {
+    id: 103,
+    item_name: "Tripod",
+    item_status: "Available",
+    quantity: 5,
+    category: "Photography",
+  },
+  {
+    id: 104,
+    item_name: "Lensa Zoom",
+    item_status: "Available",
+    quantity: 3,
+    category: "Photography",
+  },
+];
+
+// Table Row Component
+function BorrowTableRow({
+  record,
+  onReturn,
+}: {
+  record: BorrowRecord;
+  onReturn?: (id: number) => void;
+}) {
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
-      <Sidebar />
-      <main className="flex-1 py-14 px-6 ml-64">
-        <section className="max-w-3xl mx-auto">
-          <h1 className="text-5xl font-extrabold text-indigo-800 mb-3 text-center drop-shadow-lg tracking-tight">
-            📝 Borrowing Form
-          </h1>
-          <p className="text-xl text-gray-700 mb-6 text-center">
-            Complete the form for a smooth borrowing process
-          </p>
+    <tr className="border-b border-gray-200 hover:bg-gray-50">
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="font-medium text-gray-900">{record.tool_name}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">{record.user_name}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">{record.quantity}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">
+          {new Date(record.borrow_date).toLocaleDateString()}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">
+          {record.return_date
+            ? new Date(record.return_date).toLocaleDateString()
+            : "-"}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <span
+          className={`px-2 py-1 text-xs rounded-full ${
+            record.status === "borrowed"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-green-100 text-green-800"
+          }`}
+        >
+          {record.status}
+        </span>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        {record.status === "borrowed" && onReturn && (
+          <button
+            onClick={() => onReturn(record.id)}
+            className="text-blue-600 hover:text-blue-900"
+          >
+            Tandai Dikembalikan
+          </button>
+        )}
+      </td>
+    </tr>
+  );
+}
 
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-indigo-100">
-            {/* Item Search */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-indigo-700 mb-2">
-                Search Item
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-indigo-400" />
-                </div>
-                <input
-                  type="text"
-                  className="block w-full pl-10 pr-12 py-3 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-indigo-50/50 shadow-sm"
-                  placeholder="Type item name or scan barcode"
-                />
-              </div>
-            </div>
+// Borrow Form Modal (unchanged from your original)
+function BorrowFormModal({
+  tools,
+  onBorrow,
+  onCancel,
+}: {
+  tools: Tool[];
+  onBorrow: (data: BorrowFormData) => void;
+  onCancel: () => void;
+}) {
+  const [formData, setFormData] = useState<BorrowFormData>({
+    user_id: 1,
+    tool_id: tools.length > 0 ? tools[0].id : 0,
+    quantity: 1,
+    borrow_date: new Date().toISOString().split("T")[0],
+    return_date: null,
+  });
 
-            {/* Item Information */}
-            <div className="border-2 border-indigo-100 rounded-xl p-5 mb-8 bg-indigo-50/30 shadow-inner">
-              <div className="flex items-center mb-4">
-                <div className="p-2 bg-indigo-100 rounded-lg mr-3 shadow-sm">
-                  <PackageCheck className="h-5 w-5 text-indigo-600" />
-                </div>
-                <h3 className="font-semibold text-lg text-indigo-800">
-                  Item Details
-                </h3>
-              </div>
+  const [availableQuantities, setAvailableQuantities] = useState<{
+    [key: number]: number;
+  }>({});
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { label: "Item Name", value: "-" },
-                  { label: "Item Code", value: "-" },
-                  { label: "Category", value: "-" },
-                  { label: "Available Stock", value: "-" },
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-white p-3 rounded-lg shadow-sm border border-indigo-50"
-                  >
-                    <p className="text-xs font-medium text-indigo-500 uppercase tracking-wider">
-                      {item.label}
-                    </p>
-                    <p className="font-medium text-gray-700 mt-1">
-                      {item.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+  useEffect(() => {
+    const quantities = tools.reduce((acc, tool) => {
+      acc[tool.id] = tool.quantity;
+      return acc;
+    }, {} as { [key: number]: number });
+    setAvailableQuantities(quantities);
+    if (tools.length > 0 && formData.tool_id === 0) {
+      setFormData((prev) => ({ ...prev, tool_id: tools[0].id }));
+    }
+  }, [tools]);
 
-            {/* Borrowing Form */}
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-indigo-700 mb-2">
-                  Borrower
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <UserRound className="h-5 w-5 text-indigo-400" />
-                  </div>
-                  <input
-                    type="text"
-                    className="block w-full pl-10 pr-3 py-3 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-indigo-50/30 shadow-sm"
-                    placeholder="Full name of borrower"
-                  />
-                </div>
-              </div>
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      if (name === "quantity") {
+        let qty = parseInt(value);
+        if (isNaN(qty) || qty < 1) qty = 1;
+        const selected = tools.find((t) => t.id === (prev.tool_id || 0));
+        const maxQty = selected ? selected.quantity : 1;
+        if (qty > maxQty) qty = maxQty;
+        return { ...prev, quantity: qty };
+      } else if (name === "tool_id") {
+        return { ...prev, tool_id: parseInt(value), quantity: 1 };
+      }
+      return { ...prev, [name]: value };
+    });
+  };
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-sm font-medium text-indigo-700 mb-2">
-                    Borrow Date
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <CalendarDays className="h-5 w-5 text-indigo-400" />
-                    </div>
-                    <input
-                      type="date"
-                      className="block w-full pl-10 pr-3 py-3 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-indigo-50/30 shadow-sm appearance-none"
-                    />
-                  </div>
-                </div>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onBorrow(formData);
+  };
 
-                <div>
-                  <label className="block text-sm font-medium text-indigo-700 mb-2">
-                    Return Date
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <CalendarDays className="h-5 w-5 text-indigo-400" />
-                    </div>
-                    <input
-                      type="date"
-                      className="block w-full pl-10 pr-3 py-3 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-indigo-50/30 shadow-sm appearance-none"
-                    />
-                  </div>
-                </div>
-              </div>
+  const selectedTool = tools.find((tool) => tool.id === formData.tool_id);
 
-              <div>
-                <label className="block text-sm font-medium text-indigo-700 mb-2">
-                  Purpose of Borrowing
-                </label>
-                <textarea
-                  rows={3}
-                  className="block w-full px-4 py-3 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-indigo-50/30 shadow-sm"
-                  placeholder="Explain the purpose of borrowing this item"
-                ></textarea>
-              </div>
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="bg-blue-600 p-5 text-white">
+          <h2 className="text-xl font-semibold">Pinjam Alat</h2>
+        </div>
 
-              <div className="flex items-start mt-6">
-                <div className="flex items-center h-5">
-                  <input
-                    id="terms-checkbox"
-                    type="checkbox"
-                    className="w-4 h-4 text-indigo-600 border-indigo-300 rounded focus:ring-indigo-500"
-                  />
-                </div>
-                <label
-                  htmlFor="terms-checkbox"
-                  className="ml-3 text-sm text-gray-600"
-                >
-                  I agree to take full responsibility for the borrowed item
-                  during the borrowing period
-                </label>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="mt-10 flex flex-col sm:flex-row sm:justify-end gap-4">
-              <Link
-                href="/tools"
-                className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 text-center hover:bg-gray-50 transition-colors font-medium shadow-sm"
-              >
-                Cancel
-              </Link>
-              <button
-                type="button"
-                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 rounded-xl text-white font-medium shadow-lg hover:shadow-xl transition-all"
-              >
-                Submit Borrow Request
-              </button>
-            </div>
+        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Alat
+            </label>
+            <select
+              name="tool_id"
+              value={formData.tool_id}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            >
+              <option value="">Pilih Alat</option>
+              {tools.map((tool) => (
+                <option key={tool.id} value={tool.id}>
+                  {tool.item_name} - Tersedia: {availableQuantities[tool.id] || 0}
+                </option>
+              ))}
+            </select>
           </div>
-        </section>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Jumlah
+            </label>
+            <input
+              type="number"
+              name="quantity"
+              min="1"
+              max={selectedTool ? availableQuantities[selectedTool.id] : 1}
+              value={formData.quantity}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+            {selectedTool && (
+              <p className="text-xs text-gray-500 mt-1">
+                Tersedia: {availableQuantities[selectedTool.id] || 0}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tanggal Peminjaman
+            </label>
+            <input
+              type="date"
+              name="borrow_date"
+              value={formData.borrow_date}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+            >
+              Pinjam
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// Main Component
+export default function ToolBorrowingSystem() {
+  const [tools, setTools] = useState<Tool[]>(mockTools);
+  const [borrowRecords, setBorrowRecords] = useState<BorrowRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showBorrowModal, setShowBorrowModal] = useState(false);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
+
+  const fetchBorrowRecords = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const recordsRes = await api.get("/data3");
+      const mappedRecords: BorrowRecord[] = recordsRes.data.data.map(
+        (record: any) => ({
+          id: record.log_tools,
+          user_id: record.user_id || 0,
+          user_name: record.user,
+          tool_id: record.item_id || 0,
+          tool_name: record.item_name,
+          quantity: record.quantity,
+          borrow_date: record.date_borrow,
+          return_date: record.date_return,
+          status: record.tools_status,
+        })
+      );
+      setBorrowRecords(mappedRecords);
+    } catch (err) {
+      console.error("Kesalahan pengambilan data:", err);
+      let errorMessage = "Gagal memuat data catatan peminjaman.";
+      if (axios.isAxiosError(err)) {
+        if (err.code === "ERR_NETWORK") {
+          errorMessage =
+            "Kesalahan Jaringan: Tidak dapat terhubung ke server API. Pastikan server backend berjalan di " +
+            api.defaults.baseURL +
+            " dan tidak ada masalah jaringan/CORS.";
+        } else if (err.response) {
+          errorMessage = `Kesalahan API: ${err.response.status} - ${
+            err.response.data?.message || err.message
+          }`;
+        } else {
+          errorMessage = err.message;
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBorrowRecords();
+  }, []);
+
+  const handleBorrowTool = async (data: BorrowFormData) => {
+    try {
+      const toolToUpdate = tools.find((tool) => tool.id === data.tool_id);
+      if (!toolToUpdate) {
+        toast.error("Alat tidak ditemukan.");
+        return;
+      }
+
+      if (toolToUpdate.quantity < data.quantity) {
+        toast.error("Jumlah tidak cukup tersedia.");
+        return;
+      }
+
+      const payload = {
+        user: "Pengguna Saat Ini",
+        item_name: toolToUpdate.item_name,
+        quantity: data.quantity,
+        date_borrow: data.borrow_date,
+        date_return: null,
+        tools_status: "borrowed",
+      };
+      console.log("Mengirimkan payload peminjaman:", payload);
+
+      const response = await axios.get("http://192.168.110.100:8080/data2");
+      console.log("Respons dari GET /data2:", response.data);
+      toast.success("Data berhasil diambil dari /data2!");
+
+      setShowBorrowModal(false);
+      fetchBorrowRecords();
+    } catch (err) {
+      console.error("Kesalahan saat meminjam alat:", err);
+      let errorMessage = "Gagal meminjam alat.";
+      if (axios.isAxiosError(err) && err.response) {
+        errorMessage = `Kesalahan API: ${err.response.status} - ${
+          err.response.data?.message || err.message
+        }`;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleReturnTool = async (id: number) => {
+    try {
+      const recordToReturn = borrowRecords.find((record) => record.id === id);
+      if (!recordToReturn) {
+        toast.error("Catatan peminjaman tidak ditemukan.");
+        return;
+      }
+
+      const payload = {
+        log_tools: recordToReturn.id,
+        user: recordToReturn.user_name,
+        item_name: recordToReturn.tool_name,
+        quantity: recordToReturn.quantity,
+        date_borrow: recordToReturn.borrow_date,
+        date_return: new Date().toISOString().split("T")[0],
+        tools_status: "returned",
+      };
+
+      console.log("Payload pengembalian:", payload);
+      const response = await api.put(`/data3/edit/${id}`, payload);
+
+      if (response.data && response.data.status === false) {
+        toast.error(
+          response.data.message || "Gagal mengembalikan alat (server error)."
+        );
+        return;
+      }
+
+      setBorrowRecords((prevRecords) =>
+        prevRecords.map((record) =>
+          record.id === id
+            ? {
+                ...record,
+                return_date: payload.date_return,
+                status: "returned",
+              }
+            : record
+        )
+      );
+
+      setTools((prevTools) =>
+        prevTools.map((tool) =>
+          tool.id === recordToReturn.tool_id
+            ? { ...tool, quantity: tool.quantity + recordToReturn.quantity }
+            : tool
+        )
+      );
+
+      toast.success("Alat berhasil dikembalikan!");
+      fetchBorrowRecords();
+    } catch (err) {
+      console.error("Kesalahan saat mengembalikan alat:", err);
+      let errorMessage = "Gagal mengembalikan alat.";
+      if (axios.isAxiosError(err)) {
+        if (err.response?.data?.message) {
+          errorMessage = `API: ${err.response.data.message}`;
+        } else if (err.response) {
+          errorMessage = `API: ${err.response.status} - ${err.response.statusText}`;
+        } else {
+          errorMessage = err.message;
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      toast.error(errorMessage);
+    }
+  };
+
+  const filteredRecords = borrowRecords.filter(
+    (record) =>
+      record.user_name.toLowerCase().includes(search.toLowerCase()) ||
+      record.tool_name.toLowerCase().includes(search.toLowerCase()) ||
+      record.status.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredRecords.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredRecords.length / itemsPerPage)
+  );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex">
+        <Sidebar />
+        <main className="flex-1 p-8 ml-64 flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <div className="text-gray-600">Memuat data...</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex">
+        <Sidebar />
+        <main className="flex-1 p-8 ml-64 flex flex-col items-center justify-center">
+          <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full text-center">
+            <div className="text-red-500 mb-4">
+              <svg
+                className="w-16 h-16 mx-auto"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Terjadi Kesalahan
+            </h3>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <button
+              onClick={fetchBorrowRecords}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      <Sidebar />
+      <main className="flex-1 p-8 ml-64">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-gray-800 mb-1">
+              Sistem Peminjaman Alat
+            </h1>
+            <p className="text-gray-500">
+              Kelola peminjaman dan pengembalian alat
+            </p>
+          </div>
+          <div className="mb-4 md:mb-0 md:ml-4 flex justify-end gap-3">
+            <a
+              href="/tools"
+              className="px-5 py-2.5 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 flex items-center"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Kembali ke Alat
+            </a>
+            <button
+              onClick={() => setShowBorrowModal(true)}
+              className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              Pinjam Alat
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Cari catatan..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        {filteredRecords.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+            <svg
+              className="w-16 h-16 mx-auto text-gray-400 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <h3 className="text-lg font-medium text-gray-900 mb-1">
+              {borrowRecords.length === 0
+                ? "Tidak ada catatan peminjaman ditemukan"
+                : "Tidak ada catatan yang cocok ditemukan"}
+            </h3>
+            <p className="text-gray-500 mb-4">
+              {borrowRecords.length === 0
+                ? "Mulai dengan meminjam alat"
+                : "Coba istilah pencarian yang berbeda"}
+            </p>
+            {borrowRecords.length === 0 && (
+              <button
+                onClick={() => setShowBorrowModal(true)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                Pinjam Alat Pertama
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Alat
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Peminjam
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Jumlah
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Tanggal Pinjam
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Tanggal Kembali
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {currentItems.map((record) => (
+                      <BorrowTableRow
+                        key={record.id}
+                        record={record}
+                        onReturn={
+                          record.status === "borrowed" ? handleReturnTool : undefined
+                        }
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <nav className="inline-flex rounded-md shadow-sm -space-x-px">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(1, prev - 1))
+                    }
+                    disabled={currentPage === 1}
+                    className={`px-3 py-2 rounded-l-md border ${
+                      currentPage === 1
+                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    Sebelumnya
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (number) => (
+                      <button
+                        key={number}
+                        onClick={() => setCurrentPage(number)}
+                        className={`px-4 py-2 border ${
+                          currentPage === number
+                            ? "bg-blue-50 border-blue-500 text-blue-600"
+                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                        }`}
+                      >
+                        {number}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-2 rounded-r-md border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    Berikutnya
+                  </button>
+                </nav>
+              </div>
+            )}
+          </>
+        )}
+
+        {showBorrowModal && (
+          <BorrowFormModal
+            tools={tools.filter((tool) => tool.quantity > 0)}
+            onBorrow={handleBorrowTool}
+            onCancel={() => setShowBorrowModal(false)}
+          />
+        )}
       </main>
     </div>
   );
