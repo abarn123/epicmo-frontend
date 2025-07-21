@@ -506,11 +506,14 @@ export default function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(6);
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, loading: authLoading } = useAuth();
 
   useEffect(() => {
     logTokenUsage();
     const fetchUsers = async () => {
+      if (authLoading) {
+        return;
+      }
       if (!token) {
         setError("User is not authenticated");
         setLoading(false);
