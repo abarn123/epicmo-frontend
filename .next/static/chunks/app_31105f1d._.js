@@ -1164,7 +1164,11 @@ function AddToolModal({ onSave, onCancel }) {
         columnNumber: 5
     }, this);
 }
+<<<<<<< HEAD
 _s2(AddToolModal, "wxRqOsot/Z4yJfpiGyXrQlEjP9g=");
+=======
+_s2(AddToolModal, "2mNxkBvG/KfLTpDqoXoGFTnj18w=");
+>>>>>>> ae74dab018b7b58675641d91e078c5cae144b7d3
 _c2 = AddToolModal;
 function toolsPage() {
     _s3();

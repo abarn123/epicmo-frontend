@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ export default function LoginPage() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -31,18 +33,18 @@ export default function LoginPage() {
 
       const data = response.data; // Menggunakan axios langsung untuk mendapatkan data
 
-      if (!response.status === 200 || !data.status) {
+      if (response.status !== 200 || !data.status) {
         throw new Error(data.message || "Username atau password tidak sesuai");
       }
 
       console.log("Login successful", data);
 
       // Simpan token jika kamu mau pakai untuk autentikasi
-      // localStorage.setItem("token", data.user.key);
+      login(data.token);
 
-      window.location.href = "/dashboard"; // Arahkan ke dashboard
+      window.location.href = "/user"; // Arahkan ke dashboard
     } catch (err: any) {
-      setError(err.response?.data?.message || "Terjadi kesalahan saat login");
+      setError(err.response?.data?.message || "Username atau password salah");
     } finally {
       setLoading(false);
     }
