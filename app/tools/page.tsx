@@ -297,9 +297,9 @@ function EditToolModal({
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none bg-white"
               required
             >
-              <option value="Baik">Baik</option>
-              <option value="Rusak">Rusak</option>
-              <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+              <option value="good">good</option>
+              <option value="damaged">damaged</option>
+              <option value="lost">lost</option>
             </select>
           </div>
 
@@ -335,7 +335,7 @@ function AddToolModal({
   const [formData, setFormData] = useState<ToolFormData>({
     item_name: "",
     stock: 0,
-    item_condition: "Baik",
+    item_condition: "good",
     category: "Elektronik",
   });
 
@@ -421,9 +421,9 @@ function AddToolModal({
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none bg-white"
               required
             >
-              <option value="Baik">Baik</option>
-              <option value="Rusak">Rusak</option>
-              <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+              <option value="good">good</option>
+              <option value="damaged">damaged</option>
+              <option value="lost">lost</option>
             </select>
           </div>
 
@@ -449,12 +449,14 @@ function AddToolModal({
 }
 
 // Main ToolsPage component
-export default function ToolsPage() {
+export default function toolsPage() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTool, setEditingTool] = useState<Tool | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6);
   const router = useRouter();
 
   useEffect(() => {
@@ -479,7 +481,7 @@ export default function ToolsPage() {
           id: t.id?.toString() || `generated-${index}-${Date.now()}`,
           item_name: t.item_name || "No name",
           stock: t.stock || 0,
-          item_condition: t.item_condition || "Baik",
+          item_condition: t.item_condition || "good",
           category: t.category || "Lainnya",
         }));
 
@@ -496,6 +498,12 @@ export default function ToolsPage() {
     fetchTools();
   }, []);
 
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = tools.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(tools.length / itemsPerPage);
+
   const handleSaveNewTool = async (newTool: ToolFormData) => {
     try {
       const response = await axios.post(
@@ -508,6 +516,7 @@ export default function ToolsPage() {
       };
       setTools([...tools, createdTool]);
       setShowAddModal(false);
+      setCurrentPage(1); // Reset to first page
       toast.success("Alat berhasil ditambahkan");
     } catch (err) {
       console.error("Error adding tool:", err);
@@ -534,6 +543,12 @@ export default function ToolsPage() {
     try {
       await axios.delete(`http://192.168.110.100:8080/data2/${toolId}`);
       setTools(tools.filter((t) => t.id !== toolId));
+      
+      // Adjust page if last item on page was deleted
+      if (currentItems.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+      
       toast.success("Alat berhasil dihapus");
     } catch (err) {
       console.error("Error deleting tool:", err);
@@ -647,7 +662,7 @@ export default function ToolsPage() {
           </div>
         </div>
 
-        {tools.length === 0 ? (
+        {currentItems.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-8 text-center">
             <svg
               className="w-16 h-16 mx-auto text-gray-400 mb-4"
@@ -676,16 +691,63 @@ export default function ToolsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => (
-              <ToolCard
-                key={`tool-${tool.id}`}
-                tool={tool}
-                onEdit={() => setEditingTool(tool)}
-                onDelete={handleDeleteTool}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentItems.map((tool) => (
+                <ToolCard
+                  key={`tool-${tool.id}`}
+                  tool={tool}
+                  onEdit={() => setEditingTool(tool)}
+                  onDelete={handleDeleteTool}
+                />
+              ))}
+            </div>
+
+            {/* Pagination controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <nav className="inline-flex rounded-md shadow-sm -space-x-px">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-2 rounded-l-md border ${
+                      currentPage === 1
+                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    Previous
+                  </button>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                    <button
+                      key={number}
+                      onClick={() => setCurrentPage(number)}
+                      className={`px-4 py-2 border ${
+                        currentPage === number
+                          ? "bg-blue-50 border-blue-500 text-blue-600"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                      }`}
+                    >
+                      {number}
+                    </button>
+                  ))}
+                  
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-2 rounded-r-md border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                    }`}
+                  >
+                    Next
+                  </button>
+                </nav>
+              </div>
+            )}
+          </>
         )}
 
         {showAddModal && (

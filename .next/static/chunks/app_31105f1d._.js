@@ -264,7 +264,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "default": (()=>ToolsPage)
+    "default": (()=>toolsPage)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
@@ -802,24 +802,24 @@ function EditToolModal({ tool, onSave, onCancel }) {
                                     required: true,
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                            value: "Baik",
-                                            children: "Baik"
+                                            value: "good",
+                                            children: "good"
                                         }, void 0, false, {
                                             fileName: "[project]/app/tools/page.tsx",
                                             lineNumber: 300,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                            value: "Rusak",
-                                            children: "Rusak"
+                                            value: "damaged",
+                                            children: "damaged"
                                         }, void 0, false, {
                                             fileName: "[project]/app/tools/page.tsx",
                                             lineNumber: 301,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                            value: "Perlu Perbaikan",
-                                            children: "Perlu Perbaikan"
+                                            value: "lost",
+                                            children: "lost"
                                         }, void 0, false, {
                                             fileName: "[project]/app/tools/page.tsx",
                                             lineNumber: 302,
@@ -891,7 +891,7 @@ function AddToolModal({ onSave, onCancel }) {
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         item_name: "",
         stock: 0,
-        item_condition: "Baik",
+        item_condition: "good",
         category: "Elektronik"
     });
     const handleChange = (e)=>{
@@ -1083,24 +1083,24 @@ function AddToolModal({ onSave, onCancel }) {
                                     required: true,
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                            value: "Baik",
-                                            children: "Baik"
+                                            value: "good",
+                                            children: "good"
                                         }, void 0, false, {
                                             fileName: "[project]/app/tools/page.tsx",
                                             lineNumber: 424,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                            value: "Rusak",
-                                            children: "Rusak"
+                                            value: "damaged",
+                                            children: "damaged"
                                         }, void 0, false, {
                                             fileName: "[project]/app/tools/page.tsx",
                                             lineNumber: 425,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                            value: "Perlu Perbaikan",
-                                            children: "Perlu Perbaikan"
+                                            value: "lost",
+                                            children: "lost"
                                         }, void 0, false, {
                                             fileName: "[project]/app/tools/page.tsx",
                                             lineNumber: 426,
@@ -1164,20 +1164,22 @@ function AddToolModal({ onSave, onCancel }) {
         columnNumber: 5
     }, this);
 }
-_s2(AddToolModal, "iRIa2vOZGYu+gtKEnql3mHlkTNk=");
+_s2(AddToolModal, "wxRqOsot/Z4yJfpiGyXrQlEjP9g=");
 _c2 = AddToolModal;
-function ToolsPage() {
+function toolsPage() {
     _s3();
     const [tools, setTools] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [showAddModal, setShowAddModal] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [editingTool, setEditingTool] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [currentPage, setCurrentPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
+    const [itemsPerPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(6);
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "ToolsPage.useEffect": ()=>{
+        "toolsPage.useEffect": ()=>{
             const fetchTools = {
-                "ToolsPage.useEffect.fetchTools": async ()=>{
+                "toolsPage.useEffect.fetchTools": async ()=>{
                     try {
                         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("http://192.168.110.100:8080/data2");
                         let toolsData = response.data;
@@ -1192,14 +1194,14 @@ function ToolsPage() {
                             throw new Error("API did not return an array of tools");
                         }
                         const processedTools = toolsData.map({
-                            "ToolsPage.useEffect.fetchTools.processedTools": (t, index)=>({
+                            "toolsPage.useEffect.fetchTools.processedTools": (t, index)=>({
                                     id: t.id?.toString() || `generated-${index}-${Date.now()}`,
                                     item_name: t.item_name || "No name",
                                     stock: t.stock || 0,
-                                    item_condition: t.item_condition || "Baik",
+                                    item_condition: t.item_condition || "good",
                                     category: t.category || "Lainnya"
                                 })
-                        }["ToolsPage.useEffect.fetchTools.processedTools"]);
+                        }["toolsPage.useEffect.fetchTools.processedTools"]);
                         setTools(processedTools);
                     } catch (err) {
                         console.error("Fetch error:", err);
@@ -1209,10 +1211,15 @@ function ToolsPage() {
                         setLoading(false);
                     }
                 }
-            }["ToolsPage.useEffect.fetchTools"];
+            }["toolsPage.useEffect.fetchTools"];
             fetchTools();
         }
-    }["ToolsPage.useEffect"], []);
+    }["toolsPage.useEffect"], []);
+    // Pagination logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = tools.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(tools.length / itemsPerPage);
     const handleSaveNewTool = async (newTool)=>{
         try {
             const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("http://192.168.110.100:8080/data2/add", newTool);
@@ -1225,6 +1232,7 @@ function ToolsPage() {
                 createdTool
             ]);
             setShowAddModal(false);
+            setCurrentPage(1); // Reset to first page
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$toastify$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success("Alat berhasil ditambahkan");
         } catch (err) {
             console.error("Error adding tool:", err);
@@ -1246,6 +1254,10 @@ function ToolsPage() {
         try {
             await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].delete(`http://192.168.110.100:8080/data2/${toolId}`);
             setTools(tools.filter((t)=>t.id !== toolId));
+            // Adjust page if last item on page was deleted
+            if (currentItems.length === 1 && currentPage > 1) {
+                setCurrentPage(currentPage - 1);
+            }
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$toastify$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success("Alat berhasil dihapus");
         } catch (err) {
             console.error("Error deleting tool:", err);
@@ -1258,7 +1270,7 @@ function ToolsPage() {
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$Sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/tools/page.tsx",
-                    lineNumber: 547,
+                    lineNumber: 562,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1270,7 +1282,7 @@ function ToolsPage() {
                                 className: "animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 550,
+                                lineNumber: 565,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1278,24 +1290,24 @@ function ToolsPage() {
                                 children: "Memuat data alat..."
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 551,
+                                lineNumber: 566,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/tools/page.tsx",
-                        lineNumber: 549,
+                        lineNumber: 564,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/tools/page.tsx",
-                    lineNumber: 548,
+                    lineNumber: 563,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/tools/page.tsx",
-            lineNumber: 546,
+            lineNumber: 561,
             columnNumber: 7
         }, this);
     }
@@ -1305,7 +1317,7 @@ function ToolsPage() {
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$Sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/tools/page.tsx",
-                    lineNumber: 561,
+                    lineNumber: 576,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1327,17 +1339,17 @@ function ToolsPage() {
                                         d: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                     }, void 0, false, {
                                         fileName: "[project]/app/tools/page.tsx",
-                                        lineNumber: 571,
+                                        lineNumber: 586,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/tools/page.tsx",
-                                    lineNumber: 565,
+                                    lineNumber: 580,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 564,
+                                lineNumber: 579,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1345,7 +1357,7 @@ function ToolsPage() {
                                 children: "Terjadi Kesalahan"
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 579,
+                                lineNumber: 594,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1353,7 +1365,7 @@ function ToolsPage() {
                                 children: error
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 582,
+                                lineNumber: 597,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1362,24 +1374,24 @@ function ToolsPage() {
                                 children: "Coba Lagi"
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 583,
+                                lineNumber: 598,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/tools/page.tsx",
-                        lineNumber: 563,
+                        lineNumber: 578,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/tools/page.tsx",
-                    lineNumber: 562,
+                    lineNumber: 577,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/tools/page.tsx",
-            lineNumber: 560,
+            lineNumber: 575,
             columnNumber: 7
         }, this);
     }
@@ -1388,7 +1400,7 @@ function ToolsPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$components$2f$Sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/tools/page.tsx",
-                lineNumber: 597,
+                lineNumber: 612,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1405,7 +1417,7 @@ function ToolsPage() {
                                         children: "Manajemen Alat"
                                     }, void 0, false, {
                                         fileName: "[project]/app/tools/page.tsx",
-                                        lineNumber: 601,
+                                        lineNumber: 616,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1413,13 +1425,13 @@ function ToolsPage() {
                                         children: "Kelola data alat dengan mudah dan efisien"
                                     }, void 0, false, {
                                         fileName: "[project]/app/tools/page.tsx",
-                                        lineNumber: 604,
+                                        lineNumber: 619,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 600,
+                                lineNumber: 615,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1441,19 +1453,19 @@ function ToolsPage() {
                                                     d: "M12 6v6m0 0v6m0-6h6m-6 0H6"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/tools/page.tsx",
-                                                    lineNumber: 619,
+                                                    lineNumber: 634,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/tools/page.tsx",
-                                                lineNumber: 613,
+                                                lineNumber: 628,
                                                 columnNumber: 15
                                             }, this),
                                             "Tambah Alat"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/tools/page.tsx",
-                                        lineNumber: 609,
+                                        lineNumber: 624,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1472,34 +1484,34 @@ function ToolsPage() {
                                                     d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/tools/page.tsx",
-                                                    lineNumber: 638,
+                                                    lineNumber: 653,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/tools/page.tsx",
-                                                lineNumber: 632,
+                                                lineNumber: 647,
                                                 columnNumber: 15
                                             }, this),
                                             "Log Alat"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/tools/page.tsx",
-                                        lineNumber: 628,
+                                        lineNumber: 643,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 608,
+                                lineNumber: 623,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/tools/page.tsx",
-                        lineNumber: 599,
+                        lineNumber: 614,
                         columnNumber: 9
                     }, this),
-                    tools.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    currentItems.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "bg-white rounded-xl shadow-sm p-8 text-center",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
@@ -1514,12 +1526,12 @@ function ToolsPage() {
                                     d: "M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                 }, void 0, false, {
                                     fileName: "[project]/app/tools/page.tsx",
-                                    lineNumber: 658,
+                                    lineNumber: 673,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 652,
+                                lineNumber: 667,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1527,7 +1539,7 @@ function ToolsPage() {
                                 children: "Belum ada alat"
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 665,
+                                lineNumber: 680,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1535,7 +1547,7 @@ function ToolsPage() {
                                 children: "Mulai dengan menambahkan alat baru"
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 668,
+                                lineNumber: 683,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1544,36 +1556,87 @@ function ToolsPage() {
                                 children: "Tambah Alat Pertama"
                             }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 671,
+                                lineNumber: 686,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/tools/page.tsx",
-                        lineNumber: 651,
+                        lineNumber: 666,
                         columnNumber: 11
-                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
-                        children: tools.map((tool)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ToolCard, {
-                                tool: tool,
-                                onEdit: ()=>setEditingTool(tool),
-                                onDelete: handleDeleteTool
-                            }, `tool-${tool.id}`, false, {
+                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
+                                children: currentItems.map((tool)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(ToolCard, {
+                                        tool: tool,
+                                        onEdit: ()=>setEditingTool(tool),
+                                        onDelete: handleDeleteTool
+                                    }, `tool-${tool.id}`, false, {
+                                        fileName: "[project]/app/tools/page.tsx",
+                                        lineNumber: 697,
+                                        columnNumber: 17
+                                    }, this))
+                            }, void 0, false, {
                                 fileName: "[project]/app/tools/page.tsx",
-                                lineNumber: 681,
+                                lineNumber: 695,
+                                columnNumber: 13
+                            }, this),
+                            totalPages > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex justify-center mt-8",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
+                                    className: "inline-flex rounded-md shadow-sm -space-x-px",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: ()=>setCurrentPage((prev)=>Math.max(1, prev - 1)),
+                                            disabled: currentPage === 1,
+                                            className: `px-3 py-2 rounded-l-md border ${currentPage === 1 ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"}`,
+                                            children: "Previous"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/tools/page.tsx",
+                                            lineNumber: 710,
+                                            columnNumber: 19
+                                        }, this),
+                                        Array.from({
+                                            length: totalPages
+                                        }, (_, i)=>i + 1).map((number)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: ()=>setCurrentPage(number),
+                                                className: `px-4 py-2 border ${currentPage === number ? "bg-blue-50 border-blue-500 text-blue-600" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"}`,
+                                                children: number
+                                            }, number, false, {
+                                                fileName: "[project]/app/tools/page.tsx",
+                                                lineNumber: 723,
+                                                columnNumber: 21
+                                            }, this)),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                            onClick: ()=>setCurrentPage((prev)=>Math.min(totalPages, prev + 1)),
+                                            disabled: currentPage === totalPages,
+                                            className: `px-3 py-2 rounded-r-md border ${currentPage === totalPages ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"}`,
+                                            children: "Next"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/tools/page.tsx",
+                                            lineNumber: 736,
+                                            columnNumber: 19
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/app/tools/page.tsx",
+                                    lineNumber: 709,
+                                    columnNumber: 17
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/app/tools/page.tsx",
+                                lineNumber: 708,
                                 columnNumber: 15
-                            }, this))
-                    }, void 0, false, {
-                        fileName: "[project]/app/tools/page.tsx",
-                        lineNumber: 679,
-                        columnNumber: 11
-                    }, this),
+                            }, this)
+                        ]
+                    }, void 0, true),
                     showAddModal && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AddToolModal, {
                         onSave: handleSaveNewTool,
                         onCancel: ()=>setShowAddModal(false)
                     }, void 0, false, {
                         fileName: "[project]/app/tools/page.tsx",
-                        lineNumber: 692,
+                        lineNumber: 754,
                         columnNumber: 11
                     }, this),
                     editingTool && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(EditToolModal, {
@@ -1582,33 +1645,31 @@ function ToolsPage() {
                         onCancel: ()=>setEditingTool(null)
                     }, void 0, false, {
                         fileName: "[project]/app/tools/page.tsx",
-                        lineNumber: 699,
+                        lineNumber: 761,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/tools/page.tsx",
-                lineNumber: 598,
+                lineNumber: 613,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/tools/page.tsx",
-        lineNumber: 596,
+        lineNumber: 611,
         columnNumber: 5
     }, this);
 }
-_s3(ToolsPage, "OFga7BEwzInsCNFxqAmErZa/Kp8=", false, function() {
+_s3(toolsPage, "TGQr0bHhCDQHu4qVKxTbOmDX5qA=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
 });
-_c3 = ToolsPage;
-var _c, _c1, _c2, _c3;
+var _c, _c1, _c2;
 __turbopack_context__.k.register(_c, "ToolCard");
 __turbopack_context__.k.register(_c1, "EditToolModal");
 __turbopack_context__.k.register(_c2, "AddToolModal");
-__turbopack_context__.k.register(_c3, "ToolsPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
