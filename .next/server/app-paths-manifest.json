@@ -1,5 +1,9 @@
 {
   "/favicon.ico/route": "app/favicon.ico/route.js",
+<<<<<<< HEAD
   "/login/page": "app/login/page.js",
+=======
+  "/tools/page": "app/tools/page.js",
+>>>>>>> 5a5d1581cdefd99922db1064b36812e29f775b2b
   "/user/page": "app/user/page.js"
 }
