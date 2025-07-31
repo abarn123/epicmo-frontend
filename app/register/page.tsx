@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, User, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -27,11 +26,6 @@ export default function RegisterPage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name) newErrors.name = "Full name is required";
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
@@ -100,7 +94,6 @@ export default function RegisterPage() {
             )}
           </div>
 
-          {/* Email */}
           {/* Password */}
           <div>
             <label
