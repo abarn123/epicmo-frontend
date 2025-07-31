@@ -89,9 +89,7 @@ export default function EditUserPage() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json'
           },
-            withCredentials: true
         }
       );
       toast.success("Pengguna berhasil diperbarui");

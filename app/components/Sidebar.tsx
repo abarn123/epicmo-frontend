@@ -2,17 +2,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar() {
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    // Add your logout logic here
-    // For example: clear auth tokens, cookies, etc.
-    console.log("User logged out");
-
-    // Redirect to login page
-    router.push("/login");
+    logout();
   };
 
   return (

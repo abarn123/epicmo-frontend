@@ -2,9 +2,12 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function AddPage() {
   const router = useRouter();
+  const { token } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,20 +29,29 @@ export default function AddPage() {
     setSubmitting(true);
     setError(null);
 
+    if (!token) {
+      toast.error("User is not authenticated");
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch("http://192.168.110.100:8080/data1/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        toast.error(errorData.message || "Failed to add user");
         throw new Error(errorData.message || "Failed to add user");
       }
 
+      toast.success("Pengguna berhasil ditambahkan");
       router.push("/user");
     } catch (err: unknown) {
       if (err instanceof Error) {

@@ -509,16 +509,19 @@ export default function UserManagement() {
   const { token, loading: authLoading } = useAuth();
 
   useEffect(() => {
+    // Wait for auth to finish loading
+    if (authLoading) {
+      return;
+    }
+    
+    if (!token) {
+      setError("User is not authenticated");
+      setLoading(false);
+      return;
+    }
+    
     logTokenUsage();
     const fetchUsers = async () => {
-      if (authLoading) {
-        return;
-      }
-      if (!token) {
-        setError("User is not authenticated");
-        setLoading(false);
-        return;
-      }
       console.log("Token used for fetchUsers:", token);
       try {
         const response = await axios.get("http://192.168.110.100:8080/data1", {
@@ -573,6 +576,7 @@ export default function UserManagement() {
         }
 
         setUsers(processedUsers);
+        setError(null); // Clear any previous errors
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err instanceof Error ? err.message : "Unknown error occurred");
@@ -583,7 +587,7 @@ export default function UserManagement() {
     };
 
     fetchUsers();
-  }, [token]);
+  }, [token, authLoading]);
 
   const handleAddUser = () => {
     setShowAddModal(true);
@@ -702,7 +706,7 @@ export default function UserManagement() {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
         <Sidebar />
@@ -716,7 +720,7 @@ export default function UserManagement() {
     );
   }
 
-  if (error) {
+  if (error && !loading && !authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
         <Sidebar />
@@ -742,7 +746,11 @@ export default function UserManagement() {
             </h3>
             <p className="text-gray-600 mb-6">{error}</p>
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                setError(null);
+                setLoading(true);
+                window.location.reload();
+              }}
               className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
             >
               Coba Lagi
