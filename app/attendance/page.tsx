@@ -1,222 +1,343 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Camera, User, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import Sidebar from "../components/Sidebar";
+import { FiSearch, FiDownload, FiCalendar, FiFilter } from "react-icons/fi";
 
-export default function Attendance() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isCameraLoading, setIsCameraLoading] = useState(true);
+interface AttendanceRecord {
+  id: number;
+  photo: string;
+  name: string;
+  date: string;
+  status: "present" | "late" | "absent" | "leave";
+}
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+export default function AttendancePage() {
+  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [photoTaken, setPhotoTaken] = useState(false);
-  const [photoData, setPhotoData] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
-    // Initialize camera when component mounts
-    const initCamera = async () => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error("Camera API not supported in this browser");
+        const response = await axios.get("http://192.168.110.100:8080/data4");
+        let data = response.data;
+        // Jika data dibungkus dalam objek, ambil array-nya
+        if (data && typeof data === "object" && !Array.isArray(data)) {
+          if (Array.isArray(data.data)) {
+            data = data.data;
+          } else if (Array.isArray(data.attendances)) {
+            data = data.attendances;
+          }
         }
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "user", // Use front camera
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-          },
-        });
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-        setIsCameraLoading(false);
-      } catch (err) {
-        console.error("Error accessing camera:", err);
-        setError("Could not access camera. Please check permissions.");
-        setIsCameraLoading(false);
+        // Normalisasi data agar sesuai tipe AttendanceRecord
+        const processed = (Array.isArray(data) ? data : []).map(
+          (item: any, idx: number) => ({
+            id: item.id ?? idx + 1,
+            photo: item.photo || "/images/employee1.jpg",
+            name: item.name || "-",
+            date: item.date || "-",
+            status: item.status || "present",
+          })
+        );
+        setAttendanceData(processed);
+      } catch (err: any) {
+        setError("Gagal mengambil data absensi");
+      } finally {
+        setLoading(false);
       }
     };
-
-    initCamera();
-
-    // Clean up function to stop camera when component unmounts
-    return () => {
-      if (videoRef.current?.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
+    fetchData();
   }, []);
 
-  const capturePhoto = () => {
-    if (videoRef.current) {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext("2d");
-
-      if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const photoUrl = canvas.toDataURL("image/png");
-        setPhotoData(photoUrl);
-        setPhotoTaken(true);
-      }
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "present":
+        return "bg-green-100 text-green-800";
+      case "late":
+        return "bg-yellow-100 text-yellow-800";
+      case "absent":
+        return "bg-red-100 text-red-800";
+      case "leave":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const retakePhoto = () => {
-    setPhotoTaken(false);
-    setPhotoData(null);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-gray-600 text-lg">Loading attendance data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Gagal Memuat Data
+          </h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Pagination logic
+  const totalItems = attendanceData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = attendanceData.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
-      <Sidebar />
-      <main className="flex-1 py-14 px-6 ml-64">
-        <section className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-50 mb-4 shadow-inner">
-              <User className="h-7 w-7 text-indigo-600" />
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-800">
+            Attendance Records
+          </h1>
+          <p className="text-gray-600">Employee attendance monitoring system</p>
+        </div>
+
+        {/* Tombol ke halaman attendance form */}
+
+        {/* Toolbar */}
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="text-gray-400" />
             </div>
-            <h1 className="text-4xl font-extrabold text-indigo-800 mb-3 text-center drop-shadow-lg tracking-tight">
-              👤 Face Verification
-            </h1>
-            <p className="text-xl text-gray-700 mb-6 text-center">
-              Please position your face in front of the camera for
-              identification
-            </p>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Search employee..."
+            />
           </div>
 
-          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-indigo-100">
-            {/* Camera Area */}
-            <div className="relative bg-indigo-50 rounded-xl overflow-hidden h-96 flex flex-col items-center justify-center mb-6">
-              {isCameraLoading ? (
-                <div className="text-center p-4">
-                  <Loader2 className="mx-auto h-14 w-14 text-indigo-300 mb-3 animate-spin" />
-                  <p className="text-indigo-500">Initializing camera...</p>
-                </div>
-              ) : error ? (
-                <div className="text-center p-4">
-                  <Camera className="mx-auto h-14 w-14 text-indigo-300 mb-3" />
-                  <p className="text-red-500">{error}</p>
-                </div>
-              ) : photoTaken ? (
-                <div className="relative w-full h-full">
-                  <img
-                    src={photoData || ""}
-                    alt="Captured"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 border-4 border-dashed border-indigo-300/50 rounded-xl m-4 pointer-events-none flex items-center justify-center">
-                    <div className="w-44 h-56 border-2 border-indigo-400 rounded-lg"></div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 border-4 border-dashed border-indigo-300/50 rounded-xl m-4 pointer-events-none flex items-center justify-center">
-                    <div className="w-44 h-56 border-2 border-indigo-400 rounded-lg"></div>
-                  </div>
-                </>
-              )}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FiCalendar className="text-gray-400" />
+              </div>
+              <input
+                type="date"
+                className="block pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
             </div>
 
-            {/* Status Indicator */}
-            <div className="mb-6 p-4 bg-indigo-50 rounded-lg flex items-center shadow-inner">
-              <Loader2 className="h-5 w-5 text-indigo-600 animate-spin mr-3" />
-              <span className="text-indigo-700 font-medium">
-                {photoTaken
-                  ? "Photo captured. Ready for verification"
-                  : "Processing: Waiting for face verification..."}
-              </span>
-            </div>
+            <select className="block pl-3 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <option>All Status</option>
+              <option>Present</option>
+              <option>Late</option>
+              <option>Absent</option>
+              <option>Leave</option>
+            </select>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col space-y-4">
-              {photoTaken ? (
-                <>
-                  <button
-                    onClick={retakePhoto}
-                    className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+            <a
+              href="/attendance/data"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 rounded-md"
+            >
+              <FiDownload className="mr-2" />
+              Isi Absen
+            </a>
+          </div>
+        </div>
+
+        {/* Attendance Table */}
+        <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Retake Photo
-                  </button>
-                  <button className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
-                    <CheckCircle2 className="h-5 w-5" />
-                    Verify Face
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={capturePhoto}
-                  disabled={isCameraLoading || !!error}
-                  className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Camera className="h-5 w-5" />
-                  Capture Photo
-                </button>
-              )}
-            </div>
+                    No
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Photo
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Date
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {currentItems.map((record) => (
+                  <tr key={record.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {record.id}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100">
+                        {record.photo ? (
+                          // Tampilkan base64 jika string base64, atau URL jika bukan
+                          <img
+                            className="h-full w-full object-cover"
+                            src={
+                              record.photo.startsWith("http")
+                                ? record.photo
+                                : record.photo.length > 100 &&
+                                  !record.photo.startsWith("data:")
+                                ? `data:image/jpeg;base64,${record.photo}`
+                                : record.photo
+                            }
+                            alt={record.name}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                "/images/employee1.jpg";
+                            }}
+                          />
+                        ) : (
+                          <img
+                            className="h-full w-full object-cover"
+                            src="/images/employee1.jpg"
+                            alt="default"
+                          />
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {record.name}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {record.date}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                          record.status
+                        )}`}
+                      >
+                        {record.status.charAt(0).toUpperCase() +
+                          record.status.slice(1)}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-            {/* Footer */}
-            <div className="mt-6 text-center">
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+        {/* Pagination */}
+        <div className="flex items-center justify-between mt-6 bg-white px-4 py-3 rounded-lg shadow-sm">
+          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700">
+                Showing{" "}
+                <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
+                <span className="font-medium">
+                  {Math.min(indexOfLastItem, totalItems)}
+                </span>{" "}
+                of <span className="font-medium">{totalItems}</span> results
+              </p>
+            </div>
+            <div>
+              <nav
+                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
               >
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back to Dashboard
-              </Link>
-            </div>
-          </div>
-
-          {/* Tips */}
-          <div className="mt-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-5 border border-indigo-100">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 p-1 bg-indigo-100 rounded-lg">
-                <svg
-                  className="h-5 w-5 text-indigo-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={currentPage === 1}
+                  className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
+                    currentPage === 1
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-500 hover:bg-gray-50"
+                  }`}
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <h3 className="text-lg font-semibold text-indigo-800">
-                  Optimal Verification Tips
-                </h3>
-                <div className="mt-2 text-gray-600 space-y-2">
-                  <p className="flex items-start">
-                    <span className="text-indigo-500 mr-2">•</span>
-                    Ensure your face is within the guide area
-                  </p>
-                  <p className="flex items-start">
-                    <span className="text-indigo-500 mr-2">•</span>
-                    Good lighting without glare
-                  </p>
-                  <p className="flex items-start">
-                    <span className="text-indigo-500 mr-2">•</span>
-                    Avoid accessories that cover your face
-                  </p>
-                </div>
-              </div>
+                  <span className="sr-only">Previous</span>
+                  &larr;
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (number) => (
+                    <button
+                      key={number}
+                      onClick={() => setCurrentPage(number)}
+                      className={`inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                        currentPage === number
+                          ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                      }`}
+                    >
+                      {number}
+                    </button>
+                  )
+                )}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
+                    currentPage === totalPages
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="sr-only">Next</span>
+                  &rarr;
+                </button>
+              </nav>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   );
 }
