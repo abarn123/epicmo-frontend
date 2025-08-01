@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
 import axios from "axios";
+import ProtectedRoute from "../components/ProtectedRoute";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
 
 // Placeholder for toast notifications
 const toast = {
@@ -482,59 +483,53 @@ export default function ToolBorrowingSystem() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex">
-        <Sidebar />
-        <main className="flex-1 p-8 ml-64 flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-            <div className="text-gray-600">Memuat data...</div>
-          </div>
-        </main>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <div className="text-gray-600">Memuat data...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex">
-        <Sidebar />
-        <main className="flex-1 p-8 ml-64 flex flex-col items-center justify-center">
-          <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full text-center">
-            <div className="text-red-500 mb-4">
-              <svg
-                className="w-16 h-16 mx-auto"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Terjadi Kesalahan
-            </h3>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={fetchBorrowRecords}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Coba Lagi
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </div>
-        </main>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Terjadi Kesalahan
+          </h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={fetchBorrowRecords}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+          >
+            Coba Lagi
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar />
-      <main className="flex-1 p-8 ml-64">
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="p-8 bg-gray-50">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-800 mb-1">
@@ -749,7 +744,8 @@ export default function ToolBorrowingSystem() {
             onCancel={() => setShowBorrowModal(false)}
           />
         )}
-      </main>
-    </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }
