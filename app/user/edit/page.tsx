@@ -5,6 +5,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
+import ProtectedRoute from "../../components/ProtectedRoute";
+import AuthenticatedLayout from "../../components/AuthenticatedLayout";
 
 type User = {
   id: string;
@@ -37,6 +39,9 @@ export default function EditUserPage() {
     axios
       .get(`http://192.168.110.100:8080/data1/${userId}`, {
         timeout: 5000,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((res) => {
         console.log("User data fetched:", res.data);
@@ -54,7 +59,10 @@ export default function EditUserPage() {
       })
       .catch((err) => {
         console.error("Error fetching user data:", err);
-        if (axios.isAxiosError(err) && err.response?.status === 404) {
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+          toast.error("Sesi kedaluwarsa. Silakan login kembali.");
+          setError("User is not authenticated");
+        } else if (axios.isAxiosError(err) && err.response?.status === 404) {
           toast.error("Pengguna tidak ditemukan");
           setError("Pengguna tidak ditemukan");
         } else if (axios.isAxiosError(err) && err.response?.status === 500) {
@@ -73,7 +81,7 @@ export default function EditUserPage() {
 
   useEffect(() => {
     fetchUserData();
-  }, [userId]);
+  }, [userId, token]);
 
   // Debug: Log user data when it changes
   useEffect(() => {
@@ -102,14 +110,25 @@ export default function EditUserPage() {
     try {
       await axios.put(
         `http://192.168.110.100:8080/data1/edit/${user.id}`,
-        user
+        user,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       toast.success("Pengguna berhasil diperbarui");
       // Redirect back to user list
       window.location.href = "/user";
     } catch (err) {
       console.error("Error updating user:", err);
-      toast.error("Gagal memperbarui pengguna");
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
+        toast.error("Sesi kedaluwarsa. Silakan login kembali.");
+      } else if (axios.isAxiosError(err) && err.response?.status === 500) {
+        toast.error("Server error. Silakan coba lagi.");
+      } else {
+        toast.error("Gagal memperbarui pengguna");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -127,9 +146,68 @@ export default function EditUserPage() {
   }
 
   if (error) {
+    // If error is authentication related, show access denied message
+    if (error === "User is not authenticated") {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+            <div className="text-red-500 mb-4">
+              <svg
+                className="w-16 h-16 mx-auto"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Akses Ditolak
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Anda harus login terlebih dahulu untuk mengakses halaman ini.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => window.location.href = "/login"}
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full flex items-center justify-center"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                  />
+                </svg>
+                Login
+              </button>
+              <button
+                onClick={() => window.location.href = "/"}
+                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition w-full"
+              >
+                Kembali ke Beranda
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // For other errors, show generic error message
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
           <div className="text-red-500 mb-4">
             <svg
               className="w-16 h-16 mx-auto"
@@ -141,17 +219,17 @@ export default function EditUserPage() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Terjadi Kesalahan
           </h3>
           <p className="text-gray-600 mb-6">{error}</p>
           <button
             onClick={fetchUserData}
-            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full"
           >
             Coba Lagi
           </button>
@@ -163,34 +241,36 @@ export default function EditUserPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with Back Button */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center">
-          <button
-            onClick={() => window.history.back()}
-            className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Go back"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          <h1 className="text-2xl font-bold text-gray-800">Edit User</h1>
-        </div>
-      </div>
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="min-h-screen bg-gray-50">
+          {/* Header with Back Button */}
+          <div className="bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center">
+              <button
+                onClick={() => window.history.back()}
+                className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Go back"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-500"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+              <h1 className="text-2xl font-bold text-gray-800">Edit User</h1>
+            </div>
+          </div>
 
-      {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Main Content */}
+          <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           {/* Form Header */}
           <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-blue-50">
@@ -367,6 +447,8 @@ export default function EditUserPage() {
           </form>
         </div>
       </main>
-    </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }

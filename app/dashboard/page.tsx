@@ -1,5 +1,7 @@
+"use client";
 import React from "react";
-import Sidebar from "../components/Sidebar";
+import ProtectedRoute from "../components/ProtectedRoute";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
 
 const stats = [
   {
@@ -80,60 +82,61 @@ const activities = [
 
 export default function DashboardPage() {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <main className="flex-1 p-8 ml-64 bg-gradient-to-br from-gray-50 to-blue-100">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4 border border-gray-100 hover:shadow-2xl transition"
-            >
-              <div>{stat.icon}</div>
-              <div>
-                <div className="text-2xl font-bold text-indigo-700">
-                  {stat.value}
-                </div>
-                <div className="text-gray-500 text-sm font-medium">
-                  {stat.label}
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="p-8 bg-gradient-to-br from-gray-50 to-blue-100">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+            {stats.map((stat) => (
+              <div
+                key={stat.label}
+                className="bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4 border border-gray-100 hover:shadow-2xl transition"
+              >
+                <div>{stat.icon}</div>
+                <div>
+                  <div className="text-2xl font-bold text-indigo-700">
+                    {stat.value}
+                  </div>
+                  <div className="text-gray-500 text-sm font-medium">
+                    {stat.label}
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Recent Activity
+              </h2>
+              <ul className="divide-y divide-gray-100">
+                {activities.map((act, idx) => (
+                  <li key={idx} className="py-3 flex items-start gap-3">
+                    <span className="text-xs text-gray-400 w-16 flex-shrink-0">
+                      {act.time}
+                    </span>
+                    <span className="text-gray-700 text-sm">{act.desc}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Recent Activity
-            </h2>
-            <ul className="divide-y divide-gray-100">
-              {activities.map((act, idx) => (
-                <li key={idx} className="py-3 flex items-start gap-3">
-                  <span className="text-xs text-gray-400 w-16 flex-shrink-0">
-                    {act.time}
-                  </span>
-                  <span className="text-gray-700 text-sm">{act.desc}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-gradient-to-br from-blue-200 to-indigo-200 rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Welcome to Epicmo!
-            </h2>
-            <p className="text-gray-600 text-center mb-6">
-              Manage your users, tools, and projects with a modern, professional
-              dashboard. All your activities and stats in one place.
-            </p>
-            <img
-              src="/epicmo.logo.png"
-              alt="Epicmo Logo"
-              className="w-32 h-32 object-contain mb-2"
-            />
+            <div className="bg-gradient-to-br from-blue-200 to-indigo-200 rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-gray-100">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Welcome to Epicmo!
+              </h2>
+              <p className="text-gray-600 text-center mb-6">
+                Manage your users, tools, and projects with a modern, professional
+                dashboard. All your activities and stats in one place.
+              </p>
+              <img
+                src="/epicmo.logo.png"
+                alt="Epicmo Logo"
+                className="w-32 h-32 object-contain mb-2"
+              />
+            </div>
           </div>
         </div>
-      </main>
-    </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }

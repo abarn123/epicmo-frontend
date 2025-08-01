@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Sidebar from "../components/Sidebar";
+import { useAuth } from "../context/AuthContext";
+import ProtectedRoute from "../components/ProtectedRoute";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
 
 // Type definitions
 type Tool = {
@@ -458,11 +460,23 @@ export default function toolsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
   const router = useRouter();
+  const { token } = useAuth();
 
   useEffect(() => {
     const fetchTools = async () => {
       try {
-        const response = await axios.get("http://192.168.110.100:8080/data2");
+        // Check if token exists
+        if (!token) {
+          setError("User is not authenticated");
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get("http://192.168.110.100:8080/data2", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         let toolsData = response.data;
         
         if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
@@ -488,7 +502,11 @@ export default function toolsPage() {
         setTools(processedTools);
       } catch (err) {
         console.error("Fetch error:", err);
-        setError(err instanceof Error ? err.message : "Unknown error occurred");
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+          setError("User is not authenticated");
+        } else {
+          setError(err instanceof Error ? err.message : "Unknown error occurred");
+        }
         toast.error("Gagal memuat data alat");
       } finally {
         setLoading(false);
@@ -496,7 +514,7 @@ export default function toolsPage() {
     };
 
     fetchTools();
-  }, []);
+  }, [token]);
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -508,7 +526,12 @@ export default function toolsPage() {
     try {
       const response = await axios.post(
         "http://192.168.110.100:8080/data2/add",
-        newTool
+        newTool,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       const createdTool = {
         ...newTool,
@@ -528,7 +551,12 @@ export default function toolsPage() {
     try {
       await axios.put(
         `http://192.168.110.100:8080/data2/${editedTool.id}`,
-        editedTool
+        editedTool,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setTools(tools.map((t) => (t.id === editedTool.id ? editedTool : t)));
       setEditingTool(null);
@@ -541,7 +569,11 @@ export default function toolsPage() {
 
   const handleDeleteTool = async (toolId: string) => {
     try {
-      await axios.delete(`http://192.168.110.100:8080/data2/${toolId}`);
+      await axios.delete(`http://192.168.110.100:8080/data2/${toolId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTools(tools.filter((t) => t.id !== toolId));
       
       // Adjust page if last item on page was deleted
@@ -559,20 +591,20 @@ export default function toolsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
-          <div className="text-gray-600">Memuat data alat...</div>
-        </div>
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
+            <div className="text-gray-600">Memuat data alat...</div>
+          </div>
       </div>
     );
   }
 
   if (error) {
-    // Jika error adalah "User is not authenticated", tampilkan tanpa sidebar
+    // If error is authentication related, show access denied message
     if (error === "User is not authenticated") {
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
+          <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
             <div className="text-red-500 mb-4">
               <svg
                 className="w-16 h-16 mx-auto"
@@ -588,20 +620,35 @@ export default function toolsPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Akses Ditolak
             </h3>
-            <p className="text-gray-600 mb-6">{error}</p>
+            <p className="text-gray-600 mb-6">
+              Anda harus login terlebih dahulu untuk mengakses halaman ini.
+            </p>
             <div className="space-y-3">
               <button
-                onClick={() => window.location.href = "/login"}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full"
+                onClick={() => router.push("/login")}
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full flex items-center justify-center"
               >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                  />
+                </svg>
                 Login
               </button>
               <button
-                onClick={() => window.location.href = "/"}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition w-full"
+                onClick={() => router.push("/")}
+                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition w-full"
               >
                 Kembali ke Beranda
               </button>
@@ -611,47 +658,44 @@ export default function toolsPage() {
       );
     }
 
-    // Untuk error lain, tampilkan dengan sidebar
+    // For other errors, show generic error message
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
-        <Sidebar />
-        <main className="flex-1 p-8 ml-64 flex flex-col items-center justify-center">
-          <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full text-center">
-            <div className="text-red-500 mb-4">
-              <svg
-                className="w-16 h-16 mx-auto"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Terjadi Kesalahan
-            </h3>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Coba Lagi
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </div>
-        </main>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Terjadi Kesalahan
+          </h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full"
+          >
+            Coba Lagi
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
-      <Sidebar />
-      <main className="flex-1 p-8 ml-64">
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-800 mb-1">
@@ -805,7 +849,8 @@ export default function toolsPage() {
             onCancel={() => setEditingTool(null)}
           />
         )}
-      </main>
-    </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }

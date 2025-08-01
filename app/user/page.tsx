@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import axios from "axios"; // Tambahkan di bagian atas file
+import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { logTokenUsage } from "../../debug_frontend_token";
+import ProtectedRoute from "../components/ProtectedRoute";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
 
 type User = {
   id: string;
@@ -474,11 +475,11 @@ export default function UserManagement() {
       return;
     }
     
-    if (!token) {
-      setError("User is not authenticated");
-      setLoading(false);
-      return;
-    }
+      if (!token) {
+        setError("User is not authenticated");
+        setLoading(false);
+        return;
+      }
     
     logTokenUsage();
     const fetchUsers = async () => {
@@ -667,103 +668,56 @@ export default function UserManagement() {
   if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
-          <div className="text-gray-600">Memuat data pengguna...</div>
-        </div>
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
+            <div className="text-gray-600">Memuat data pengguna...</div>
+          </div>
       </div>
     );
   }
 
   if (error && !loading && !authLoading) {
-    // Jika error adalah "User is not authenticated", tampilkan tanpa sidebar
-    if (error === "User is not authenticated") {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
-            <div className="text-red-500 mb-4">
-              <svg
-                className="w-16 h-16 mx-auto"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Akses Ditolak
-            </h3>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <div className="space-y-3">
-              <button
-                onClick={() => window.location.href = "/login"}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => window.location.href = "/"}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition w-full"
-              >
-                Kembali ke Beranda
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Untuk error lain, tampilkan dengan sidebar
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
-        <Sidebar />
-        <main className="flex-1 p-8 ml-64 flex flex-col items-center justify-center">
-          <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full text-center">
-            <div className="text-red-500 mb-4">
-              <svg
-                className="w-16 h-16 mx-auto"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Terjadi Kesalahan
-            </h3>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={() => {
-                setError(null);
-                setLoading(true);
-                window.location.reload();
-              }}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Coba Lagi
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </div>
-        </main>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Terjadi Kesalahan
+          </h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              window.location.reload();
+            }}
+            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+          >
+            Coba Lagi
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex">
-      <Sidebar />
-      <main className="flex-1 p-8 ml-64">
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-800 mb-1">
@@ -958,7 +912,8 @@ export default function UserManagement() {
             onCancel={() => setEditingUser(null)}
           />
         )}
-      </main>
-    </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }

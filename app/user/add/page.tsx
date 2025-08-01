@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import ProtectedRoute from "../../components/ProtectedRoute";
+import AuthenticatedLayout from "../../components/AuthenticatedLayout";
 
 export default function AddPage() {
   const router = useRouter();
@@ -64,34 +66,36 @@ export default function AddPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with Back Button */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center">
-         <button
-      onClick={() => router.back()}
-      className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-      aria-label="Go back"
-    >
-     <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-    </button>
-          <h1 className="text-2xl font-bold text-gray-800">Add New User</h1>
-        </div>
-      </div>
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="min-h-screen bg-gray-50">
+          {/* Header with Back Button */}
+          <div className="bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center">
+             <button
+          onClick={() => router.back()}
+          className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="Go back"
+        >
+         <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-500"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+        </button>
+              <h1 className="text-2xl font-bold text-gray-800">Add New User</h1>
+            </div>
+          </div>
 
-      {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Main Content */}
+          <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           {/* Form Header */}
           <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-blue-50">
@@ -290,6 +294,8 @@ export default function AddPage() {
           </form>
         </div>
       </main>
-    </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }
