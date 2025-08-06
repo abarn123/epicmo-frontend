@@ -393,9 +393,13 @@ export default function EditUserPage() {
                   required
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm sm:text-sm text-black"
                 >
+                  {/* Always show current role as selected, even if not in default list */}
+                  {!["admin","staff","freelance"].includes((user.role||"").toLowerCase()) && user.role && (
+                    <option value={user.role}>{user.role}</option>
+                  )}
                   <option value="admin">Admin</option>
-                  <option value="Staff">Staff</option>
-                  <option value="Freelance">Freelance</option>
+                  <option value="staff">Staff</option>
+                  <option value="freelance">Freelance</option>
                 </select>
               </div>
             </div>

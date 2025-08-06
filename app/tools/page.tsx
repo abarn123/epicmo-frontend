@@ -695,7 +695,7 @@ export default function toolsPage() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen flex flex-col p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-800 mb-1">
@@ -790,7 +790,7 @@ export default function toolsPage() {
 
             {/* Pagination controls */}
             {totalPages > 1 && (
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-center mt-8 mt-auto">
                 <nav className="inline-flex rounded-md shadow-sm -space-x-px">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
