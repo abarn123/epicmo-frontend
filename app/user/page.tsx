@@ -220,243 +220,9 @@ function UserCard({
   );
 }
 
-function EditUserModal({
-  user,
-  onSave,
-  onCancel,
-}: {
-  user: User;
-  onSave: (user: User) => void;
-  onCancel: () => void;
-}) {
-  const [formData, setFormData] = useState<User>({ ...user, role: user.role.toLowerCase() });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-white">
-          <h2 className="text-xl font-semibold">Edit Pengguna</h2>
-          <p className="text-blue-100 text-sm">Perbarui informasi pengguna</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nama Lengkap
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-              required
-            />
-          </div>
 
 
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                No. Telepon
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Role
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none bg-white"
-                required
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-                <option value="staff">Staff</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Alamat
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-            >
-              Simpan Perubahan
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function AddUserModal({
-  onSave,
-  onCancel,
-}: {
-  onSave: (user: UserFormData) => void;
-  onCancel: () => void;
-}) {
-  const [formData, setFormData] = useState<UserFormData>({
-    name: "",
-    phone: "",
-    address: "",
-    role: "user",
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-white">
-          <h2 className="text-xl font-semibold">Tambah Pengguna Baru</h2>
-          <p className="text-blue-100 text-sm">
-            Isi form untuk menambahkan pengguna baru
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nama Lengkap
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-              required
-            />
-          </div>
-
-
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                No. Telepon
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Role
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none bg-white"
-                required
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Alamat
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-            >
-              Tambah Pengguna
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
 
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
@@ -596,10 +362,11 @@ export default function UserManagement() {
       // Kirim hanya field yang diperlukan, dan pastikan role lowercase
       const { id, name, phone, address, role } = updatedUser;
       const payload = {
+        id,
         name,
         phone,
         address,
-        role: role.toLowerCase(),
+        role: role,
       };
       console.log("Payload for update:", payload);
       const response = await axios.put(
@@ -627,9 +394,11 @@ export default function UserManagement() {
       console.error("Error updating user:", err);
       // Tampilkan pesan error detail jika ada
       if (axios.isAxiosError(err) && err.response) {
-        toast.error(
-          err.response.data?.message || "Gagal menyimpan perubahan (400)"
-        );
+        // Tampilkan seluruh error detail dari backend
+        const detail = typeof err.response.data === "string"
+          ? err.response.data
+          : JSON.stringify(err.response.data);
+        toast.error(detail || "Gagal menyimpan perubahan (400)");
       } else {
         toast.error("Gagal menyimpan perubahan");
       }
@@ -918,20 +687,8 @@ export default function UserManagement() {
             </div>
           )}
 
-          {showAddModal && (
-            <AddUserModal
-              onSave={handleSaveNewUser}
-              onCancel={() => setShowAddModal(false)}
-            />
-          )}
-
-          {editingUser && (
-            <EditUserModal
-              user={editingUser}
-              onSave={handleSaveEditedUser}
-              onCancel={() => setEditingUser(null)}
-            />
-          )}
+          
+          
         </div>
       </AuthenticatedLayout>
     </ProtectedRoute>
