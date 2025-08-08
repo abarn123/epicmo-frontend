@@ -398,8 +398,8 @@ export default function EditUserPage() {
                     <option value={user.role}>{user.role}</option>
                   )}
                   <option value="admin">Admin</option>
-                  <option value="Staff">Staff</option>
-                  <option value="Freelance">Freelance</option>
+                  <option value="staff">Staff</option>
+                  <option value="freelance">Freelance</option>
                 </select>
               </div>
             </div>

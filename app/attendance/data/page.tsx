@@ -395,9 +395,9 @@ export default function AttendanceFormPage() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 >
-                  <option value="present">Hadir</option>
-                  <option value="permission">Izin</option>
-                  <option value="sick">Sakit</option>
+                  <option value="present">Present</option>
+                  <option value="permission">Permission</option>
+                  <option value="sick">Sick</option>
                 </select>
               </div>
             </div>
