@@ -1,5 +1,6 @@
+
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
@@ -9,7 +10,7 @@ import AuthenticatedLayout from "../../components/AuthenticatedLayout";
 
 export default function AddPage() {
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, loading: authLoading } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -18,6 +19,13 @@ export default function AddPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Auto-redirect ke login kalau token ilang
+  useEffect(() => {
+    if (!authLoading && !token) {
+      window.location.href = "/login";
+    }
+  }, [token, authLoading]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

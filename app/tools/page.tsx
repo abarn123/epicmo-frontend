@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -460,9 +461,10 @@ export default function toolsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, loading: authLoading } = useAuth();
 
   useEffect(() => {
+    if (authLoading) return;
     const fetchTools = async () => {
       try {
         // Check if token exists
@@ -514,7 +516,7 @@ export default function toolsPage() {
     };
 
     fetchTools();
-  }, [token]);
+  }, [token, authLoading]);
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -588,7 +590,7 @@ export default function toolsPage() {
     }
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
           <div className="flex flex-col items-center">
@@ -599,7 +601,7 @@ export default function toolsPage() {
     );
   }
 
-  if (error) {
+  if (error && !authLoading) {
     // If error is authentication related, show access denied message
     if (error === "User is not authenticated") {
       return (
