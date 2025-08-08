@@ -646,12 +646,7 @@ export default function toolsPage() {
                 </svg>
                 Login
               </button>
-              <button
-                onClick={() => router.push("/")}
-                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition w-full"
-              >
-                Kembali ke Beranda
-              </button>
+              
             </div>
           </div>
         </div>
