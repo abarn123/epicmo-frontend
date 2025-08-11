@@ -10,7 +10,7 @@ interface AttendanceRecord {
   name: string;
   date: string;
   time: string;
-  status: "present" | "late" | "absent" | "leave";
+  status: "present" | "permission" | "sick";
 }
 
 export default function AttendancePage() {
@@ -112,11 +112,9 @@ export default function AttendancePage() {
     switch (status) {
       case "present":
         return "bg-green-100 text-green-800";
-      case "late":
-        return "bg-yellow-100 text-yellow-800";
-      case "absent":
+      case "sick":
         return "bg-red-100 text-red-800";
-      case "leave":
+      case "permission":
         return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -151,7 +149,7 @@ export default function AttendancePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-gray-600 text-lg">Loading attendance data...</div>
+        <div className="text-gray-600 text-lg">Memuat data absensi...</div>
       </div>
     );
   }
@@ -200,10 +198,10 @@ export default function AttendancePage() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-800">
-              Attendance Records
+              Absensi
             </h1>
             <p className="text-gray-600">
-              Employee attendance monitoring system
+              Sistem pemantauan kehadiran karyawan
             </p>
           </div>
 
@@ -216,7 +214,7 @@ export default function AttendancePage() {
               <input
                 type="text"
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Search employee..."
+                placeholder="Cari karyawan..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -244,10 +242,10 @@ export default function AttendancePage() {
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
                 >
-                  <option value="">All Status</option>
-                  <option value="present">Present</option>
-                  <option value="sick">Sick</option>
-                  <option value="permission">Permission</option>
+                  <option value="">Semua Status</option>
+                  <option value="present">Hadir</option>
+                  <option value="permission">Izin</option>
+                  <option value="sick">Sakit</option>
                 </select>
               </div>
 
@@ -277,25 +275,25 @@ export default function AttendancePage() {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Photo
+                      Foto
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Name
+                      Nama
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Date
+                      Tanggal
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Time
+                      Waktu
                     </th>
                     <th
                       scope="col"
@@ -357,8 +355,9 @@ export default function AttendancePage() {
                               record.status
                             )}`}
                           >
-                            {record.status.charAt(0).toUpperCase() +
-                              record.status.slice(1)}
+                            {record.status === "present" && "Hadir"}
+                            {record.status === "permission" && "Izin"}
+                            {record.status === "sick" && "Sakit"}
                           </span>
                         </td>
                       </tr>
@@ -369,7 +368,7 @@ export default function AttendancePage() {
                         colSpan={6}
                         className="px-6 py-4 text-center text-sm text-gray-500"
                       >
-                        No attendance records found
+                        Tidak ada data absensi ditemukan
                       </td>
                     </tr>
                   )}
@@ -378,7 +377,7 @@ export default function AttendancePage() {
             </div>
           </div>
 
-          {/* Sticky Pagination Footer (match user management) */}
+          {/* Sticky Pagination Footer */}
           {totalItems > 0 && totalPages > 1 && (
             <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4 mt-8">
               <nav
@@ -394,7 +393,7 @@ export default function AttendancePage() {
                       : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                   }`}
                 >
-                  <span className="sr-only">Previous</span>
+                  <span className="sr-only">Sebelumnya</span>
                   <svg
                     className="h-5 w-5"
                     fill="currentColor"
@@ -435,7 +434,7 @@ export default function AttendancePage() {
                       : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                   }`}
                 >
-                  <span className="sr-only">Next</span>
+                  <span className="sr-only">Selanjutnya</span>
                   <svg
                     className="h-5 w-5"
                     fill="currentColor"

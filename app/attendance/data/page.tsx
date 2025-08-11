@@ -60,7 +60,7 @@ export default function AttendanceFormPage() {
 
         // Handle different response formats
         let usersData = [];
-        
+
         if (Array.isArray(response.data)) {
           usersData = response.data;
         } else if (response.data?.users && Array.isArray(response.data.users)) {
@@ -70,12 +70,12 @@ export default function AttendanceFormPage() {
         }
 
         // Validate and transform data
-       const validatedUsers = usersData
-  .map((item: any) => ({
-    user_id: item.user_id || item.id || "",
-    name: item.name || ""
-  }))
-  .filter((item: any) => item.user_id && item.name); // Only keep items with both ID and name
+        const validatedUsers = usersData
+          .map((item: any) => ({
+            user_id: item.user_id || item.id || "",
+            name: item.name || "",
+          }))
+          .filter((item: any) => item.user_id && item.name); // Only keep items with both ID and name
 
         setUsers(validatedUsers);
       } catch (err) {
@@ -100,7 +100,7 @@ export default function AttendanceFormPage() {
         minute: "2-digit",
         second: "2-digit",
       });
-      setFormData(prev => ({ ...prev, time: timeString }));
+      setFormData((prev) => ({ ...prev, time: timeString }));
     };
 
     updateTime();
@@ -114,9 +114,10 @@ export default function AttendanceFormPage() {
 
     const initializeCamera = async () => {
       try {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
+        const isMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          );
 
         const constraints: MediaStreamConstraints = {
           audio: false,
@@ -145,7 +146,7 @@ export default function AttendanceFormPage() {
     initializeCamera();
 
     return () => {
-      mediaStream?.getTracks().forEach(track => track.stop());
+      mediaStream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
 
@@ -171,19 +172,19 @@ export default function AttendanceFormPage() {
 
     const photoData = canvasRef.current.toDataURL("image/jpeg");
     setCapturedPhoto(photoData);
-    setFormData(prev => ({ ...prev, photo: photoData }));
+    setFormData((prev) => ({ ...prev, photo: photoData }));
   };
 
   const retakePhoto = () => {
     setCapturedPhoto(null);
-    setFormData(prev => ({ ...prev, photo: "" }));
+    setFormData((prev) => ({ ...prev, photo: "" }));
   };
 
   const handleUserSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUserId = e.target.value;
-    const selectedUser = users.find(user => user.user_id === selectedUserId);
+    const selectedUser = users.find((user) => user.user_id === selectedUserId);
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       user_id: selectedUserId,
       name: selectedUser ? selectedUser.name : "",
@@ -238,7 +239,8 @@ export default function AttendanceFormPage() {
     } catch (err: any) {
       let errorMessage = "Terjadi kesalahan";
       if (err.response) {
-        errorMessage = err.response.data?.message || 
+        errorMessage =
+          err.response.data?.message ||
           `Error ${err.response.status}: ${err.response.statusText}`;
       } else if (err.request) {
         errorMessage = "Tidak ada respon dari server";
@@ -255,7 +257,7 @@ export default function AttendanceFormPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   if (success) {
@@ -299,9 +301,11 @@ export default function AttendanceFormPage() {
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         <div className="p-6">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Isi Absensi</h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Formulir Absensi
+            </h2>
             <p className="text-gray-600">
-              Silakan lengkapi form absensi harian
+              Silakan lengkapi formulir absensi harian Anda
             </p>
           </div>
 
@@ -336,7 +340,7 @@ export default function AttendanceFormPage() {
                     onClick={retakePhoto}
                     className="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                   >
-                    <FiX className="mr-2" /> Ambil Ulang
+                    <FiX className="mr-2" /> Ambil Ulang Foto
                   </button>
                 ) : (
                   <button
@@ -380,7 +384,7 @@ export default function AttendanceFormPage() {
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                     >
                       <option value="">Pilih User ID</option>
-                      {users.map(user => (
+                      {users.map((user) => (
                         <option key={user.user_id} value={user.user_id}>
                           {user.user_id} - {user.name}
                         </option>
@@ -453,9 +457,9 @@ export default function AttendanceFormPage() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 >
-                  <option value="present">Present</option>
-                  <option value="permission">Permission</option>
-                  <option value="sick">Sick</option>
+                  <option value="present">Hadir</option>
+                  <option value="permission">Izin</option>
+                  <option value="sick">Sakit</option>
                 </select>
               </div>
             </div>
