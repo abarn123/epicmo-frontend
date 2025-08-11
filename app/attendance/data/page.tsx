@@ -57,10 +57,31 @@ export default function AttendanceFormPage() {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUsers(response.data);
+
+        // Handle different response formats
+        let usersData = [];
+        
+        if (Array.isArray(response.data)) {
+          usersData = response.data;
+        } else if (response.data?.users && Array.isArray(response.data.users)) {
+          usersData = response.data.users;
+        } else if (response.data?.data && Array.isArray(response.data.data)) {
+          usersData = response.data.data;
+        }
+
+        // Validate and transform data
+        const validatedUsers = usersData
+          .map(item => ({
+            user_id: item.user_id || item.id || "",
+            name: item.name || ""
+          }))
+          .filter(item => item.user_id && item.name); // Only keep items with both ID and name
+
+        setUsers(validatedUsers);
       } catch (err) {
         console.error("Failed to fetch users:", err);
         setError("Gagal memuat daftar pengguna");
+        setUsers([]);
       } finally {
         setLoadingUsers(false);
       }
@@ -69,7 +90,7 @@ export default function AttendanceFormPage() {
     fetchUsers();
   }, []);
 
-  // Initialize and update time every second
+  // Update time every second
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -79,7 +100,7 @@ export default function AttendanceFormPage() {
         minute: "2-digit",
         second: "2-digit",
       });
-      setFormData((prev) => ({ ...prev, time: timeString }));
+      setFormData(prev => ({ ...prev, time: timeString }));
     };
 
     updateTime();
@@ -87,20 +108,15 @@ export default function AttendanceFormPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Camera setup and cleanup
+  // Camera setup
   useEffect(() => {
     let mediaStream: MediaStream | null = null;
 
     const initializeCamera = async () => {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(
-          (device) => device.kind === "videoinput"
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
         );
-        const isMobile =
-          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-            navigator.userAgent
-          );
 
         const constraints: MediaStreamConstraints = {
           audio: false,
@@ -129,9 +145,7 @@ export default function AttendanceFormPage() {
     initializeCamera();
 
     return () => {
-      if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());
-      }
+      mediaStream?.getTracks().forEach(track => track.stop());
     };
   }, []);
 
@@ -157,19 +171,19 @@ export default function AttendanceFormPage() {
 
     const photoData = canvasRef.current.toDataURL("image/jpeg");
     setCapturedPhoto(photoData);
-    setFormData((prev) => ({ ...prev, photo: photoData }));
+    setFormData(prev => ({ ...prev, photo: photoData }));
   };
 
   const retakePhoto = () => {
     setCapturedPhoto(null);
-    setFormData((prev) => ({ ...prev, photo: "" }));
+    setFormData(prev => ({ ...prev, photo: "" }));
   };
 
   const handleUserSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedUserId = e.target.value;
-    const selectedUser = users.find((user) => user.user_id === selectedUserId);
+    const selectedUser = users.find(user => user.user_id === selectedUserId);
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       user_id: selectedUserId,
       name: selectedUser ? selectedUser.name : "",
@@ -197,9 +211,7 @@ export default function AttendanceFormPage() {
     setError(null);
 
     try {
-      const base64Photo = formData.photo.includes(",")
-        ? formData.photo.split(",")[1]
-        : formData.photo;
+      const base64Photo = formData.photo.split(",")[1] || formData.photo;
 
       const payload = {
         user_id: formData.user_id,
@@ -221,36 +233,29 @@ export default function AttendanceFormPage() {
 
       if (response.status >= 200 && response.status < 300) {
         setSuccess(true);
-        router.push("/attendance");
+        setTimeout(() => router.push("/attendance"), 1500);
       }
     } catch (err: any) {
-      handleSubmissionError(err);
+      let errorMessage = "Terjadi kesalahan";
+      if (err.response) {
+        errorMessage = err.response.data?.message || 
+          `Error ${err.response.status}: ${err.response.statusText}`;
+      } else if (err.request) {
+        errorMessage = "Tidak ada respon dari server";
+      } else {
+        errorMessage = err.message || "Error saat mengirim data";
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSubmissionError = (err: any) => {
-    let errorMessage = "Terjadi kesalahan";
-
-    if (err.response) {
-      errorMessage =
-        err.response.data?.message ||
-        `Error ${err.response.status}: ${err.response.statusText}`;
-    } else if (err.request) {
-      errorMessage = "Tidak ada respon dari server";
-    } else {
-      errorMessage = err.message || "Error saat mengirim data";
-    }
-
-    setError(errorMessage);
   };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   if (success) {
@@ -375,34 +380,14 @@ export default function AttendanceFormPage() {
                       className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                     >
                       <option value="">Pilih User ID</option>
-                      {users.map((user) => (
+                      {users.map(user => (
                         <option key={user.user_id} value={user.user_id}>
-                          {user.user_id}
+                          {user.user_id} - {user.name}
                         </option>
                       ))}
                     </select>
                   )}
                 </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-black mb-1"
-                >
-                  Nama
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-black"
-                  placeholder="Nama akan terisi otomatis"
-                  readOnly
-                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -424,7 +409,7 @@ export default function AttendanceFormPage() {
                       required
                       value={formData.date}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-black"
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                     />
                   </div>
                 </div>
@@ -447,7 +432,7 @@ export default function AttendanceFormPage() {
                       required
                       readOnly
                       value={formData.time}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-black placeholder-black"
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-black"
                     />
                   </div>
                 </div>
@@ -475,14 +460,12 @@ export default function AttendanceFormPage() {
               </div>
             </div>
 
-            {/* Error Message */}
             {error && (
               <div className="p-3 bg-red-100 text-red-700 rounded-md">
                 {error}
               </div>
             )}
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading || !capturedPhoto}
