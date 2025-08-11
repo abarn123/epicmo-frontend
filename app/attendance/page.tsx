@@ -26,22 +26,28 @@ export default function AttendancePage() {
   // Fungsi untuk memformat waktu dari berbagai kemungkinan format
   const formatTimeFromAPI = (timeString: string | undefined) => {
     if (!timeString) return "-";
-    
+
     try {
       // Jika format ISO (YYYY-MM-DDTHH:MM:SS)
-      if (timeString.includes('T')) {
+      if (timeString.includes("T")) {
         const date = new Date(timeString);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
       }
       // Jika format HH:MM:SS
       else if (timeString.match(/^\d{2}:\d{2}:\d{2}$/)) {
-        const [hours, minutes] = timeString.split(':');
+        const [hours, minutes] = timeString.split(":");
         return `${hours}:${minutes}`;
       }
       // Jika format timestamp
       else if (!isNaN(Number(timeString))) {
         const date = new Date(Number(timeString));
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
       }
       // Jika format lain, tampilkan apa adanya
       return timeString;
@@ -57,7 +63,7 @@ export default function AttendancePage() {
       try {
         const response = await axios.get("http://192.168.110.100:8080/data4");
         let data = response.data;
-        
+
         // Jika data dibungkus dalam objek, ambil array-nya
         if (data && typeof data === "object" && !Array.isArray(data)) {
           if (Array.isArray(data.data)) {
@@ -66,29 +72,31 @@ export default function AttendancePage() {
             data = data.attendances;
           }
         }
-        
+
         // Normalisasi data agar sesuai tipe AttendanceRecord
         const processed = (Array.isArray(data) ? data : []).map(
           (item: any, idx: number) => {
             // Cek apakah ada field waktu terpisah atau digabung dengan tanggal
             const hasSeparateTimeField = item.time !== undefined;
             const dateFromAPI = item.date || item.timestamp || item.createdAt;
-            
+
             return {
               id: item.id ?? idx + 1,
               photo: item.photo || "/images/employee1.jpg",
               name: item.name || "-",
-              date: dateFromAPI ? new Date(dateFromAPI).toLocaleDateString() : "-",
-              time: hasSeparateTimeField 
+              date: dateFromAPI
+                ? new Date(dateFromAPI).toLocaleDateString()
+                : "-",
+              time: hasSeparateTimeField
                 ? formatTimeFromAPI(item.time)
-                : dateFromAPI 
-                  ? formatTimeFromAPI(dateFromAPI)
-                  : "-",
+                : dateFromAPI
+                ? formatTimeFromAPI(dateFromAPI)
+                : "-",
               status: item.status || "present",
             };
           }
         );
-        
+
         setAttendanceData(processed);
       } catch (err: any) {
         setError("Gagal mengambil data absensi");
@@ -116,11 +124,15 @@ export default function AttendancePage() {
   };
 
   // Fungsi untuk filter data
-  const filteredData = attendanceData.filter(record => {
-    const matchesSearch = record.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDate = filterDate ? record.date === new Date(filterDate).toLocaleDateString() : true;
+  const filteredData = attendanceData.filter((record) => {
+    const matchesSearch = record.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesDate = filterDate
+      ? record.date === new Date(filterDate).toLocaleDateString()
+      : true;
     const matchesStatus = filterStatus ? record.status === filterStatus : true;
-    
+
     return matchesSearch && matchesDate && matchesStatus;
   });
 
@@ -190,7 +202,9 @@ export default function AttendancePage() {
             <h1 className="text-2xl font-bold text-gray-800">
               Attendance Records
             </h1>
-            <p className="text-gray-600">Employee attendance monitoring system</p>
+            <p className="text-gray-600">
+              Employee attendance monitoring system
+            </p>
           </div>
 
           {/* Toolbar */}
@@ -253,22 +267,40 @@ export default function AttendancePage() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       No
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Photo
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Name
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Date
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Time
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Status
                     </th>
                   </tr>
@@ -333,7 +365,10 @@ export default function AttendancePage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
+                      <td
+                        colSpan={6}
+                        className="px-6 py-4 text-center text-sm text-gray-500"
+                      >
                         No attendance records found
                       </td>
                     </tr>
@@ -343,71 +378,77 @@ export default function AttendancePage() {
             </div>
           </div>
 
-          {/* Pagination */}
-          {totalItems > 0 && (
-            <div className="flex items-center justify-between mt-6 bg-white px-4 py-3 rounded-lg shadow-sm">
-              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    Showing{" "}
-                    <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
-                    <span className="font-medium">
-                      {Math.min(indexOfLastItem, totalItems)}
-                    </span>{" "}
-                    of <span className="font-medium">{totalItems}</span> results
-                  </p>
-                </div>
-                <div>
-                  <nav
-                    className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                    aria-label="Pagination"
+          {/* Sticky Pagination Footer (match user management) */}
+          {totalItems > 0 && totalPages > 1 && (
+            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4 mt-8">
+              <nav
+                className="inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
+              >
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-2 rounded-l-md border ${
+                    currentPage === 1
+                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="sr-only">Previous</span>
+                  <svg
+                    className="h-5 w-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
                   >
+                    <path
+                      fillRule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (number) => (
                     <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(1, prev - 1))
-                      }
-                      disabled={currentPage === 1}
-                      className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
-                        currentPage === 1
-                          ? "text-gray-300 cursor-not-allowed"
-                          : "text-gray-500 hover:bg-gray-50"
+                      key={number}
+                      onClick={() => setCurrentPage(number)}
+                      className={`px-4 py-2 border ${
+                        currentPage === number
+                          ? "bg-blue-50 border-blue-500 text-blue-600"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                       }`}
                     >
-                      <span className="sr-only">Previous</span>
-                      &larr;
+                      {number}
                     </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                      (number) => (
-                        <button
-                          key={number}
-                          onClick={() => setCurrentPage(number)}
-                          className={`inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                            currentPage === number
-                              ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                          }`}
-                        >
-                          {number}
-                        </button>
-                      )
-                    )}
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                      className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
-                        currentPage === totalPages
-                          ? "text-gray-300 cursor-not-allowed"
-                          : "text-gray-500 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className="sr-only">Next</span>
-                      &rarr;
-                    </button>
-                  </nav>
-                </div>
-              </div>
+                  )
+                )}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-2 rounded-r-md border ${
+                    currentPage === totalPages
+                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="sr-only">Next</span>
+                  <svg
+                    className="h-5 w-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </nav>
             </div>
           )}
         </div>
