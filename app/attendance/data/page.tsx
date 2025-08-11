@@ -22,6 +22,11 @@ interface AttendanceFormData {
   status: "present" | "permission" | "sick";
 }
 
+interface UserData {
+  user_id: string;
+  name: string;
+}
+
 export default function AttendanceFormPage() {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -39,6 +44,30 @@ export default function AttendanceFormPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+
+  // Fetch users data from API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get("http://192.168.110.100:8080/data1", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUsers(response.data);
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+        setError("Gagal memuat daftar pengguna");
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   // Initialize and update time every second
   useEffect(() => {
@@ -64,13 +93,31 @@ export default function AttendanceFormPage() {
 
     const initializeCamera = async () => {
       try {
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user" },
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput"
+        );
+        const isMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          );
+
+        const constraints: MediaStreamConstraints = {
           audio: false,
-        });
+          video: {
+            facingMode: isMobile ? { exact: "user" } : "user",
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        };
+
+        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
+          if (isMobile) {
+            videoRef.current.style.transform = "scaleX(-1)";
+          }
         }
         setStream(mediaStream);
       } catch (err) {
@@ -96,13 +143,17 @@ export default function AttendanceFormPage() {
 
     canvasRef.current.width = videoRef.current.videoWidth;
     canvasRef.current.height = videoRef.current.videoHeight;
+
+    context.save();
+    context.scale(-1, 1);
     context.drawImage(
       videoRef.current,
-      0,
+      -canvasRef.current.width,
       0,
       canvasRef.current.width,
       canvasRef.current.height
     );
+    context.restore();
 
     const photoData = canvasRef.current.toDataURL("image/jpeg");
     setCapturedPhoto(photoData);
@@ -114,17 +165,24 @@ export default function AttendanceFormPage() {
     setFormData((prev) => ({ ...prev, photo: "" }));
   };
 
+  const handleUserSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedUserId = e.target.value;
+    const selectedUser = users.find((user) => user.user_id === selectedUserId);
+
+    setFormData((prev) => ({
+      ...prev,
+      user_id: selectedUserId,
+      name: selectedUser ? selectedUser.name : "",
+    }));
+  };
+
   const validateForm = (): boolean => {
     if (!formData.photo) {
       setError("Foto wajib diambil");
       return false;
     }
     if (!formData.user_id.trim()) {
-      setError("User ID wajib diisi");
-      return false;
-    }
-    if (!formData.name.trim()) {
-      setError("Nama wajib diisi");
+      setError("User ID wajib dipilih");
       return false;
     }
     return true;
@@ -163,7 +221,7 @@ export default function AttendanceFormPage() {
 
       if (response.status >= 200 && response.status < 300) {
         setSuccess(true);
-        setTimeout(() => router.push("/attendance/data"), 2000);
+        router.push("/attendance");
       }
     } catch (err: any) {
       handleSubmissionError(err);
@@ -300,16 +358,30 @@ export default function AttendanceFormPage() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiUser className="text-gray-400" />
                   </div>
-                  <input
-                    type="text"
-                    id="user_id"
-                    name="user_id"
-                    required
-                    value={formData.user_id}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-black"
-                    placeholder="Masukkan ID User"
-                  />
+                  {loadingUsers ? (
+                    <select
+                      disabled
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
+                    >
+                      <option>Memuat daftar pengguna...</option>
+                    </select>
+                  ) : (
+                    <select
+                      id="user_id"
+                      name="user_id"
+                      required
+                      value={formData.user_id}
+                      onChange={handleUserSelect}
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    >
+                      <option value="">Pilih User ID</option>
+                      {users.map((user) => (
+                        <option key={user.user_id} value={user.user_id}>
+                          {user.user_id}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               </div>
 
@@ -328,7 +400,8 @@ export default function AttendanceFormPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-black"
-                  placeholder="Masukkan nama Anda"
+                  placeholder="Nama akan terisi otomatis"
+                  readOnly
                 />
               </div>
 
