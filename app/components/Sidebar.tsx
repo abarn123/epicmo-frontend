@@ -9,7 +9,8 @@ export default function Sidebar() {
   const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("token");
+  router.push("/login"); 
   };
 
   return (
