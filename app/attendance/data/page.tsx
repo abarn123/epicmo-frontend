@@ -70,12 +70,12 @@ export default function AttendanceFormPage() {
         }
 
         // Validate and transform data
-        const validatedUsers = usersData
-          .map(item => ({
-            user_id: item.user_id || item.id || "",
-            name: item.name || ""
-          }))
-          .filter(item => item.user_id && item.name); // Only keep items with both ID and name
+       const validatedUsers = usersData
+  .map((item: any) => ({
+    user_id: item.user_id || item.id || "",
+    name: item.name || ""
+  }))
+  .filter((item: any) => item.user_id && item.name); // Only keep items with both ID and name
 
         setUsers(validatedUsers);
       } catch (err) {
