@@ -701,10 +701,9 @@ export default function toolsPage() {
                     key={`tool-${tool.id}`}
                     tool={tool}
                     onDelete={handleDeleteTool}
-                    role={role}
+                    role={role || ""}
                   />
                 ))}
-                
               </div>
             </>
           )}
