@@ -11,6 +11,7 @@ import AuthenticatedLayout from "../../components/AuthenticatedLayout";
 type User = {
   id: string;
   name: string;
+  password: string;
   phone: string;
   address: string;
   role: string;
@@ -303,6 +304,30 @@ export default function EditUserPage() {
                         required
                         className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                         placeholder="Masukkan nama lengkap"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password Field */}
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Password
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <div className="mt-1 relative rounded-md shadow-sm">
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={user.password || ""}
+                        onChange={handleChange}
+                        required
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
+                        placeholder="Masukkan password baru"
+                        autoComplete="new-password"
                       />
                     </div>
                   </div>

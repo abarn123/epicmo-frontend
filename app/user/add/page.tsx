@@ -12,6 +12,7 @@ export default function AddPage() {
   const { token, loading: authLoading } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
+    password:"",
     phone: "",
     address: "",
     role: "",
@@ -164,6 +165,30 @@ export default function AddPage() {
                     </div>
                   </div>
 
+                  {/* Password Field */}
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Password
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <div className="mt-1 relative rounded-md shadow-sm">
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
+                        placeholder="Masukkan password"
+                        autoComplete="new-password"
+                      />
+                    </div>
+                  </div>
+
                   {/* Phone Field */}
                   <div>
                     <label
@@ -253,8 +278,8 @@ export default function AddPage() {
                         Pilih role
                       </option>
                       <option value="admin">Admin</option>
-                      <option value="Staff">Staff</option>
-                      <option value="Freelance">Freelance</option>
+                      <option value="staff">Staff</option>
+                      <option value="freelance">Freelance</option>
                     </select>
                   </div>
                 </div>
