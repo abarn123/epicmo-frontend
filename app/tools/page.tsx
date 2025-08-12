@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -21,15 +20,16 @@ type Tool = {
 type ToolFormData = Omit<Tool, "id">;
 
 // ToolCard component
+import { useRouter as useNextRouter } from "next/navigation";
+
 function ToolCard({
   tool,
-  onEdit,
   onDelete,
 }: {
   tool: Tool;
-  onEdit?: (tool: Tool) => void;
   onDelete?: (toolId: string) => void;
 }) {
+  const router = useNextRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -53,7 +53,9 @@ function ToolCard({
             {tool.item_name[0]}
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-800">{tool.item_name}</h2>
+            <h2 className="text-lg font-semibold text-gray-800">
+              {tool.item_name}
+            </h2>
             <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
               {tool.category}
             </span>
@@ -97,27 +99,25 @@ function ToolCard({
       </div>
 
       <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100">
-        {onEdit && (
-          <button
-            onClick={() => onEdit(tool)}
-            className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
+        <Link
+          href={`/tools/edit?id=${tool.id}`}
+          className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
+        >
+          <svg
+            className="w-4 h-4 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              className="w-4 h-4 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            Edit
-          </button>
-        )}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
+          </svg>
+          Edit
+        </Link>
 
         {onDelete && (
           <>
@@ -231,8 +231,6 @@ function EditToolModal({
     e.preventDefault();
     onSave(formData);
   };
-
-  
 }
 
 // AddToolModal component
@@ -267,11 +265,15 @@ function AddToolModal({
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-white">
           <h2 className="text-xl font-semibold">Tambah Alat Baru</h2>
-          <p className="text-blue-100 text-sm">Isi form untuk menambahkan alat baru</p>
+          <p className="text-blue-100 text-sm">
+            Isi form untuk menambahkan alat baru
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Alat</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nama Alat
+            </label>
             <input
               type="text"
               name="item_name"
@@ -283,7 +285,9 @@ function AddToolModal({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Stock
+              </label>
               <input
                 type="number"
                 name="stock"
@@ -295,7 +299,9 @@ function AddToolModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Kategori
+              </label>
               <select
                 name="category"
                 value={formData.category}
@@ -310,7 +316,9 @@ function AddToolModal({
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Kondisi</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Kondisi
+            </label>
             <input
               type="text"
               name="item_condition"
@@ -370,8 +378,12 @@ export default function toolsPage() {
           },
         });
         let toolsData = response.data;
-        
-        if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
+
+        if (
+          toolsData &&
+          typeof toolsData === "object" &&
+          !Array.isArray(toolsData)
+        ) {
           if (Array.isArray(toolsData.data)) {
             toolsData = toolsData.data;
           } else if (Array.isArray(toolsData.tools)) {
@@ -397,7 +409,9 @@ export default function toolsPage() {
         if (axios.isAxiosError(err) && err.response?.status === 401) {
           setError("User is not authenticated");
         } else {
-          setError(err instanceof Error ? err.message : "Unknown error occurred");
+          setError(
+            err instanceof Error ? err.message : "Unknown error occurred"
+          );
         }
         toast.error("Gagal memuat data alat");
       } finally {
@@ -408,11 +422,13 @@ export default function toolsPage() {
     fetchTools();
   }, [token, authLoading]);
 
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = tools.slice(indexOfFirstItem, indexOfLastItem);
+  // Pagination logic (match user management style)
+  const indexOfLastTool = currentPage * itemsPerPage;
+  const indexOfFirstTool = indexOfLastTool - itemsPerPage;
+  const currentTools = tools.slice(indexOfFirstTool, indexOfLastTool);
   const totalPages = Math.ceil(tools.length / itemsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const handleSaveNewTool = async (newTool: ToolFormData) => {
     try {
@@ -461,21 +477,24 @@ export default function toolsPage() {
 
   const handleDeleteTool = async (toolsId: string) => {
     try {
-      await axios.delete(`http://192.168.110.100:8080/data2/delete/${toolsId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `http://192.168.110.100:8080/data2/delete/${toolsId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const updatedTools = tools.filter((u) => u.id !== toolsId);
       setTools(updatedTools);
 
       if (
         updatedTools.length > 0 &&
-        currentPage > Math.ceil(updatedTools.length )
+        currentPage > Math.ceil(updatedTools.length)
       ) {
-        setCurrentPage(Math.ceil(updatedTools.length ));
+        setCurrentPage(Math.ceil(updatedTools.length));
       }
-      
+
       toast.success("Alat berhasil dihapus");
     } catch (err) {
       console.error("Error deleting tool:", err);
@@ -486,10 +505,10 @@ export default function toolsPage() {
   if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
-            <div className="text-gray-600">Memuat data alat...</div>
-          </div>
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
+          <div className="text-gray-600">Memuat data alat...</div>
+        </div>
       </div>
     );
   }
@@ -541,7 +560,6 @@ export default function toolsPage() {
                 </svg>
                 Login
               </button>
-              
             </div>
           </div>
         </div>
@@ -585,7 +603,7 @@ export default function toolsPage() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="min-h-screen flex flex-col p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100 relative p-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-800 mb-1">
@@ -667,71 +685,91 @@ export default function toolsPage() {
             </div>
           ) : (
             <>
-              {/* Jika currentItems kosong karena pagination, pindah ke halaman sebelumnya */}
-              {currentItems.length === 0 && currentPage > 1
-                ? setCurrentPage(currentPage - 1)
-                : (
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {currentItems.map((tool) => (
-                        <ToolCard
-                          key={`tool-${tool.id}`}
-                          tool={tool}
-                          onEdit={() => setEditingTool(tool)}
-                          onDelete={handleDeleteTool}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Pagination controls */}
-                    {totalPages > 1 && (
-                      <div className="flex justify-center mt-8 mt-auto">
-                        <nav className="inline-flex rounded-md shadow-sm -space-x-px">
-                          <button
-                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1}
-                            className={`px-3 py-2 rounded-l-md border ${
-                              currentPage === 1
-                                ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                                : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                            }`}
-                          >
-                            Previous
-                          </button>
-                          {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-                            <button
-                              key={number}
-                              onClick={() => setCurrentPage(number)}
-                              className={`px-4 py-2 border ${
-                                currentPage === number
-                                  ? "bg-blue-50 border-blue-500 text-blue-600"
-                                  : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                              }`}
-                            >
-                              {number}
-                            </button>
-                          ))}
-                          <button
-                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages}
-                            className={`px-3 py-2 rounded-r-md border ${
-                              currentPage === totalPages
-                                ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                                : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                            }`}
-                          >
-                            Next
-                          </button>
-                        </nav>
-                      </div>
-                    )}
-                  </>
-                )
-              }
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentTools.map((tool) => (
+                  <ToolCard
+                    key={`tool-${tool.id}`}
+                    tool={tool}
+                    onDelete={handleDeleteTool}
+                  />
+                ))}
+              </div>
             </>
           )}
 
-          {/* Modal AddToolModal dihapus karena tidak dipakai lagi */}
+          {/* Sticky Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4">
+              <nav
+                className="inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
+              >
+                <button
+                  onClick={() => paginate(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-2 rounded-l-md border ${
+                    currentPage === 1
+                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="sr-only">Previous</span>
+                  <svg
+                    className="h-5 w-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (number) => (
+                    <button
+                      key={number}
+                      onClick={() => paginate(number)}
+                      className={`px-4 py-2 border ${
+                        currentPage === number
+                          ? "bg-blue-50 border-blue-500 text-blue-600"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                      }`}
+                    >
+                      {number}
+                    </button>
+                  )
+                )}
+
+                <button
+                  onClick={() =>
+                    paginate(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-2 rounded-r-md border ${
+                    currentPage === totalPages
+                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="sr-only">Next</span>
+                  <svg
+                    className="h-5 w-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          )}
         </div>
       </AuthenticatedLayout>
     </ProtectedRoute>
