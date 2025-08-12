@@ -5,7 +5,7 @@ import AuthenticatedLayout from "../components/AuthenticatedLayout";
 
 const stats = [
   {
-    label: "Total Users",
+    label: "Total Pengguna",
     value: 128,
     icon: (
       <svg
@@ -24,7 +24,7 @@ const stats = [
     ),
   },
   {
-    label: "Active Tools",
+    label: "Alat Aktif",
     value: 12,
     icon: (
       <svg
@@ -40,7 +40,7 @@ const stats = [
     ),
   },
   {
-    label: "Stock Items",
+    label: "Stok Barang",
     value: 37,
     icon: (
       <svg
@@ -56,7 +56,7 @@ const stats = [
     ),
   },
   {
-    label: "attendance",
+    label: "Kehadiran",
     value: 5,
     icon: (
       <svg
@@ -74,10 +74,10 @@ const stats = [
 ];
 
 const activities = [
-  { time: "09:00", desc: "User Budi Santoso added new tool: Box Epicmo" },
-  { time: "10:15", desc: "Stock updated for Tripod box" },
-  { time: "11:30", desc: "New user registered: Siti Aminah" },
-  { time: "13:00", desc: "Project 'Photo Booth Wedding' created" },
+  { time: "09:00", desc: "Pengguna Budi Santoso menambahkan alat baru: Box Epicmo" },
+  { time: "10:15", desc: "Stok diperbarui untuk Tripod box" },
+  { time: "11:30", desc: "Pengguna baru terdaftar: Siti Aminah" },
+  { time: "13:00", desc: "Proyek 'Photo Booth Wedding' dibuat" },
 ];
 
 export default function DashboardPage() {
@@ -108,7 +108,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Recent Activity
+                  Aktivitas Terbaru
                 </h2>
                 <ul className="divide-y divide-gray-100">
                   {activities.map((act, idx) => (
@@ -123,15 +123,15 @@ export default function DashboardPage() {
               </div>
               <div className="bg-gradient-to-br from-blue-200 to-indigo-200 rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Welcome to Epicmo!
+                  Selamat Datang di Epicmo!
                 </h2>
                 <p className="text-gray-600 text-center mb-6">
-                  Manage your users, tools, and projects with a modern, professional
-                  dashboard. All your activities and stats in one place.
+                  Kelola pengguna, alat, dan proyek Anda dengan dasbor modern dan profesional.
+                  Semua aktivitas dan statistik Anda di satu tempat.
                 </p>
                 <img
                   src="/epicmo.logo.png"
-                  alt="Epicmo Logo"
+                  alt="Logo Epicmo"
                   className="w-32 h-32 object-contain mb-2"
                 />
               </div>
