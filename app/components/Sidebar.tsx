@@ -13,6 +13,8 @@ export default function Sidebar() {
   router.push("/login"); 
   };
 
+
+
   return (
     <aside className="fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col py-8 px-4 shadow-md z-30">
       <div className="mb-15 text-center">
@@ -42,6 +44,7 @@ export default function Sidebar() {
           </svg>
           Dashboard
         </Link>
+         
         <Link
           href="/attendance"
           className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
