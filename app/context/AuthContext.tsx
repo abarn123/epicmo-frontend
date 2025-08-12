@@ -11,6 +11,7 @@ interface AuthContextType {
   loading: boolean;
   userName: string | null;
   userId: number | null;
+  userPhoto: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,6 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
+  const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!token) {
         setUserName(null);
         setUserId(null);
+        setUserPhoto(null);
         return;
       }
       try {
@@ -49,10 +52,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         if (data && data.data && data.data.length > 0) {
           setUserId(data.data[0].id ?? null);
           setUserName(data.data[0].name ?? null);
+          setUserPhoto(data.data[0].photo ?? null);
         }
       } catch (e) {
         setUserName(null);
         setUserId(null);
+        setUserPhoto(null);
       }
     };
     fetchUserProfile();
@@ -68,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setToken(null);
     setUserName(null);
     setUserId(null);
+    setUserPhoto(null);
     router.push("/login");
   };
 
@@ -83,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         loading,
         userName,
         userId,
+        userPhoto,
       }}
     >
       {children}
