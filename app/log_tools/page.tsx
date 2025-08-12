@@ -233,7 +233,8 @@ function BorrowFormModal({
               <option value="">Pilih Alat</option>
               {tools.map((tool) => (
                 <option key={tool.id} value={tool.id}>
-                  {tool.item_name} - Tersedia: {availableQuantities[tool.id] || 0}
+                  {tool.item_name} - Tersedia:{" "}
+                  {availableQuantities[tool.id] || 0}
                 </option>
               ))}
             </select>
@@ -305,6 +306,16 @@ export default function ToolBorrowingSystem() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
+  // Tambahan: listen to storage event for cross-tab update
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "refreshBorrowRecords") {
+        fetchBorrowRecords();
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   const fetchBorrowRecords = async () => {
     try {
@@ -353,6 +364,11 @@ export default function ToolBorrowingSystem() {
 
   useEffect(() => {
     fetchBorrowRecords();
+    // Cek jika ada flag refresh dari localStorage (misal setelah pinjam alat)
+    if (window.localStorage.getItem("refreshBorrowRecords")) {
+      window.localStorage.removeItem("refreshBorrowRecords");
+      fetchBorrowRecords();
+    }
   }, []);
 
   const handleBorrowTool = async (data: BorrowFormData) => {
@@ -417,7 +433,7 @@ export default function ToolBorrowingSystem() {
       };
 
       console.log("Payload pengembalian:", payload);
-      const response = await api.put(`/data3/edit/${id}`, payload);
+      const response = await api.put(`/data3/add/${id}`, payload);
 
       if (response.data && response.data.status === false) {
         toast.error(
@@ -530,220 +546,254 @@ export default function ToolBorrowingSystem() {
     <ProtectedRoute>
       <AuthenticatedLayout>
         <div className="p-8 bg-gray-50">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-800 mb-1">
-              Sistem Peminjaman Alat
-            </h1>
-            <p className="text-gray-500">
-              Kelola peminjaman dan pengembalian alat
-            </p>
-          </div>
-          <div className="mb-4 md:mb-0 md:ml-4 flex justify-end gap-3">
-            <a
-              href="/tools"
-              className="px-5 py-2.5 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 flex items-center"
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              Kembali ke Alat
-            </a>
-            <button
-              onClick={() => setShowBorrowModal(true)}
-              className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center"
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              Pinjam Alat
-            </button>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="relative max-w-md">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-gray-800 mb-1">
+                Sistem Peminjaman Alat
+              </h1>
+              <p className="text-gray-500">
+                Kelola peminjaman dan pengembalian alat
+              </p>
             </div>
-            <input
-              type="text"
-              placeholder="Cari catatan..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            <div className="mb-4 md:mb-0 md:ml-4 flex justify-end gap-3">
+              <a
+                href="/tools"
+                className="px-5 py-2.5 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 flex items-center"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+                Kembali ke Alat
+              </a>
+              <a
+                href="/log_tools/add"
+                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Pinjam Alat
+              </a>
+            </div>
           </div>
-        </div>
 
-        {filteredRecords.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-            <svg
-              className="w-16 h-16 mx-auto text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          <div className="mb-6">
+            <div className="relative max-w-md">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Cari catatan..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-            </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">
-              {borrowRecords.length === 0
-                ? "Tidak ada catatan peminjaman ditemukan"
-                : "Tidak ada catatan yang cocok ditemukan"}
-            </h3>
-            <p className="text-gray-500 mb-4">
-              {borrowRecords.length === 0
-                ? "Mulai dengan meminjam alat"
-                : "Coba istilah pencarian yang berbeda"}
-            </p>
-            {borrowRecords.length === 0 && (
-              <button
-                onClick={() => setShowBorrowModal(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-              >
-                Pinjam Alat Pertama
-              </button>
-            )}
-          </div>
-        ) : (
-          <>
-            <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Alat
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Peminjam
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Jumlah
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Tanggal Pinjam
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Tanggal Kembali
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Aksi
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {currentItems.map((record) => (
-                      <BorrowTableRow
-                        key={record.id}
-                        record={record}
-                        onReturn={
-                          record.status === "borrowed" ? handleReturnTool : undefined
-                        }
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
+          </div>
 
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-8">
-                <nav className="inline-flex rounded-md shadow-sm -space-x-px">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(1, prev - 1))
-                    }
-                    disabled={currentPage === 1}
-                    className={`px-3 py-2 rounded-l-md border ${
-                      currentPage === 1
-                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                    }`}
-                  >
-                    Sebelumnya
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (number) => (
-                      <button
-                        key={number}
-                        onClick={() => setCurrentPage(number)}
-                        className={`px-4 py-2 border ${
-                          currentPage === number
-                            ? "bg-blue-50 border-blue-500 text-blue-600"
-                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                        }`}
-                      >
-                        {number}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                    className={`px-3 py-2 rounded-r-md border ${
-                      currentPage === totalPages
-                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                    }`}
-                  >
-                    Berikutnya
-                  </button>
-                </nav>
+          {filteredRecords.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+              <svg
+                className="w-16 h-16 mx-auto text-gray-400 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">
+                {borrowRecords.length === 0
+                  ? "Tidak ada catatan peminjaman ditemukan"
+                  : "Tidak ada catatan yang cocok ditemukan"}
+              </h3>
+              <p className="text-gray-500 mb-4">
+                {borrowRecords.length === 0
+                  ? "Mulai dengan meminjam alat"
+                  : "Coba istilah pencarian yang berbeda"}
+              </p>
+              {borrowRecords.length === 0 && (
+                <button
+                  onClick={() => setShowBorrowModal(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+                >
+                  Pinjam Alat Pertama
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Alat
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Peminjam
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Jumlah
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Tanggal Pinjam
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Tanggal Kembali
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Status
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Aksi
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {currentItems.map((record) => (
+                        <BorrowTableRow
+                          key={record.id}
+                          record={record}
+                          onReturn={
+                            record.status === "borrowed"
+                              ? handleReturnTool
+                              : undefined
+                          }
+                        />
+                      ))}
+                      {/* Tambahkan baris kosong jika data sedikit agar tinggi tabel tetap konsisten */}
+                      {currentItems.length < itemsPerPage &&
+                        Array.from({
+                          length: itemsPerPage - currentItems.length,
+                        }).map((_, idx) => (
+                          <tr key={`empty-${idx}`} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              &nbsp;
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap"></td>
+                            <td className="px-6 py-4 whitespace-nowrap"></td>
+                            <td className="px-6 py-4 whitespace-nowrap"></td>
+                            <td className="px-6 py-4 whitespace-nowrap"></td>
+                            <td className="px-6 py-4 whitespace-nowrap"></td>
+                            <td className="px-6 py-4 whitespace-nowrap"></td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            )}
-          </>
-        )}
 
-        {showBorrowModal && (
-          <BorrowFormModal
-            tools={tools.filter((tool) => tool.quantity > 0)}
-            onBorrow={handleBorrowTool}
-            onCancel={() => setShowBorrowModal(false)}
-          />
-        )}
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-8">
+                  <nav className="inline-flex rounded-md shadow-sm -space-x-px">
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(1, prev - 1))
+                      }
+                      disabled={currentPage === 1}
+                      className={`px-3 py-2 rounded-l-md border ${
+                        currentPage === 1
+                          ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                      }`}
+                    >
+                      Sebelumnya
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (number) => (
+                        <button
+                          key={number}
+                          onClick={() => setCurrentPage(number)}
+                          className={`px-4 py-2 border ${
+                            currentPage === number
+                              ? "bg-blue-50 border-blue-500 text-blue-600"
+                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                          }`}
+                        >
+                          {number}
+                        </button>
+                      )
+                    )}
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                      className={`px-3 py-2 rounded-r-md border ${
+                        currentPage === totalPages
+                          ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                      }`}
+                    >
+                      Berikutnya
+                    </button>
+                  </nav>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Modal Pinjam Alat di-nonaktifkan, gunakan halaman add */}
         </div>
       </AuthenticatedLayout>
     </ProtectedRoute>
