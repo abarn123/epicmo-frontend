@@ -13,7 +13,7 @@ export default function AddToolPage() {
     const [formData, setFormData] = useState({
         item_name: "",
         stock: "",
-        item_condition: "Baru",
+        item_condition: "new",
         category: "",
     });
     const [submitting, setSubmitting] = useState(false);
@@ -46,7 +46,7 @@ export default function AddToolPage() {
         const payload = {
             item_name: formData.item_name,
             stock: Number(formData.stock),
-            item_condition: formData.item_condition || "Baru",
+            item_condition: formData.item_condition,
             category: formData.category || "Lainnya",
         };
 
@@ -66,7 +66,7 @@ export default function AddToolPage() {
                 throw new Error(errorData.message || "Failed to add tool");
             }
 
-            toast.success("Tool berhasil ditambahkan");
+            toast.success("Tools berhasil ditambahkan");
             router.push("/tools");
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -203,8 +203,11 @@ export default function AddToolPage() {
                                             required
                                             className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                                         >
-                                            <option value="Baru">Baru</option>
-                                            <option value="Bekas">Bekas</option>
+                                            <option value="" disabled>
+                                                Pilih kondisi
+                                            </option>
+                                            <option value="new">New</option>
+                                            <option value="second">Second</option>
                                         </select>
                                     </div>
 
