@@ -699,8 +699,7 @@ export default function toolsPage() {
 
           {/* Sticky Pagination Footer */}
           {totalPages > 1 && (
-            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 fixed bottom-4 left-0 z-10 flex justify-center translate-x-20
-">
+            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4">
               <nav
                 className="inline-flex rounded-md shadow-sm -space-x-px"
                 aria-label="Pagination"
