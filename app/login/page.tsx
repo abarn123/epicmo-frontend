@@ -31,18 +31,35 @@ export default function LoginPage() {
         password: formData.password,
       });
 
-      const data = response.data; // Menggunakan axios langsung untuk mendapatkan data
+      const data = response.data;
 
       if (response.status !== 200 || !data.status) {
         throw new Error(data.message || "Username atau password tidak sesuai");
       }
 
-      console.log("Login successful", data);
+      // Pastikan role ada dan lowercase
+      let role = data.role;
+      if (!role && data.user && data.user.role) {
+        role = data.user.role;
+      }
+      if (role) {
+        role = role.toLowerCase();
+        localStorage.setItem("role", role);
+      } else {
+        console.warn("Role tidak ditemukan di response login", data);
+      }
 
-      // Simpan token jika kamu mau pakai untuk autentikasi
       login(data.token);
 
-      window.location.href = "/user"; // Arahkan ke dashboard
+      if (role === "freelance") {
+  window.location.href = "/attendance";
+} else if (role === "staff") {
+  window.location.href = "/tools";
+} else {
+  window.location.href = "/user";
+}
+
+
     } catch (err: any) {
       setError(err.response?.data?.message || "Username atau password salah");
     } finally {
