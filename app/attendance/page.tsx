@@ -61,7 +61,12 @@ export default function AttendancePage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get("http://192.168.110.100:8080/data4");
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
+        const response = await axios.get("http://192.168.110.100:8080/data4", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         let data = response.data;
 
         // Jika data dibungkus dalam objek, ambil array-nya
