@@ -51,13 +51,14 @@ export default function LoginPage() {
 
       login(data.token);
 
-      if (role === "freelance") {
-  window.location.href = "/attendance";
-} else if (role === "staff") {
-  window.location.href = "/tools";
-} else {
-  window.location.href = "/user";
-}
+      // Setelah login(data.token);
+const redirects: Record<string, string> = {
+  freelance: "/attendance",
+  staff: "/tools"
+};
+
+window.location.href = redirects[role] || "/user";
+
 
 
     } catch (err: any) {

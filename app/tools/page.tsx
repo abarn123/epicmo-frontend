@@ -25,9 +25,11 @@ import { useRouter as useNextRouter } from "next/navigation";
 function ToolCard({
   tool,
   onDelete,
+  role,
 }: {
   tool: Tool;
   onDelete?: (toolId: string) => void;
+  role?: string;
 }) {
   const router = useNextRouter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -35,7 +37,6 @@ function ToolCard({
 
   const handleDelete = async () => {
     if (!onDelete) return;
-
     setIsDeleting(true);
     try {
       await onDelete(tool.id);
@@ -97,113 +98,114 @@ function ToolCard({
           </div>
         </div>
       </div>
-
-      <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100">
-        <Link
-          href={`/tools/edit?id=${tool.id}`}
-          className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
-        >
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      {/* Tombol edit & hapus hanya jika bukan freelance */}
+      {role !== "freelance" && (
+        <div className="bg-gray-50 px-5 py-3 flex justify-end space-x-2 border-t border-gray-100">
+          <Link
+            href={`/tools/edit?id=${tool.id}`}
+            className="px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 transition-colors flex items-center"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-            />
-          </svg>
-          Edit
-        </Link>
-
-        {onDelete && (
-          <>
-            {showDeleteConfirm ? (
-              <div className="flex space-x-2">
-                <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="px-3 py-1.5 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors flex items-center"
-                >
-                  {isDeleting ? (
-                    <>
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
+            <svg
+              className="w-4 h-4 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Edit
+          </Link>
+          {onDelete && (
+            <>
+              {showDeleteConfirm ? (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors flex items-center"
+                  >
+                    {isDeleting ? (
+                      <>
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Menghapus...
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="none"
                           stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Menghapus...
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      Konfirmasi
-                    </>
-                  )}
-                </button>
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        Konfirmasi
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  >
+                    Batal
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={() => setShowDeleteConfirm(false)}
+                  onClick={() => setShowDeleteConfirm(true)}
                   disabled={isDeleting}
-                  className="px-3 py-1.5 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-md text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 transition-colors flex items-center"
                 >
-                  Batal
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  Hapus
                 </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                disabled={isDeleting}
-                className="px-3 py-1.5 text-sm font-medium rounded-md text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 transition-colors flex items-center"
-              >
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-                Hapus
-              </button>
-            )}
-          </>
-        )}
-      </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -360,6 +362,11 @@ export default function toolsPage() {
   const [itemsPerPage] = useState(6);
   const router = useRouter();
   const { token, loading: authLoading } = useAuth();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    setRole(localStorage.getItem("role")?.toLowerCase() || null);
+  }, []);
 
   useEffect(() => {
     if (authLoading) return;
@@ -614,25 +621,28 @@ export default function toolsPage() {
               </p>
             </div>
             <div className="mb-4 md:mb-0 md:ml-4 flex justify-end space-x-4">
-              <Link
-                href="/tools/add"
-                className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center"
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              {/* Tombol tambah alat hanya jika bukan freelance */}
+              {role !== "freelance" && (
+                <Link
+                  href="/tools/add"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                Tambah Alat
-              </Link>
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  Tambah Alat
+                </Link>
+              )}
               <Link
                 href="/log_tools"
                 className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition shadow-md flex items-center"
@@ -691,15 +701,17 @@ export default function toolsPage() {
                     key={`tool-${tool.id}`}
                     tool={tool}
                     onDelete={handleDeleteTool}
+                    role={role}
                   />
                 ))}
+                
               </div>
             </>
           )}
 
           {/* Sticky Pagination Footer */}
           {totalPages > 1 && (
-            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4">
+            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 fixed bottom-4 left-0 z-10 flex justify-center translate-x-20">
               <nav
                 className="inline-flex rounded-md shadow-sm -space-x-px"
                 aria-label="Pagination"
