@@ -4,12 +4,14 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function Sidebar() {
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, userName, loading, isAuthenticated } = useAuth();
   const [role, setRole] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateRole = () => {
@@ -23,6 +25,11 @@ export default function Sidebar() {
     };
   }, []);
 
+  // Reset dropdown and force re-render on logout/login
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [isAuthenticated, userName]);
+
   if (!role) {
     // Bisa tampilkan loading, atau menu default
     return null;
@@ -30,7 +37,6 @@ export default function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
     router.push("/login");
   };
 
@@ -55,6 +61,73 @@ export default function Sidebar() {
           className="h-8 w-auto mx-auto"
         />
       </div>
+
+      {/* User Dropdown */}
+      <div className="relative flex flex-col items-center mb-6 mt-4">
+        <button
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full"
+          onClick={() => setDropdownOpen((v) => !v)}
+          aria-label="User menu"
+        >
+          <span className="inline-flex items-center justify-center w-9 h-9 rounded-full border bg-gray-200 text-gray-500 text-lg font-bold">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="8" r="4" />
+              <path d="M6 20c0-2.21 3.582-4 6-4s6 1.79 6 4" />
+            </svg>
+          </span>
+          <span className="font-semibold text-gray-800 dark:text-gray-100 text-base truncate max-w-[100px]">
+            {loading
+              ? "Memuat..."
+              : isAuthenticated
+              ? userName || "User"
+              : "User"}
+          </span>
+          <svg
+            className="w-4 h-4 ml-1 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+        {dropdownOpen && (
+          <div
+            ref={dropdownRef}
+            className="absolute top-12 left-0 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 animate-fade-in"
+          >
+            <Link
+              href="/profile"
+              className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-t-lg transition-colors"
+              onClick={() => setDropdownOpen(false)}
+            >
+              Profile
+            </Link>
+            <button
+              onClick={() => {
+                setDropdownOpen(false);
+                handleLogout();
+              }}
+              className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-b-lg transition-colors border-t border-gray-100 dark:border-gray-700 flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4 text-red-500" />
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+
       <nav className="flex flex-col gap-4 flex-grow">
         {canAccess("dashboard") && (
           <Link
@@ -132,15 +205,6 @@ export default function Sidebar() {
           </Link>
         )}
       </nav>
-
-      {/* Logout Button */}
-      <button
-        onClick={handleLogout}
-        className="mt-4 flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors font-medium text-gray-700 dark:text-gray-200 group"
-      >
-        <LogOut className="w-5 h-5 text-red-500 group-hover:text-red-700 transition-colors" />
-        Logout
-      </button>
 
       <div className="mt-auto text-xs text-gray-400 text-center pt-8">
         © {new Date().getFullYear()} Epicmo

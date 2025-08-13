@@ -289,8 +289,22 @@ export default function AddBorrowPage() {
                     </label>
                     <input
                       type="text"
-                      value={userName || ""}
+                      value={
+                        authLoading
+                          ? "Memuat nama user..."
+                          : token
+                          ? userName || "User"
+                          : "User"
+                      }
                       readOnly
+                      disabled={authLoading || !token || !userName}
+                      placeholder={
+                        authLoading
+                          ? "Memuat nama user..."
+                          : !token
+                          ? "User"
+                          : "Nama user tidak ditemukan"
+                      }
                       className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-gray-100 rounded-md shadow-sm focus:outline-none sm:text-sm text-black"
                     />
                   </div>
