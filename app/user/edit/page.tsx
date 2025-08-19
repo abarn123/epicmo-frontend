@@ -38,7 +38,7 @@ export default function EditUserPage() {
     setLoading(true);
     setError(null);
     axios
-      .get(`http://192.168.110.100:8080/data1/${userId}`, {
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/data1/${userId}`, {
         timeout: 5000,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -110,7 +110,7 @@ export default function EditUserPage() {
     setSubmitting(true);
     try {
       await axios.put(
-        `http://192.168.110.100:8080/data1/edit/${user.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/data1/edit/${user.id}`,
         user,
         {
           headers: {

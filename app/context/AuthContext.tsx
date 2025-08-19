@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         return;
       }
       try {
-        const res = await fetch("http://192.168.110.100:8080/data1", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data1`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) return;

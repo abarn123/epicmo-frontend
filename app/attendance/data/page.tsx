@@ -10,6 +10,7 @@ import {
   FiUser,
 } from "react-icons/fi";
 import React, { useState, useRef, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -29,66 +30,35 @@ interface UserData {
 
 export default function AttendanceFormPage() {
   const router = useRouter();
+  const { userId, userName } = useAuth();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [formData, setFormData] = useState<AttendanceFormData>({
     photo: "",
-    user_id: "",
-    name: "",
+    user_id: userId ? String(userId) : "",
+    name: userName || "",
     date: new Date().toISOString().split("T")[0],
     time: "",
     status: "present",
   });
+
+  // Update formData user_id dan name jika context berubah
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      user_id: userId ? String(userId) : "",
+      name: userName || "",
+    }));
+  }, [userId, userName]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [users, setUsers] = useState<UserData[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
 
-  // Fetch users data from API
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get("http://192.168.110.100:8080/data1", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        // Handle different response formats
-        let usersData = [];
-
-        if (Array.isArray(response.data)) {
-          usersData = response.data;
-        } else if (response.data?.users && Array.isArray(response.data.users)) {
-          usersData = response.data.users;
-        } else if (response.data?.data && Array.isArray(response.data.data)) {
-          usersData = response.data.data;
-        }
-
-        // Validate and transform data
-        const validatedUsers = usersData
-          .map((item: any) => ({
-            user_id: item.user_id || item.id || "",
-            name: item.name || "",
-          }))
-          .filter((item: any) => item.user_id && item.name); // Only keep items with both ID and name
-
-        setUsers(validatedUsers);
-      } catch (err) {
-        console.error("Failed to fetch users:", err);
-        setError("Gagal memuat daftar pengguna");
-        setUsers([]);
-      } finally {
-        setLoadingUsers(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  // Tidak perlu fetch users, user diambil dari context
 
   // Update time every second
   useEffect(() => {
@@ -180,16 +150,7 @@ export default function AttendanceFormPage() {
     setFormData((prev) => ({ ...prev, photo: "" }));
   };
 
-  const handleUserSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedUserId = e.target.value;
-    const selectedUser = users.find((user) => user.user_id === selectedUserId);
-
-    setFormData((prev) => ({
-      ...prev,
-      user_id: selectedUserId,
-      name: selectedUser ? selectedUser.name : "",
-    }));
-  };
+  // Tidak perlu handleUserSelect
 
   const validateForm = (): boolean => {
     if (!formData.photo) {
@@ -197,7 +158,7 @@ export default function AttendanceFormPage() {
       return false;
     }
     if (!formData.user_id.trim()) {
-      setError("User ID wajib dipilih");
+      setError("User ID tidak ditemukan. Silakan login ulang.");
       return false;
     }
     return true;
@@ -224,10 +185,11 @@ export default function AttendanceFormPage() {
       };
 
       const response = await axios.post(
-        "http://192.168.110.100:8080/data4",
+       `${process.env.NEXT_PUBLIC_API_URL}/data4`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
+          
           timeout: 10000,
         }
       );
@@ -257,6 +219,8 @@ export default function AttendanceFormPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    // Jangan izinkan user mengubah user_id dan name
+    if (name === "id" || name === "name") return;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -363,35 +327,30 @@ export default function AttendanceFormPage() {
                 >
                   User ID
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiUser className="text-gray-400" />
-                  </div>
-                  {loadingUsers ? (
-                    <select
-                      disabled
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
-                    >
-                      <option>Memuat daftar pengguna...</option>
-                    </select>
-                  ) : (
-                    <select
-                      id="user_id"
-                      name="user_id"
-                      required
-                      value={formData.user_id}
-                      onChange={handleUserSelect}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                    >
-                      <option value="">Pilih User ID</option>
-                      {users.map((user) => (
-                        <option key={user.user_id} value={user.user_id}>
-                          {user.user_id} - {user.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
+                <input
+                  type="text"
+                  id="user_id"
+                  name="user_id"
+                  value={formData.user_id}
+                  readOnly
+                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-black mb-1"
+                >
+                  Nama
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  readOnly
+                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">

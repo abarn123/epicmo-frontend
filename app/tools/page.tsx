@@ -379,23 +379,16 @@ export default function toolsPage() {
           return;
         }
 
-        const response = await axios.get("http://192.168.110.100:8080/data2", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         let toolsData = response.data;
-
-        if (
-          toolsData &&
-          typeof toolsData === "object" &&
-          !Array.isArray(toolsData)
-        ) {
-          if (Array.isArray(toolsData.data)) {
-            toolsData = toolsData.data;
-          } else if (Array.isArray(toolsData.tools)) {
-            toolsData = toolsData.tools;
-          }
+if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
+  if (Array.isArray(toolsData.data)) {
+    toolsData = toolsData.data;
+  }
         }
 
         if (!Array.isArray(toolsData)) {
@@ -440,7 +433,7 @@ export default function toolsPage() {
   const handleSaveNewTool = async (newTool: ToolFormData) => {
     try {
       const response = await axios.post(
-        "http://192.168.110.100:8080/data2/add",
+        `${process.env.NEXT_PUBLIC_API_URL}/data2/add`,
         newTool,
         {
           headers: {
@@ -465,7 +458,7 @@ export default function toolsPage() {
   const handleSaveEditedTool = async (editedTool: Tool) => {
     try {
       await axios.put(
-        `http://192.168.110.100:8080/data2/${editedTool.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/data2/${editedTool.id}`,
         editedTool,
         {
           headers: {
@@ -485,7 +478,7 @@ export default function toolsPage() {
   const handleDeleteTool = async (toolsId: string) => {
     try {
       await axios.delete(
-        `http://192.168.110.100:8080/data2/delete/${toolsId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/data2/delete/${toolsId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

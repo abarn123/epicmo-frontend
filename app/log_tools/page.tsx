@@ -394,7 +394,7 @@ export default function ToolBorrowingSystem() {
       };
       console.log("Mengirimkan payload peminjaman:", payload);
 
-      const response = await axios.get("http://192.168.110.100:8080/data2");
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`);
       console.log("Respons dari GET /data2:", response.data);
       toast.success("Data berhasil diambil dari /data2!");
 

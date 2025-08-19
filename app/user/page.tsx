@@ -486,7 +486,7 @@ export default function UserManagement() {
     const fetchUsers = async () => {
       console.log("Token used for fetchUsers:", token);
       try {
-        const response = await axios.get("http://192.168.110.100:8080/data1", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data1`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -561,7 +561,7 @@ export default function UserManagement() {
     }
     try {
       const response = await axios.post(
-        "http://192.168.110.100:8080/data1",
+        `${process.env.NEXT_PUBLIC_API_URL}/data1`,
         newUser,
         {
           headers: {
@@ -604,7 +604,7 @@ export default function UserManagement() {
       };
       console.log("Payload for update:", payload);
       const response = await axios.put(
-        `http://192.168.110.100:8080/data1/edit/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/data1/edit/${id}`,
         payload,
         {
           headers: {
@@ -645,7 +645,7 @@ export default function UserManagement() {
       return;
     }
     try {
-      await axios.delete(`http://192.168.110.100:8080/data1/delete/${userId}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/data1/delete/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

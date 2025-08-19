@@ -104,7 +104,7 @@ export default function EditToolPage() {
     setSubmitting(true);
     try {
       await axios.put(
-        `http://192.168.110.100:8080/data2/edit/${tool.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/data2/edit/${tool.id}`,
         {
           id: tool.id,
           item_name: tool.name,

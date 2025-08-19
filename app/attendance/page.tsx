@@ -62,7 +62,7 @@ export default function AttendancePage() {
       setError(null);
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
-        const response = await axios.get("http://192.168.110.100:8080/data4", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data4`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
