@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import AuthenticatedLayout from "../../components/AuthenticatedLayout";
+import axios from "axios";
 
 export default function AddPage() {
   const router = useRouter();
@@ -45,20 +46,21 @@ export default function AddPage() {
     }
 
     try {
-      const response = await fetch("http://192.168.110.100:8080/data1/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(errorData.message || "Failed to add user");
-        throw new Error(errorData.message || "Failed to add user");
-      }
+     try {
+  const response = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/data1/add`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+       console.log("Response:", response.data);
+} catch (error) {
+  console.error("Error:", error);
+}
 
       toast.success("Pengguna berhasil ditambahkan");
       router.push("/user");

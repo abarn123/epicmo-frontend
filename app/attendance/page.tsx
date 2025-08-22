@@ -61,7 +61,11 @@ export default function AttendancePage() {
       setLoading(true);
       setError(null);
       try {
-        const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("Token tidak ditemukan. Silakan login kembali.");
+          return;
+        }
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data4`, {
           headers: {
             Authorization: `Bearer ${token}`,

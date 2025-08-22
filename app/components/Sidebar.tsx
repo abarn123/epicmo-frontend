@@ -2,10 +2,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState, useRef } from "react";
-
 export default function Sidebar() {
   const router = useRouter();
   const { logout, userName, loading, isAuthenticated } = useAuth();
@@ -81,13 +79,14 @@ export default function Sidebar() {
               <path d="M6 20c0-2.21 3.582-4 6-4s6 1.79 6 4" />
             </svg>
           </span>
-          <span className="font-semibold text-gray-800 dark:text-gray-100 text-base truncate max-w-[100px]">
+            <span className="font-semibold text-gray-800 dark:text-gray-100 text-base truncate max-w-[100px]">
             {loading
               ? "Memuat..."
               : isAuthenticated
               ? userName || "User"
               : "User"}
-          </span>
+            </span>
+            
           <svg
             className="w-4 h-4 ml-1 text-gray-500"
             fill="none"

@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import AuthenticatedLayout from "../../components/AuthenticatedLayout";
+import axios from "axios";
 
 export default function AddToolPage() {
   const router = useRouter();
@@ -51,33 +52,31 @@ export default function AddToolPage() {
     };
 
     try {
-      const response = await fetch("http://192.168.110.100:8080/data2/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(errorData.message || "Failed to add tool");
-        throw new Error(errorData.message || "Failed to add tool");
-      }
-
-      toast.success("Tools berhasil ditambahkan");
-      router.push("/tools");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
-      }
-    } finally {
-      setSubmitting(false);
+  const response = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/data2/add`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     }
-  };
+  );
+
+console.log("Response:", response.data);
+
+    toast.success("Tools berhasil ditambahkan");
+    router.push("/tools");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError("An unknown error occurred");
+    }
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <ProtectedRoute>

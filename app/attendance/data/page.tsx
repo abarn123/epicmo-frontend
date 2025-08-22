@@ -99,7 +99,6 @@ export default function AttendanceFormPage() {
         };
 
         mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
           if (isMobile) {
@@ -185,10 +184,13 @@ export default function AttendanceFormPage() {
       };
 
       const response = await axios.post(
-       `${process.env.NEXT_PUBLIC_API_URL}/data4`,
+       `${process.env.NEXT_PUBLIC_API_URL}/data4/add`,
         payload,
         {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           
           timeout: 10000,
         }

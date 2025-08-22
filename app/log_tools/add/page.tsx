@@ -22,7 +22,7 @@ type BorrowFormData = {
   return_date: string | null;
 };
 
-const API_BASE_URL = "http://192.168.110.100:8080";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 
 export default function AddBorrowPage() {
   const router = useRouter();

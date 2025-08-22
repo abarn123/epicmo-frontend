@@ -49,7 +49,12 @@ export default function LoginPage() {
         console.warn("Role tidak ditemukan di response login", data);
       }
 
-      login(data.token);
+      // Simpan nama user ke localStorage untuk fallback
+      if (data.user && data.user.name) {
+        localStorage.setItem("userName", data.user.name);
+      }
+
+      login(data.token, data.user?.id);
 
       // Setelah login(data.token);
 const redirects: Record<string, string> = {

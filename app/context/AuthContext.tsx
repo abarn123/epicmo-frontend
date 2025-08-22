@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 interface AuthContextType {
   token: string | null;
-  login: (token: string) => void;
+  login: (token: string, id: number) => void;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
@@ -26,50 +26,76 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const router = useRouter();
 
+  // ambil token + userId dari localStorage pas app pertama kali load
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    const storedId = localStorage.getItem("userId");
+
+    if (storedToken) setToken(storedToken);
+    if (storedId) setUserId(Number(storedId));
+
     setLoading(false);
   }, []);
 
-  // Fetch user profile when token changes
+  // fetch user detail kalau token dan userId ada
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!token) {
-        setUserName(null);
-        setUserId(null);
+      if (!token || !userId) {
+        // fallback ke localStorage jika ada
+        const fallbackName = localStorage.getItem("userName");
+        setUserName(fallbackName ?? null);
         setUserPhoto(null);
         return;
       }
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data1`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data && data.data && data.data.length > 0) {
-          setUserId(data.data[0].id ?? null);
-          setUserName(data.data[0].name ?? null);
-          setUserPhoto(data.data[0].photo ?? null);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/profile`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (!res.ok) {
+          // fallback ke localStorage jika fetch gagal
+          const fallbackName = localStorage.getItem("userName");
+          setUserName(fallbackName ?? null);
+          setUserPhoto(null);
+          return;
         }
+        const data = await res.json();
+
+        setUserId(data.data?.id ?? null);
+        if (data.data?.name) {
+          setUserName(data.data.name);
+          localStorage.setItem("userName", data.data.name);
+        } else {
+          // fallback ke localStorage jika tidak ada nama
+          const fallbackName = localStorage.getItem("userName");
+          setUserName(fallbackName ?? null);
+        }
+        setUserPhoto(data.data?.photo ?? null);
       } catch (e) {
-        setUserName(null);
+        console.error("Error fetching user:", e);
+        // fallback ke localStorage jika error
+        const fallbackName = localStorage.getItem("userName");
+        setUserName(fallbackName ?? null);
         setUserId(null);
         setUserPhoto(null);
       }
     };
     fetchUserProfile();
-  }, [token]);
+  }, [token, userId]);
 
-  const login = (newToken: string) => {
+  // login nyimpen token + userId
+  const login = (newToken: string, id: number) => {
     localStorage.setItem("token", newToken);
+    localStorage.setItem("userId", id.toString());
     setToken(newToken);
+    setUserId(id);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     setToken(null);
     setUserName(null);
     setUserId(null);
