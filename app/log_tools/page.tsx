@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthenticatedLayout from "../components/AuthenticatedLayout";
@@ -12,39 +14,39 @@ const toast = {
 
 // Type definitions
 type Tool = {
-  id: number;
+  id: string;
   item_name: string;
-  item_status: string;
-  quantity: number;
+  stock: number;
+  item_condition: string;
   category: string;
 };
 
 type BorrowRecord = {
-  id: number;
-  user_id: number;
-  user_name: string;
-  tool_id: number;
-  tool_name: string;
+  log_tools: string;
+  user: string;
+  item_name: string;
   quantity: number;
-  borrow_date: string;
-  return_date: string | null;
-  status: "borrowed" | "returned";
+  date_borrow: string;
+  date_return: string | null;
+  tools_status: "borrowed" | "returned";
+  user_id: string;
+  tools_id: string;
 };
 
 type BorrowFormData = {
-  user_id: number;
-  tool_id: number;
+  user_id: string;
+  tools_id: string;
   quantity: number;
-  borrow_date: string;
-  return_date: string | null;
+  date_borrow: string;
+  date_return: string | null;
+  tools_status: "borrowed";
 };
 
 // Axios instance
 const api = axios.create({
-  baseURL: "http://192.168.110.100:8080",
-  timeout: 10000,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  timeout: 30000,
 });
-
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -58,43 +60,12 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
+      window.location.href = "/login";
       toast.error("Sesi kedaluwarsa. Silakan login kembali.");
     }
     return Promise.reject(error);
   }
 );
-
-// Mock tools data
-const mockTools: Tool[] = [
-  {
-    id: 101,
-    item_name: "Kamera Canon",
-    item_status: "Available",
-    quantity: 10,
-    category: "Electronics",
-  },
-  {
-    id: 102,
-    item_name: "Kain Warna Merah",
-    item_status: "Available",
-    quantity: 15,
-    category: "Textiles",
-  },
-  {
-    id: 103,
-    item_name: "Tripod",
-    item_status: "Available",
-    quantity: 5,
-    category: "Photography",
-  },
-  {
-    id: 104,
-    item_name: "Lensa Zoom",
-    item_status: "Available",
-    quantity: 3,
-    category: "Photography",
-  },
-];
 
 // Table Row Component
 function BorrowTableRow({
@@ -102,46 +73,46 @@ function BorrowTableRow({
   onReturn,
 }: {
   record: BorrowRecord;
-  onReturn?: (id: number) => void;
+  onReturn?: (id: string) => void;
 }) {
   return (
     <tr className="border-b border-gray-200 hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="font-medium text-gray-900">{record.tool_name}</div>
+        <div className="font-medium text-gray-900">{record.item_name}</div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-gray-700">{record.user_name}</div>
+        <div className="text-gray-700">{record.user}</div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-gray-700">{record.quantity}</div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-gray-700">
-          {new Date(record.borrow_date).toLocaleDateString()}
+          {new Date(record.date_borrow).toLocaleDateString()}
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-gray-700">
-          {record.return_date
-            ? new Date(record.return_date).toLocaleDateString()
+          {record.date_return
+            ? new Date(record.date_return).toLocaleDateString()
             : "-"}
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span
           className={`px-2 py-1 text-xs rounded-full ${
-            record.status === "borrowed"
+            record.tools_status === "borrowed"
               ? "bg-yellow-100 text-yellow-800"
               : "bg-green-100 text-green-800"
           }`}
         >
-          {record.status}
+          {record.tools_status}
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        {record.status === "borrowed" && onReturn && (
+        {record.tools_status === "borrowed" && onReturn && (
           <button
-            onClick={() => onReturn(record.id)}
+            onClick={() => onReturn(record.log_tools)}
             className="text-blue-600 hover:text-blue-900"
           >
             Tandai Dikembalikan
@@ -152,7 +123,7 @@ function BorrowTableRow({
   );
 }
 
-// Borrow Form Modal (unchanged from your original)
+// Borrow Form Modal
 function BorrowFormModal({
   tools,
   onBorrow,
@@ -163,25 +134,26 @@ function BorrowFormModal({
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState<BorrowFormData>({
-    user_id: 1,
-    tool_id: tools.length > 0 ? tools[0].id : 0,
+    user_id: "1", // Default user ID, bisa diganti dengan user yang sedang login
+    tools_id: tools.length > 0 ? tools[0].id : "",
     quantity: 1,
-    borrow_date: new Date().toISOString().split("T")[0],
-    return_date: null,
+    date_borrow: new Date().toISOString().split("T")[0],
+    date_return: null,
+    tools_status: "borrowed",
   });
 
   const [availableQuantities, setAvailableQuantities] = useState<{
-    [key: number]: number;
+    [key: string]: number;
   }>({});
 
   useEffect(() => {
     const quantities = tools.reduce((acc, tool) => {
-      acc[tool.id] = tool.quantity;
+      acc[tool.id] = tool.stock;
       return acc;
-    }, {} as { [key: number]: number });
+    }, {} as { [key: string]: number });
     setAvailableQuantities(quantities);
-    if (tools.length > 0 && formData.tool_id === 0) {
-      setFormData((prev) => ({ ...prev, tool_id: tools[0].id }));
+    if (tools.length > 0 && formData.tools_id === "") {
+      setFormData((prev) => ({ ...prev, tools_id: tools[0].id }));
     }
   }, [tools]);
 
@@ -193,12 +165,12 @@ function BorrowFormModal({
       if (name === "quantity") {
         let qty = parseInt(value);
         if (isNaN(qty) || qty < 1) qty = 1;
-        const selected = tools.find((t) => t.id === (prev.tool_id || 0));
-        const maxQty = selected ? selected.quantity : 1;
+        const selected = tools.find((t) => t.id === (prev.tools_id || ""));
+        const maxQty = selected ? selected.stock : 1;
         if (qty > maxQty) qty = maxQty;
         return { ...prev, quantity: qty };
-      } else if (name === "tool_id") {
-        return { ...prev, tool_id: parseInt(value), quantity: 1 };
+      } else if (name === "tools_id") {
+        return { ...prev, tools_id: value, quantity: 1 };
       }
       return { ...prev, [name]: value };
     });
@@ -209,7 +181,7 @@ function BorrowFormModal({
     onBorrow(formData);
   };
 
-  const selectedTool = tools.find((tool) => tool.id === formData.tool_id);
+  const selectedTool = tools.find((tool) => tool.id === formData.tools_id);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -224,8 +196,8 @@ function BorrowFormModal({
               Alat
             </label>
             <select
-              name="tool_id"
-              value={formData.tool_id}
+              name="tools_id"
+              value={formData.tools_id}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
@@ -233,8 +205,7 @@ function BorrowFormModal({
               <option value="">Pilih Alat</option>
               {tools.map((tool) => (
                 <option key={tool.id} value={tool.id}>
-                  {tool.item_name} - Tersedia:{" "}
-                  {availableQuantities[tool.id] || 0}
+                  {tool.item_name} - Tersedia: {tool.stock}
                 </option>
               ))}
             </select>
@@ -248,7 +219,7 @@ function BorrowFormModal({
               type="number"
               name="quantity"
               min="1"
-              max={selectedTool ? availableQuantities[selectedTool.id] : 1}
+              max={selectedTool ? selectedTool.stock : 1}
               value={formData.quantity}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -256,7 +227,7 @@ function BorrowFormModal({
             />
             {selectedTool && (
               <p className="text-xs text-gray-500 mt-1">
-                Tersedia: {availableQuantities[selectedTool.id] || 0}
+                Tersedia: {selectedTool.stock}
               </p>
             )}
           </div>
@@ -267,8 +238,8 @@ function BorrowFormModal({
             </label>
             <input
               type="date"
-              name="borrow_date"
-              value={formData.borrow_date}
+              name="date_borrow"
+              value={formData.date_borrow}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
@@ -298,7 +269,7 @@ function BorrowFormModal({
 
 // Main Component
 export default function ToolBorrowingSystem() {
-  const [tools, setTools] = useState<Tool[]>(mockTools);
+  const [tools, setTools] = useState<Tool[]>([]);
   const [borrowRecords, setBorrowRecords] = useState<BorrowRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -306,164 +277,245 @@ export default function ToolBorrowingSystem() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-  // Tambahan: listen to storage event for cross-tab update
+  const router = useRouter();
+
+  // Fetch tools and borrow records
   useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "refreshBorrowRecords") {
-        fetchBorrowRecords();
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch tools
+        const toolsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data2`
+        );
+        let toolsData = toolsRes.data;
+
+        // Handle different response structures
+        if (toolsData && typeof toolsData === "object") {
+          if (Array.isArray(toolsData.data)) {
+            toolsData = toolsData.data;
+          }
+        }
+
+        const processedTools: Tool[] = toolsData.map(
+          (tool: any, index: number) => ({
+            id: tool.id?.toString() || `generated-${index}-${Date.now()}`,
+            item_name: tool.item_name || "No name",
+            stock: tool.stock || 0,
+            item_condition: tool.item_condition || "",
+            category: tool.category || "Lainnya",
+          })
+        );
+
+        setTools(processedTools);
+
+        // Fetch borrow records
+        const recordsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data3`
+        );
+        let recordsData = recordsRes.data;
+
+        // Handle different response structures
+        if (recordsData && typeof recordsData === "object") {
+          if (Array.isArray(recordsData.data)) {
+            recordsData = recordsData.data;
+          }
+        }
+
+        const mappedRecords: BorrowRecord[] = recordsData.map(
+          (record: any) => ({
+            log_tools:
+              record.log_tools?.toString() || `generated-${Date.now()}`,
+            user_id: record.user_id?.toString() || "0",
+            user: record.user || "Unknown User",
+            tools_id: record.tools_id?.toString() || "0",
+            item_name: record.item_name || "Unknown Tool",
+            quantity: record.quantity || 0,
+            date_borrow: record.date_borrow || new Date().toISOString(),
+            date_return: record.date_return || null,
+            tools_status:
+              record.tools_status === "returned" ? "returned" : "borrowed",
+          })
+        );
+
+        setBorrowRecords(mappedRecords);
+      } catch (err) {
+        console.error("Kesalahan pengambilan data:", err);
+        let errorMessage = "Gagal memuat data.";
+        if (axios.isAxiosError(err)) {
+          if (err.code === "ERR_NETWORK") {
+            errorMessage =
+              "Kesalahan Jaringan: Tidak dapat terhubung ke server API. Pastikan server backend berjalan di " +
+              api.defaults.baseURL;
+          } else if (err.response) {
+            errorMessage = `Kesalahan API: ${err.response.status} - ${
+              err.response.data?.message || err.message
+            }`;
+          } else {
+            errorMessage = err.message;
+          }
+        } else if (err instanceof Error) {
+          errorMessage = err.message;
+        }
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
       }
     };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+
+    fetchData();
   }, []);
 
-  const fetchBorrowRecords = async () => {
+  const handleBorrowTool = async (data: BorrowFormData) => {
     try {
-      setLoading(true);
-      setError(null);
-      const recordsRes = await api.get("/data3");
-      const mappedRecords: BorrowRecord[] = recordsRes.data.data.map(
-        (record: any) => ({
-          id: record.log_tools,
-          user_id: record.user_id || 0,
-          user_name: record.user,
-          tool_id: record.item_id || 0,
-          tool_name: record.item_name,
-          quantity: record.quantity,
-          borrow_date: record.date_borrow,
-          return_date: record.date_return,
-          status: record.tools_status,
-        })
+      const toolToUpdate = tools.find((tool) => tool.id === data.tools_id);
+      if (!toolToUpdate) {
+        toast.error("Alat tidak ditemukan.");
+        return;
+      }
+
+      if (toolToUpdate.stock < data.quantity) {
+        toast.error("Jumlah tidak cukup tersedia.");
+        return;
+      }
+
+      const payload = {
+        user_id: data.user_id,
+        tools_id: data.tools_id,
+        quantity: data.quantity,
+        date_borrow: data.date_borrow,
+        date_return: null,
+        tools_status: "borrowed",
+      };
+
+      // Kirim permintaan untuk meminjam alat
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/data3`,
+        payload
       );
-      setBorrowRecords(mappedRecords);
+
+      if (response.data && response.data.status === false) {
+        toast.error(response.data.message || "Gagal meminjam alat.");
+        return;
+      }
+
+      // Update stok alat
+      const updateToolResponse = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/data2/${data.tools_id}`,
+        {
+          ...toolToUpdate,
+          stock: toolToUpdate.stock - data.quantity,
+        }
+      );
+
+      if (updateToolResponse.data && updateToolResponse.data.status === false) {
+        toast.error(
+          updateToolResponse.data.message || "Gagal memperbarui stok alat."
+        );
+        return;
+      }
+
+      setShowBorrowModal(false);
+      toast.success("Alat berhasil dipinjam!");
+
+      // Refresh data
+      window.location.reload();
     } catch (err) {
-      console.error("Kesalahan pengambilan data:", err);
-      let errorMessage = "Gagal memuat data catatan peminjaman.";
+      console.error("Kesalahan saat meminjam alat:", err);
+      let errorMessage = "Gagal meminjam alat.";
       if (axios.isAxiosError(err)) {
-        if (err.code === "ERR_NETWORK") {
-          errorMessage =
-            "Kesalahan Jaringan: Tidak dapat terhubung ke server API. Pastikan server backend berjalan di " +
-            api.defaults.baseURL +
-            " dan tidak ada masalah jaringan/CORS.";
+        if (err.response?.data?.message) {
+          errorMessage = `API: ${err.response.data.message}`;
         } else if (err.response) {
-          errorMessage = `Kesalahan API: ${err.response.status} - ${
-            err.response.data?.message || err.message
-          }`;
+          errorMessage = `API: ${err.response.status} - ${err.response.statusText}`;
         } else {
           errorMessage = err.message;
         }
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBorrowRecords();
-    // Cek jika ada flag refresh dari localStorage (misal setelah pinjam alat)
-    if (window.localStorage.getItem("refreshBorrowRecords")) {
-      window.localStorage.removeItem("refreshBorrowRecords");
-      fetchBorrowRecords();
-    }
-  }, []);
-
-  const handleBorrowTool = async (data: BorrowFormData) => {
-    try {
-      const toolToUpdate = tools.find((tool) => tool.id === data.tool_id);
-      if (!toolToUpdate) {
-        toast.error("Alat tidak ditemukan.");
-        return;
-      }
-
-      if (toolToUpdate.quantity < data.quantity) {
-        toast.error("Jumlah tidak cukup tersedia.");
-        return;
-      }
-
-      const payload = {
-        user: "Pengguna Saat Ini",
-        item_name: toolToUpdate.item_name,
-        quantity: data.quantity,
-        date_borrow: data.borrow_date,
-        date_return: null,
-        tools_status: "borrowed",
-      };
-      console.log("Mengirimkan payload peminjaman:", payload);
-
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`);
-      console.log("Respons dari GET /data2:", response.data);
-      toast.success("Data berhasil diambil dari /data2!");
-
-      setShowBorrowModal(false);
-      fetchBorrowRecords();
-    } catch (err) {
-      console.error("Kesalahan saat meminjam alat:", err);
-      let errorMessage = "Gagal meminjam alat.";
-      if (axios.isAxiosError(err) && err.response) {
-        errorMessage = `Kesalahan API: ${err.response.status} - ${
-          err.response.data?.message || err.message
-        }`;
-      } else if (err instanceof Error) {
-        errorMessage = err.message;
-      }
       toast.error(errorMessage);
     }
   };
 
-  const handleReturnTool = async (id: number) => {
+  const handleReturnTool = async (id: string) => {
     try {
-      const recordToReturn = borrowRecords.find((record) => record.id === id);
+      const recordToReturn = borrowRecords.find(
+        (record) => record.log_tools === id
+      );
       if (!recordToReturn) {
         toast.error("Catatan peminjaman tidak ditemukan.");
         return;
       }
 
       const payload = {
-        log_tools: recordToReturn.id,
-        user: recordToReturn.user_name,
-        item_name: recordToReturn.tool_name,
+        user_id: recordToReturn.user_id,
+        tools_id: recordToReturn.tools_id,
         quantity: recordToReturn.quantity,
-        date_borrow: recordToReturn.borrow_date,
+        date_borrow: recordToReturn.date_borrow,
         date_return: new Date().toISOString().split("T")[0],
         tools_status: "returned",
       };
 
-      console.log("Payload pengembalian:", payload);
-      const response = await api.put(`/data3/add/${id}`, payload);
+      // Update status peminjaman
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/data2/${id}`, payload);
 
       if (response.data && response.data.status === false) {
-        toast.error(
-          response.data.message || "Gagal mengembalikan alat (server error)."
-        );
+        toast.error(response.data.message || "Gagal mengembalikan alat.");
         return;
       }
 
+      // Kembalikan stok alat
+      const toolToUpdate = tools.find(
+        (tool) => tool.id === recordToReturn.tools_id
+      );
+      if (toolToUpdate) {
+        const updateToolResponse = await axios.put(
+          `${process.env.NEXT_PUBLIC_API_URL}/data2/${recordToReturn.tools_id}`,
+          {
+            ...toolToUpdate,
+            stock: toolToUpdate.stock + recordToReturn.quantity,
+          }
+        );
+
+        if (
+          updateToolResponse.data &&
+          updateToolResponse.data.status === false
+        ) {
+          toast.error(
+            updateToolResponse.data.message || "Gagal mengembalikan stok alat."
+          );
+          return;
+        }
+      }
+
+      // Update state lokal
       setBorrowRecords((prevRecords) =>
         prevRecords.map((record) =>
-          record.id === id
+          record.log_tools === id
             ? {
                 ...record,
-                return_date: payload.date_return,
-                status: "returned",
+                date_return: payload.date_return,
+                tools_status: "returned",
               }
             : record
         )
       );
 
-      setTools((prevTools) =>
-        prevTools.map((tool) =>
-          tool.id === recordToReturn.tool_id
-            ? { ...tool, quantity: tool.quantity + recordToReturn.quantity }
-            : tool
-        )
-      );
+      if (toolToUpdate) {
+        setTools((prevTools) =>
+          prevTools.map((tool) =>
+            tool.id === recordToReturn.tools_id
+              ? { ...tool, stock: tool.stock + recordToReturn.quantity }
+              : tool
+          )
+        );
+      }
 
       toast.success("Alat berhasil dikembalikan!");
-      fetchBorrowRecords();
     } catch (err) {
       console.error("Kesalahan saat mengembalikan alat:", err);
       let errorMessage = "Gagal mengembalikan alat.";
@@ -484,9 +536,9 @@ export default function ToolBorrowingSystem() {
 
   const filteredRecords = borrowRecords.filter(
     (record) =>
-      record.user_name.toLowerCase().includes(search.toLowerCase()) ||
-      record.tool_name.toLowerCase().includes(search.toLowerCase()) ||
-      record.status.toLowerCase().includes(search.toLowerCase())
+      record.user.toLowerCase().includes(search.toLowerCase()) ||
+      record.item_name.toLowerCase().includes(search.toLowerCase()) ||
+      record.tools_status.toLowerCase().includes(search.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -532,7 +584,7 @@ export default function ToolBorrowingSystem() {
           </h3>
           <p className="text-gray-600 mb-6">{error}</p>
           <button
-            onClick={fetchBorrowRecords}
+            onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
           >
             Coba Lagi
@@ -545,7 +597,7 @@ export default function ToolBorrowingSystem() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="p-8 bg-gray-50">
+        <div className="p-8 bg-gray-50 min-h-screen">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-800 mb-1">
@@ -556,7 +608,7 @@ export default function ToolBorrowingSystem() {
               </p>
             </div>
             <div className="mb-4 md:mb-0 md:ml-4 flex justify-end gap-3">
-              <a
+              <Link
                 href="/tools"
                 className="px-5 py-2.5 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 flex items-center"
               >
@@ -574,9 +626,9 @@ export default function ToolBorrowingSystem() {
                   />
                 </svg>
                 Kembali ke Alat
-              </a>
-              <a
-                href="/log_tools/add"
+              </Link>
+              <button
+                onClick={() => setShowBorrowModal(true)}
                 className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center"
               >
                 <svg
@@ -593,7 +645,7 @@ export default function ToolBorrowingSystem() {
                   />
                 </svg>
                 Pinjam Alat
-              </a>
+              </button>
             </div>
           </div>
 
@@ -712,32 +764,15 @@ export default function ToolBorrowingSystem() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {currentItems.map((record) => (
                         <BorrowTableRow
-                          key={record.id}
+                          key={record.log_tools}
                           record={record}
                           onReturn={
-                            record.status === "borrowed"
+                            record.tools_status === "borrowed"
                               ? handleReturnTool
                               : undefined
                           }
                         />
                       ))}
-                      {/* Tambahkan baris kosong jika data sedikit agar tinggi tabel tetap konsisten */}
-                      {currentItems.length < itemsPerPage &&
-                        Array.from({
-                          length: itemsPerPage - currentItems.length,
-                        }).map((_, idx) => (
-                          <tr key={`empty-${idx}`} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              &nbsp;
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap"></td>
-                            <td className="px-6 py-4 whitespace-nowrap"></td>
-                            <td className="px-6 py-4 whitespace-nowrap"></td>
-                            <td className="px-6 py-4 whitespace-nowrap"></td>
-                            <td className="px-6 py-4 whitespace-nowrap"></td>
-                            <td className="px-6 py-4 whitespace-nowrap"></td>
-                          </tr>
-                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -793,7 +828,13 @@ export default function ToolBorrowingSystem() {
             </>
           )}
 
-          {/* Modal Pinjam Alat di-nonaktifkan, gunakan halaman add */}
+          {showBorrowModal && (
+            <BorrowFormModal
+              tools={tools}
+              onBorrow={handleBorrowTool}
+              onCancel={() => setShowBorrowModal(false)}
+            />
+          )}
         </div>
       </AuthenticatedLayout>
     </ProtectedRoute>
