@@ -789,44 +789,65 @@ export default function UserManagement() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100 relative">
-          <div className="flex-1 p-8 flex flex-col">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-800 mb-1">
-                  Manajemen Pengguna
-                </h1>
-                <p className="text-gray-500">
-                  Kelola data pengguna sistem dengan mudah dan efisien
-                </p>
+        <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+          <div className="flex-1 md:ml-64 p-2 sm:p-4 md:p-8 transition-all duration-200">
+            <div className="max-w-7xl mx-auto">
+              <div className="mb-8">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">Manajemen Pengguna</h1>
+                <p className="text-gray-500">Kelola data pengguna sistem dengan mudah dan efisien</p>
               </div>
-              <div className="mb-4 md:mb-0 md:ml-4 flex justify-end">
-                <Link href="/user/add" passHref>
-                  <button className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center">
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
-                    Tambah Pengguna
-                  </button>
-                </Link>
+              <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex-1">
+                  <div className="relative max-w-md">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Cari pengguna..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900"
+                    />
+                  </div>
+                </div>
+                <div className="mb-4 md:mb-0 md:ml-4 flex justify-end">
+                  <Link href="/user/add" passHref>
+                    <button className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                      Tambah Pengguna
+                    </button>
+                  </Link>
+                </div>
               </div>
-            </div>
-
-            <div className="mb-6">
-              <div className="relative max-w-md">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              {filteredUsers.length === 0 ? (
+                <div className="bg-white rounded-xl shadow-sm p-8 text-center">
                   <svg
-                    className="w-5 h-5 text-gray-400"
+                    className="w-16 h-16 mx-auto text-gray-400 mb-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -835,151 +856,119 @@ export default function UserManagement() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Cari pengguna..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-900"
-                />
-              </div>
-            </div>
-
-            {filteredUsers.length === 0 ? (
-              <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-                <svg
-                  className="w-16 h-16 mx-auto text-gray-400 mb-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <h3 className="text-lg font-medium text-gray-900 mb-1">
-                  {users.length === 0
-                    ? "Belum ada pengguna"
-                    : "Pengguna tidak ditemukan"}
-                </h3>
-                <p className="text-gray-500 mb-4">
-                  {users.length === 0
-                    ? "Mulai dengan menambahkan pengguna baru"
-                    : "Coba dengan kata kunci lain"}
-                </p>
-                {users.length === 0 && (
-                  <button
-                    onClick={handleAddUser}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-                  >
-                    Tambah Pengguna Pertama
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {currentUsers.map((user) => (
-                    <UserCard
-                      key={`user-${user.id}`}
-                      user={user}
-                      onEdit={handleEditUser}
-                      onDelete={handleDeleteUser}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Sticky Pagination Footer */}
-          {totalPages > 1 && (
-            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4">
-              <nav
-                className="inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <button
-                  onClick={() => paginate(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-2 rounded-l-md border ${
-                    currentPage === 1
-                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="sr-only">Previous</span>
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (number) => (
+                  <h3 className="text-lg font-medium text-gray-900 mb-1">
+                    {users.length === 0
+                      ? "Belum ada pengguna"
+                      : "Pengguna tidak ditemukan"}
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    {users.length === 0
+                      ? "Mulai dengan menambahkan pengguna baru"
+                      : "Coba dengan kata kunci lain"}
+                  </p>
+                  {users.length === 0 && (
                     <button
-                      key={number}
-                      onClick={() => paginate(number)}
-                      className={`px-4 py-2 border ${
-                        currentPage === number
-                          ? "bg-blue-50 border-blue-500 text-blue-600"
+                      onClick={handleAddUser}
+                      className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+                    >
+                      Tambah Pengguna Pertama
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {currentUsers.map((user) => (
+                      <UserCard
+                        key={`user-${user.id}`}
+                        user={user}
+                        onEdit={handleEditUser}
+                        onDelete={handleDeleteUser}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {/* Sticky Pagination Footer */}
+              {totalPages > 1 && (
+                <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-3 sm:py-4 mt-8 overflow-x-auto">
+                  <nav
+                    className="inline-flex rounded-md shadow-sm -space-x-px"
+                    aria-label="Pagination"
+                  >
+                    <button
+                      onClick={() => paginate(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className={`px-3 py-2 rounded-l-md border ${
+                        currentPage === 1
+                          ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
                           : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                       }`}
                     >
-                      {number}
+                      <span className="sr-only">Previous</span>
+                      <svg
+                        className="h-5 w-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
                     </button>
-                  )
-                )}
-
-                <button
-                  onClick={() =>
-                    paginate(Math.min(totalPages, currentPage + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  className={`px-3 py-2 rounded-r-md border ${
-                    currentPage === totalPages
-                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="sr-only">Next</span>
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </nav>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (number) => (
+                        <button
+                          key={number}
+                          onClick={() => paginate(number)}
+                          className={`px-4 py-2 border ${
+                            currentPage === number
+                              ? "bg-blue-50 border-blue-500 text-blue-600"
+                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                          }`}
+                        >
+                          {number}
+                        </button>
+                      )
+                    )}
+                    <button
+                      onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                      className={`px-3 py-2 rounded-r-md border ${
+                        currentPage === totalPages
+                          ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span className="sr-only">Next</span>
+                      <svg
+                        className="h-5 w-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </nav>
+                </div>
+              )}
             </div>
-          )}
-
+          </div>
           {showAddModal && (
             <AddUserModal
               onSave={handleSaveNewUser}
               onCancel={() => setShowAddModal(false)}
             />
           )}
-
           {editingUser && (
             <EditUserModal
               user={editingUser}
