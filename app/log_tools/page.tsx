@@ -186,35 +186,35 @@ export default function ToolBorrowingSystem() {
   // Create API instance with interceptors
   const api = createApiInstance();
 
-  // Fungsi untuk mengelompokkan data peminjaman
+  // Fungsi untuk mengelompokkan data peminjaman berdasarkan user dan tanggal
   const groupBorrowRecords = (
     records: BorrowRecord[]
   ): GroupedBorrowRecord[] => {
-    const result: GroupedBorrowRecord[] = [];
+    const groupedMap: {[key: string]: GroupedBorrowRecord} = {};
 
-    // Urutkan records berdasarkan tanggal
-    const sortedRecords = [...records].sort((a, b) => 
-      new Date(a.date_borrow).getTime() - new Date(b.date_borrow).getTime()
-    );
-
-    sortedRecords.forEach((record) => {
-      // Buat group baru untuk setiap record (tidak digabungkan)
-      result.push({
-        user: record.user,
-        user_id: record.user_id,
-        date_borrow: record.date_borrow,
-        date_return: record.date_return,
-        tools_status: record.tools_status,
-        items: [{
-          log_tools: record.log_tools,
-          item_name: record.item_name,
-          quantity: record.quantity,
-          tools_id: record.tools_id,
-        }],
+    records.forEach((record) => {
+      const key = `${record.user_id}-${record.date_borrow}`;
+      
+      if (!groupedMap[key]) {
+        groupedMap[key] = {
+          user: record.user,
+          user_id: record.user_id,
+          date_borrow: record.date_borrow,
+          date_return: record.date_return,
+          tools_status: record.tools_status,
+          items: []
+        };
+      }
+      
+      groupedMap[key].items.push({
+        log_tools: record.log_tools,
+        item_name: record.item_name,
+        quantity: record.quantity,
+        tools_id: record.tools_id,
       });
     });
 
-    return result;
+    return Object.values(groupedMap);
   };
 
   // Fetch tools and borrow records
