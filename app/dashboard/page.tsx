@@ -115,7 +115,7 @@ const MediaDashboard = () => {
       title: "Testimoni 3",
       description:
         "Bukan Sekadar Video,Tapi Pengalaman yang Nempel di Hati!",
-      duration: "5:30",
+      duration: "00:05",
       
     },
   ];
