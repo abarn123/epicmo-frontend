@@ -29,8 +29,24 @@ export default function Sidebar() {
     setDropdownOpen(false);
   }, [isAuthenticated, userName]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   if (!role) {
-    // Bisa tampilkan loading, atau menu default
     return null;
   }
 
@@ -52,31 +68,31 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-64 bg-black border-r border-slate-700 flex flex-col shadow-xl z-30">
-      {/* Background overlay pattern */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.6))] opacity-10"></div>
-      
-      {/* Content wrapper with relative positioning */}
-      <div className="relative flex flex-col h-full px-4 py-4">
-        {/* Logo section - moved to very top */}
-        <div className="mb-6 text-center">
+    <aside className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-900 to-black border-r border-gray-700 flex flex-col shadow-2xl z-30">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.3))] opacity-5"></div>
+
+      {/* Content wrapper */}
+      <div className="relative flex flex-col h-full px-6 py-6">
+        {/* Logo section */}
+        <div className="mb-8 text-center">
           <img
             src="/epicmo.logo.png"
             alt="Epicmo Logo"
-            className="h-10 w-auto mx-auto drop-shadow-lg"
+            className="h-12 w-auto mx-auto drop-shadow-lg transition-transform hover:scale-105"
           />
         </div>
 
         {/* User Dropdown */}
         <div className="relative flex flex-col items-center mb-8">
           <button
-            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-200 w-full border border-white/10 bg-white/5"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:border-white/20 transition-all duration-300 w-full group"
             onClick={() => setDropdownOpen((v) => !v)}
             aria-label="User menu"
           >
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-white/20 bg-gradient-to-br from-blue-400 to-purple-500 text-white text-lg font-bold shadow-lg">
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-lg font-bold shadow-lg ring-2 ring-white/20">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -85,17 +101,19 @@ export default function Sidebar() {
                 <circle cx="12" cy="8" r="4" />
                 <path d="M6 20c0-2.21 3.582-4 6-4s6 1.79 6 4" />
               </svg>
-            </span>
-            <span className="font-semibold text-white text-base truncate max-w-[100px] drop-shadow-sm">
+            </div>
+            <span className="font-semibold text-white text-sm truncate max-w-[120px] transition-colors group-hover:text-blue-200">
               {loading
                 ? "Memuat..."
                 : isAuthenticated
                 ? userName || "User"
                 : "User"}
             </span>
-            
+
             <svg
-              className="w-4 h-4 ml-1 text-white/70"
+              className={`w-4 h-4 ml-auto text-white/60 transition-transform duration-200 ${
+                dropdownOpen ? "rotate-180" : ""
+              }`}
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -108,113 +126,148 @@ export default function Sidebar() {
               />
             </svg>
           </button>
+
           {dropdownOpen && (
             <div
               ref={dropdownRef}
-              className="absolute top-16 left-0 w-52 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 z-50 animate-fade-in overflow-hidden"
+              className="absolute top-full left-0 right-0 mt-2 bg-gray-800 backdrop-blur-md rounded-xl shadow-2xl border border-gray-600 z-50 overflow-hidden animate-fade-in"
             >
               <Link
                 href="/profile"
-                className="block px-4 py-3 text-slate-700 hover:bg-blue-50 transition-colors font-medium"
+                className="flex items-center gap-3 px-4 py-3 text-gray-200 hover:bg-gray-700 transition-colors duration-200"
                 onClick={() => setDropdownOpen(false)}
               >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
                 Profile
               </Link>
               <button
-                onClick={() => {
-                  setDropdownOpen(false);
-                  handleLogout();
-                }}
-                className="w-full text-left px-4 py-3 text-slate-700 hover:bg-red-50 transition-colors border-t border-slate-200 flex items-center gap-2 font-medium"
+                onClick={handleLogout}
+                className="flex items-center gap-3 w-full text-left px-4 py-3 text-red-400 hover:bg-red-900/50 transition-colors duration-200 border-t border-gray-600"
               >
-                <LogOut className="w-4 h-4 text-red-500" />
+                <LogOut className="w-4 h-4" />
                 Logout
               </button>
             </div>
           )}
         </div>
 
+        {/* Navigation Menu */}
         <nav className="flex flex-col gap-2 flex-grow">
           {canAccess("dashboard") && (
             <Link
               href="/dashboard"
-              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-200 font-medium text-white/90 hover:text-white group border border-transparent hover:border-white/10"
+              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-300 font-medium text-white/90 hover:text-white group border border-transparent hover:border-blue-500/30"
             >
-              <svg
-                className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors drop-shadow-sm"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"
-                />
-              </svg>
-              <span className="drop-shadow-sm">Dashboard</span>
+              <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                <svg
+                  className="w-5 h-5 text-blue-400 group-hover:text-blue-300 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"
+                  />
+                </svg>
+              </div>
+              <span className="group-hover:translate-x-1 transition-transform">
+                Dashboard
+              </span>
             </Link>
           )}
+
           {canAccess("attendance") && (
             <Link
               href="/attendance"
-              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-200 font-medium text-white/90 hover:text-white group border border-transparent hover:border-white/10"
+              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-300 font-medium text-white/90 hover:text-white group border border-transparent hover:border-green-500/30"
             >
-              <svg
-                className="w-5 h-5 text-green-400 group-hover:text-green-300 transition-colors drop-shadow-sm"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <rect x="3" y="7" width="18" height="13" rx="2" />
-                <path d="M16 3v4M8 3v4" />
-              </svg>
-              <span className="drop-shadow-sm">Attendance</span>
+              <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
+                <svg
+                  className="w-5 h-5 text-green-400 group-hover:text-green-300 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <rect x="3" y="7" width="18" height="13" rx="2" />
+                  <path d="M16 3v4M8 3v4" />
+                </svg>
+              </div>
+              <span className="group-hover:translate-x-1 transition-transform">
+                Attendance
+              </span>
             </Link>
           )}
+
           {canAccess("tools") && (
             <Link
               href="/tools"
-              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-200 font-medium text-white/90 hover:text-white group border border-transparent hover:border-white/10"
+              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-300 font-medium text-white/90 hover:text-white group border border-transparent hover:border-purple-500/30"
             >
-              <svg
-                className="w-5 h-5 text-purple-400 group-hover:text-purple-300 transition-colors drop-shadow-sm"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06A1.65 1.65 0 0015 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 008.6 15a1.65 1.65 0 00-1.82-.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0015 8.6a1.65 1.65 0 001.82.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 15z" />
-              </svg>
-              <span className="drop-shadow-sm">Tools</span>
+              <div className="p-2 bg-purple-500/10 rounded-lg group-hover:bg-purple-500/20 transition-colors">
+                <svg
+                  className="w-5 h-5 text-purple-400 group-hover:text-purple-300 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06A1.65 1.65 0 0015 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 008.6 15a1.65 1.65 0 00-1.82-.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0015 8.6a1.65 1.65 0 001.82.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 15z" />
+                </svg>
+              </div>
+              <span className="group-hover:translate-x-1 transition-transform">
+                Tools
+              </span>
             </Link>
           )}
+
           {role === "admin" && (
             <Link
               href="/user"
-              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-200 font-medium text-white/90 hover:text-white group border border-transparent hover:border-white/10"
+              className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/10 backdrop-blur-sm transition-all duration-300 font-medium text-white/90 hover:text-white group border border-transparent hover:border-orange-500/30"
             >
-              <svg
-                className="w-5 h-5 text-orange-400 group-hover:text-orange-300 transition-colors drop-shadow-sm"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M6 20c0-2.21 3.582-4 6-4s6 1.79 6 4" />
-              </svg>
-              <span className="drop-shadow-sm">User</span>
+              <div className="p-2 bg-orange-500/10 rounded-lg group-hover:bg-orange-500/20 transition-colors">
+                <svg
+                  className="w-5 h-5 text-orange-400 group-hover:text-orange-300 transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M6 20c0-2.21 3.582-4 6-4s6 1.79 6 4" />
+                </svg>
+              </div>
+              <span className="group-hover:translate-x-1 transition-transform">
+                User
+              </span>
             </Link>
           )}
         </nav>
 
-        <div className="mt-auto text-xs text-white/60 text-center pt-6">
-          <div className="border-t border-white/10 pt-4">
+        {/* Footer */}
+        <div className="mt-auto pt-6 border-t border-gray-700">
+          <div className="text-xs text-gray-400 text-center">
             © {new Date().getFullYear()} Epicmo
+            <div className="text-[10px] text-gray-500 mt-1">
+              v{process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0"}
+            </div>
           </div>
         </div>
       </div>

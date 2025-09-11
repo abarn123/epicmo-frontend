@@ -210,149 +210,8 @@ function ToolCard({
   );
 }
 
-// EditToolModal component
-function EditToolModal({
-  tool,
-  onSave,
-  onCancel,
-}: {
-  tool: Tool;
-  onSave: (tool: Tool) => void;
-  onCancel: () => void;
-}) {
-  const [formData, setFormData] = useState<Tool>(tool);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-}
-
-// AddToolModal component
-function AddToolModal({
-  onSave,
-  onCancel,
-}: {
-  onSave: (tool: ToolFormData) => void;
-  onCancel: () => void;
-}) {
-  const [formData, setFormData] = useState<ToolFormData>({
-    item_name: "",
-    stock: 0,
-    item_condition: "baru",
-    category: "Elektronik",
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-white">
-          <h2 className="text-xl font-semibold">Tambah Alat Baru</h2>
-          <p className="text-blue-100 text-sm">
-            Isi form untuk menambahkan alat baru
-          </p>
-        </div>
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nama Alat
-            </label>
-            <input
-              type="text"
-              name="item_name"
-              value={formData.item_name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-              required
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Stock
-              </label>
-              <input
-                type="number"
-                name="stock"
-                value={formData.stock}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                required
-                min={0}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Kategori
-              </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none bg-white"
-                required
-              >
-                <option value="Elektronik">Elektronik</option>
-                <option value="Aksesoris">Aksesoris</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Kondisi
-            </label>
-            <input
-              type="text"
-              name="item_condition"
-              value={formData.item_condition}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-              required
-            />
-          </div>
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-            >
-              Tambah Alat
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
 // Main ToolsPage component
-export default function toolsPage() {
+export default function ToolsPage() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -385,10 +244,10 @@ export default function toolsPage() {
           },
         });
         let toolsData = response.data;
-if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
-  if (Array.isArray(toolsData.data)) {
-    toolsData = toolsData.data;
-  }
+        if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
+          if (Array.isArray(toolsData.data)) {
+            toolsData = toolsData.data;
+          }
         }
 
         if (!Array.isArray(toolsData)) {
@@ -422,7 +281,7 @@ if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
     fetchTools();
   }, [token, authLoading]);
 
-  // Pagination logic (match user management style)
+  // Pagination logic (matching user management style)
   const indexOfLastTool = currentPage * itemsPerPage;
   const indexOfFirstTool = indexOfLastTool - itemsPerPage;
   const currentTools = tools.slice(indexOfFirstTool, indexOfLastTool);
@@ -490,9 +349,9 @@ if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
 
       if (
         updatedTools.length > 0 &&
-        currentPage > Math.ceil(updatedTools.length)
+        currentPage > Math.ceil(updatedTools.length / itemsPerPage)
       ) {
-        setCurrentPage(Math.ceil(updatedTools.length));
+        setCurrentPage(Math.ceil(updatedTools.length / itemsPerPage));
       }
 
       toast.success("Alat berhasil dihapus");
@@ -701,9 +560,9 @@ if (toolsData && typeof toolsData === "object" && !Array.isArray(toolsData)) {
             </>
           )}
 
-          {/* Sticky Pagination Footer */}
+          {/* Sticky Pagination Footer - Updated to match user management style */}
           {totalPages > 1 && (
-            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 fixed bottom-4 left-0 z-10 flex justify-center translate-x-20">
+            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4 mt-8">
               <nav
                 className="inline-flex rounded-md shadow-sm -space-x-px"
                 aria-label="Pagination"

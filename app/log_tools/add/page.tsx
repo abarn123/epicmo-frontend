@@ -8,19 +8,20 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 type Tool = {
-  id: string;
+  id: number;
   item_name: string;
   stock: number;
   item_condition: string;
   category: string;
+  selected: boolean;
+  quantity: number;
 };
 
 type BorrowFormData = {
   user_id: number | null;
-  tool_id: string;
-  quantity: number;
-  borrow_date: string;
-  return_date: string | null;
+  date_borrow: string;
+  date_return: string | null;
+  tools_status: string;
 };
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
@@ -33,13 +34,14 @@ export default function AddBorrowPage() {
   const [loadingTools, setLoadingTools] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [showCategoryTools, setShowCategoryTools] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<BorrowFormData>({
     user_id: null,
-    tool_id: "",
-    quantity: 0,
-    borrow_date: new Date().toISOString().split("T")[0],
-    return_date: null,
+    date_borrow: new Date().toISOString().split("T")[0],
+    date_return: null,
+    tools_status: "borrowed" // Status default untuk peminjaman
   });
 
   useEffect(() => {
@@ -86,11 +88,13 @@ export default function AddBorrowPage() {
           
           const processedTools: Tool[] = availableTools.map(
             (tool: any, index: number) => ({
-              id: tool.id?.toString() || `generated-${index}-${Date.now()}`,
+              id: tool.id ? parseInt(tool.id) : index + 0,
               item_name: tool.item_name || "No name",
               stock: tool.stock || 0,
               item_condition: tool.item_condition || "",
               category: tool.category || "Lainnya",
+              selected: false,
+              quantity: 0
             })
           );
           setTools(processedTools);
@@ -115,80 +119,38 @@ export default function AddBorrowPage() {
     console.error(error);
   };
 
-  // Debounce untuk mencegah multiple calls
-  const debounce = (func: Function, delay: number) => {
-  let timeoutId: NodeJS.Timeout;
-  return (...args: any[]) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func(...args), delay);
+  const handleToolSelection = (id: number, selected: boolean) => {
+    setTools(prevTools => 
+      prevTools.map(tool => 
+        tool.id === id 
+          ? { ...tool, selected, quantity: selected ? 1 : 0 } 
+          : tool
+      )
+    );
   };
-};
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => {
-      if (name === "quantity") {
-        // Parse nilai input
-        let quantity = parseInt(value, 10);
-        
-        // Jika bukan angka, set ke 0
-        if (isNaN(quantity)) {
-          return { ...prev, quantity: 0 };
+  const handleQuantityChange = (id: number, quantity: number) => {
+    setTools(prevTools => 
+      prevTools.map(tool => {
+        if (tool.id === id) {
+          // Validasi jumlah tidak melebihi stok dan minimal 1
+          const validQuantity = Math.max(1, Math.min(quantity, tool.stock));
+          return { ...tool, quantity: validQuantity };
         }
-        
-        const selectedTool = tools.find((t) => t.id === prev.tool_id);
-        const maxQuantity = selectedTool?.stock || 0;
-
-        // Pastikan quantity minimal 0 dan maksimal sesuai stok
-        quantity = Math.max(0, Math.min(quantity, maxQuantity));
-        return { ...prev, quantity };
-      }
-
-      if (name === "tool_id") {
-        return { ...prev, tool_id: value, quantity: 0 };
-      }
-
-      return { ...prev, [name]: value };
-    });
-  };
-
-  // Debounced version of handleChange untuk input number
-  const debouncedHandleChange = debounce(handleChange, 300);
-
-  const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    
-    // Untuk input number, gunakan handler langsung tanpa debounce
-    if (name === "quantity") {
-      let quantity = parseInt(value, 10);
-      
-      if (isNaN(quantity)) {
-        quantity = 0;
-      }
-      
-      const selectedTool = tools.find((t) => t.id === formData.tool_id);
-      const maxQuantity = selectedTool?.stock || 0;
-      
-      quantity = Math.max(0, Math.min(quantity, maxQuantity));
-      
-      setFormData(prev => ({ ...prev, quantity }));
-    }
-  };
-
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === "tool_id") {
-      setFormData(prev => ({ ...prev, tool_id: value, quantity: 0 }));
-    }
+        return tool;
+      })
+    );
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+    setShowCategoryTools(category !== "");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -204,24 +166,33 @@ export default function AddBorrowPage() {
         return;
       }
 
-      const selectedTool = tools.find((t) => t.id === formData.tool_id);
-      if (!selectedTool) throw new Error("Alat tidak ditemukan");
+      // Dapatkan alat yang dipilih
+      const selectedTools = tools.filter(tool => tool.selected);
       
-      if (formData.quantity < 1) {
-        throw new Error("Jumlah peminjaman minimal 1");
-      }
-      
-      if (selectedTool.stock < formData.quantity) {
-        throw new Error("Jumlah tidak cukup tersedia");
+      // Validasi
+      if (selectedTools.length === 0) {
+        throw new Error("Silakan pilih minimal satu alat");
       }
 
-      // Pastikan payload sesuai dengan yang diharapkan backend
+      for (const tool of selectedTools) {
+        if (tool.quantity < 1) {
+          throw new Error(`Jumlah peminjaman minimal 1 untuk ${tool.item_name}`);
+        }
+        
+        if (tool.stock < tool.quantity) {
+          throw new Error(`Jumlah tidak cukup tersedia untuk ${tool.item_name}`);
+        }
+      }
+
+      // Siapkan payload yang sesuai dengan backend
       const payload = {
         user_id: formData.user_id,
-        tools_id: selectedTool.id,
-        tools_status: "borrowed",
-        quantity: formData.quantity,
-        date_borrow: formData.borrow_date,
+        tools_status: "borrowed", // Status untuk peminjaman
+        tools: selectedTools.map(tool => ({
+          tools_id: tool.id,
+          quantity: tool.quantity
+        })),
+        date_borrow: formData.date_borrow,
         date_return: null,
       };
 
@@ -236,16 +207,11 @@ export default function AddBorrowPage() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to submit borrow request");
-      }
-
-      const result = await response.json();
-      console.log("Response dari server:", result);
+      const responseData = await response.json();
+      console.log("Response dari server:", responseData);
       
-      if (result.status === false) {
-        throw new Error(result.message || "Server rejected the request");
+      if (!response.ok || !responseData.status) {
+        throw new Error(responseData.message || "Failed to submit borrow request");
       }
 
       toast.success("Berhasil meminjam alat!");
@@ -257,6 +223,14 @@ export default function AddBorrowPage() {
       setSubmitting(false);
     }
   };
+
+  // Dapatkan daftar kategori unik
+  const categories = Array.from(new Set(tools.map(tool => tool.category)));
+
+  // Filter alat berdasarkan kategori yang dipilih
+  const filteredTools = selectedCategory 
+    ? tools.filter(tool => tool.category === selectedCategory)
+    : [];
 
   if (loadingTools) {
     return (
@@ -303,8 +277,6 @@ export default function AddBorrowPage() {
     );
   }
 
-  const selectedTool = tools.find((t) => t.id === formData.tool_id);
-
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
@@ -345,14 +317,14 @@ export default function AddBorrowPage() {
             </div>
           </div>
 
-          <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="bg-white shadow overflow-hidden rounded-lg">
               <div className="px-4 py-5 sm:px-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
                 <h3 className="text-lg leading-6 font-medium text-black">
                   Formulir Peminjaman
                 </h3>
                 <p className="mt-1 text-sm text-black">
-                  Isi semua field yang diperlukan untuk meminjam alat
+                  Pilih kategori terlebih dahulu, kemudian pilih alat yang ingin dipinjam
                 </p>
               </div>
 
@@ -384,90 +356,142 @@ export default function AddBorrowPage() {
                       style={{ color: "#000" }}
                     />
                   </div>
-                  <div className="col-span-6 sm:col-span-4">
-                    <label
-                      htmlFor="tool_id"
-                      className="block text-sm font-medium text-black"
-                    >
-                      Alat <span className="text-red-500">*</span>
+
+                  <div className="col-span-6 sm:col-span-3">
+                    <label className="block text-sm font-medium text-black">
+                      Pilih Kategori <span className="text-red-500">*</span>
                     </label>
                     <select
-                      id="tool_id"
-                      name="tool_id"
-                      value={formData.tool_id}
-                      onChange={handleSelectChange}
+                      value={selectedCategory}
+                      onChange={handleCategoryChange}
                       className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
-                      required
                       style={{ color: "#000" }}
-                      disabled={loadingTools || tools.length === 0}
                     >
-                      <option value="" className="text-black">
-                        {loadingTools 
-                          ? "Memuat data alat..." 
-                          : tools.length === 0 
-                            ? "Tidak ada alat tersedia" 
-                            : "Pilih Alat"}
-                      </option>
-                      {tools.map((tool) => (
-                        <option
-                          key={tool.id}
-                          value={tool.id}
-                          className="text-black"
-                          disabled={tool.stock === 0}
-                        >
-                          {tool.item_name} {tool.stock === 0 ? "(Habis)" : `(Tersedia: ${tool.stock})`}
+                      <option value="">-- Pilih Kategori --</option>
+                      {categories.map((category) => (
+                        <option key={category} value={category} className="text-black">
+                          {category}
                         </option>
                       ))}
                     </select>
-                    {tools.length === 0 && !loadingTools && (
-                      <p className="mt-1 text-sm text-red-600">
-                        Tidak ada alat yang tersedia untuk dipinjam.
-                      </p>
-                    )}
                   </div>
 
-                  <div className="col-span-6 sm:col-span-2">
-                    <label
-                      htmlFor="quantity"
-                      className="block text-sm font-medium text-black"
-                    >
-                      Jumlah <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      id="quantity"
-                      name="quantity"
-                      min="0"
-                      max={selectedTool?.stock || 0}
-                      value={formData.quantity}
-                      onChange={handleNumberInput}
-                      className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
-                      required
-                      style={{ color: "#000" }}
-                      disabled={!formData.tool_id || selectedTool?.stock === 0}
-                    />
-                    <p className="mt-1 text-xs text-black">
-                      Tersedia: {selectedTool?.stock ?? 0} alat
-                    </p>
-                    {formData.quantity === 0 && formData.tool_id && (
-                      <p className="mt-1 text-xs text-red-600">
-                        Jumlah peminjaman harus lebih dari 0
-                      </p>
+                  {showCategoryTools && (
+                    <div className="col-span-6">
+                      <h4 className="text-lg font-medium text-black mb-4">
+                        Alat dalam Kategori: {selectedCategory}
+                      </h4>
+                      
+                      {filteredTools.length === 0 ? (
+                        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                          <div className="flex">
+                            <div className="ml-3">
+                              <p className="text-sm text-yellow-700">
+                                Tidak ada alat yang tersedia dalam kategori ini.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="border border-gray-200 rounded-lg overflow-hidden">
+                          <div className="divide-y divide-gray-200">
+                            {filteredTools.map((tool) => (
+                              <div key={tool.id} className="px-4 py-3 flex items-center justify-between">
+                                <div className="flex items-center space-x-3 flex-1">
+                                  <input
+                                    type="checkbox"
+                                    checked={tool.selected}
+                                    onChange={(e) => handleToolSelection(tool.id, e.target.checked)}
+                                    disabled={tool.stock === 0}
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <label className="text-sm font-medium text-black cursor-pointer">
+                                      {tool.item_name}
+                                    </label>
+                                    <p className="text-xs text-gray-500">
+                                      Kondisi: {tool.item_condition} | Stok: {tool.stock}
+                                    </p>
+                                  </div>
+                                </div>
+                                {tool.selected && (
+                                  <div className="ml-4 flex items-center">
+                                    <label htmlFor={`quantity-${tool.id}`} className="sr-only">
+                                      Jumlah
+                                    </label>
+                                    <input
+                                      type="number"
+                                      id={`quantity-${tool.id}`}
+                                      min="1"
+                                      max={tool.stock}
+                                      value={tool.quantity}
+                                      onChange={(e) => handleQuantityChange(tool.id, parseInt(e.target.value) || 1)}
+                                      className="w-20 py-1 px-2 border border-gray-300 rounded-md shadow-sm text-sm text-black"
+                                      style={{ color: "#000" }}
+                                    />
+                                    <span className="ml-2 text-sm text-black">pcs</span>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="col-span-6">
+                    <h4 className="text-lg font-medium text-black mb-4">
+                      Alat yang Dipilih
+                    </h4>
+                    
+                    {tools.filter(tool => tool.selected).length === 0 ? (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+                        <p className="text-sm text-gray-500">Belum ada alat yang dipilih</p>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="bg-gray-50 px-4 py-2">
+                          <h5 className="text-sm font-medium text-gray-700">Daftar Alat Dipilih</h5>
+                        </div>
+                        <div className="divide-y divide-gray-200">
+                          {tools.filter(tool => tool.selected).map((tool) => (
+                            <div key={tool.id} className="px-4 py-3 flex items-center justify-between">
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-black">{tool.item_name}</p>
+                                <p className="text-xs text-gray-500">Kategori: {tool.category}</p>
+                              </div>
+                              <div className="flex items-center">
+                                <span className="text-sm text-black mr-3">{tool.quantity} pcs</span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleToolSelection(tool.id, false)}
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
 
                   <div className="col-span-6 sm:col-span-3">
                     <label
-                      htmlFor="borrow_date"
+                      htmlFor="date_borrow"
                       className="block text-sm font-medium text-black"
                     >
                       Tanggal Peminjaman <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
-                      id="borrow_date"
-                      name="borrow_date"
-                      value={formData.borrow_date}
+                      id="date_borrow"
+                      name="date_borrow"
+                      value={formData.date_borrow}
                       onChange={handleDateChange}
                       className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                       required
@@ -486,7 +510,8 @@ export default function AddBorrowPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={submitting || !formData.user_id || formData.quantity === 0 || !formData.tool_id || selectedTool?.stock === 0}
+                    disabled={submitting || !formData.user_id || 
+                      tools.filter(t => t.selected).length === 0}
                     className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-75"
                   >
                     {!formData.user_id ? (
@@ -508,7 +533,7 @@ export default function AddBorrowPage() {
                           <path
                             className="opacity-75"
                             fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 极 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            d="M4 12a8 8 0 018-极V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c极 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
                         </svg>
                         <span className="text-black">Memuat User...</span>
@@ -519,7 +544,7 @@ export default function AddBorrowPage() {
                           className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
-                          viewBox="极 0 24 24"
+                          viewBox="0 0 24 24"
                         >
                           <circle
                             className="opacity-25"
@@ -532,7 +557,7 @@ export default function AddBorrowPage() {
                           <path
                             className="opacity-75"
                             fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c极 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
                         </svg>
                         <span className="text-black">Memproses...</span>

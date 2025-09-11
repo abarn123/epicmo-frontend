@@ -1,144 +1,152 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthenticatedLayout from "../components/AuthenticatedLayout";
 
-const stats = [
-  {
-    label: "Total Pengguna",
-    value: 128,
-    icon: (
-      <svg
-        className="w-8 h-8 text-blue-500"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m9-4a4 4 0 11-8 0 4 4 0 018 0z"
-        />
-      </svg>
-    ),
-  },
-  {
-    label: "Alat Aktif",
-    value: 12,
-    icon: (
-      <svg
-        className="w-8 h-8 text-purple-500"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        viewBox="0 0 24 24"
-      >
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06A1.65 1.65 0 0015 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 008.6 15a1.65 1.65 0 00-1.82-.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0015 8.6a1.65 1.65 0 001.82.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 15z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Stok Barang",
-    value: 37,
-    icon: (
-      <svg
-        className="w-8 h-8 text-green-500"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        viewBox="0 0 24 24"
-      >
-        <rect x="3" y="7" width="18" height="13" rx="2" />
-        <path d="M16 3v4M8 3v4" />
-      </svg>
-    ),
-  },
-  {
-    label: "Kehadiran",
-    value: 5,
-    icon: (
-      <svg
-        className="w-8 h-8 text-orange-500"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        viewBox="0 0 24 24"
-      >
-        <circle cx="12" cy="8" r="4" />
-        <path d="M6 20c0-2.21 3.582-4 6-4s6 1.79 6 4" />
-      </svg>
-    ),
-  },
-];
+const MediaDashboard = () => {
+  const [activeTab, setActiveTab] = useState('photos');
+  
+  // Data contoh untuk foto
+  const photos = [
+    {
+      id: 1,
+      src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+      title: "Pegunungan Indah",
+      description: "Pemandangan pegunungan yang menakjubkan dengan udara segar dan pemandangan memukau."
+    },
+    {
+      id: 2,
+      src: "https://images.unsplash.com/photo-1518837695005-2083093ee35b",
+      title: "Pantai yang Tenang",
+      description: "Ombak yang berkejaran dengan pasir putih, menciptakan harmoni alam yang menenangkan."
+    },
+    {
+      id: 3,
+      src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05",
+      title: "Hutan Hijau",
+      description: "Kehijauan hutan yang menyegarkan mata, dengan beragam kehidupan di dalamnya."
+    },
+    {
+      id: 4,
+      src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470",
+      title: "Danau yang Jernih",
+      description: "Air danau yang jernih memantulkan keindahan langit dan pepohonan di sekitarnya."
+    }
+  ];
 
-const activities = [
-  { time: "09:00", desc: "Pengguna Budi Santoso menambahkan alat baru: Box Epicmo" },
-  { time: "10:15", desc: "Stok diperbarui untuk Tripod box" },
-  { time: "11:30", desc: "Pengguna baru terdaftar: Siti Aminah" },
-  { time: "13:00", desc: "Proyek 'Photo Booth Wedding' dibuat" },
-];
+  // Data contoh untuk video
+  const videos = [
+    {
+      id: 1,
+      poster: "https://images.unsplash.com/photo-1559703248-dcaaec9fab78",
+      title: "Petualangan Seru",
+      description: "Video petualangan mendaki gunung dengan pemandangan memukau sepanjang perjalanan."
+    },
+    {
+      id: 2,
+      poster: "https://images.unsplash.com/photo-1579801025761-8cfc1b06bfed",
+      title: "Kehidupan Bawah Laut",
+      description: "Eksplorasi keindahan terumbu karang dan kehidupan bawah laut yang penuh warna."
+    },
+    {
+      id: 3,
+      poster: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
+      title: "Pemandangan Kota",
+      description: "Time-lapse pergerakan kota dari siang hingga malam dengan lampu-lampu indah."
+    },
+    {
+      id: 4,
+      poster: "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1",
+      title: "Sunset di Pantai",
+      description: "Momen indah matahari terbenam di garis horizon lautan."
+    }
+  ];
 
-export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-blue-100">
-          <div className="flex-1 p-8 flex flex-col">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4 border border-gray-100 hover:shadow-2xl transition"
-                >
-                  <div>{stat.icon}</div>
-                  <div>
-                    <div className="text-2xl font-bold text-indigo-700">
-                      {stat.value}
-                    </div>
-                    <div className="text-gray-500 text-sm font-medium">
-                      {stat.label}
-                    </div>
-                  </div>
-                </div>
-              ))}
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-6">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Epicmo Gallery</h1>
+            <p className="text-gray-600 mb-8">Jelajahi koleksi foto dan video menarik kami</p>
+            
+            {/* Tab Navigation */}
+            <div className="flex border-b border-gray-200 mb-8">
+              <button
+                className={`py-3 px-6 font-medium text-sm ${activeTab === 'photos' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab('photos')}
+              >
+                Photos
+              </button>
+              <button
+                className={`py-3 px-6 font-medium text-sm ${activeTab === 'videos' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab('videos')}
+              >
+                Videos
+              </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Aktivitas Terbaru
-                </h2>
-                <ul className="divide-y divide-gray-100">
-                  {activities.map((act, idx) => (
-                    <li key={idx} className="py-3 flex items-start gap-3">
-                      <span className="text-xs text-gray-400 w-16 flex-shrink-0">
-                        {act.time}
-                      </span>
-                      <span className="text-gray-700 text-sm">{act.desc}</span>
-                    </li>
+            
+            {/* Content based on active tab */}
+            {activeTab === 'photos' && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Photo Collection</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {photos.map(photo => (
+                    <div key={photo.id} className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                      <div className="relative">
+                        <img 
+                          src={photo.src} 
+                          alt={photo.title}
+                          className="w-full h-48 object-cover"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold text-gray-800 mb-2">{photo.title}</h3>
+                        <p className="text-gray-600 text-sm">{photo.description}</p>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-blue-200 to-indigo-200 rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-gray-100">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Selamat Datang di Epicmo!
-                </h2>
-                <p className="text-gray-600 text-center mb-6">
-                  Kelola pengguna, alat, dan proyek Anda dengan dasbor modern dan profesional.
-                  Semua aktivitas dan statistik Anda di satu tempat.
-                </p>
-                <img
-                  src="/epicmo.logo.png"
-                  alt="Logo Epicmo"
-                  className="w-32 h-32 object-contain mb-2"
-                />
+            )}
+            
+            {activeTab === 'videos' && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-6">Video Collection</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {videos.map(video => (
+                    <div key={video.id} className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                      <div className="relative">
+                        <img 
+                          src={video.poster} 
+                          alt={video.title}
+                          className="w-full h-48 object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-white bg-opacity-80 rounded-full flex items-center justify-center">
+                            <svg className="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold text-gray-800 mb-2">{video.title}</h3>
+                        <p className="text-gray-600 text-sm">{video.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+            
+            {/* Stats Section */}
+          
           </div>
         </div>
       </AuthenticatedLayout>
     </ProtectedRoute>
   );
-}
+};
+
+export default MediaDashboard;
