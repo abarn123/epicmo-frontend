@@ -39,7 +39,7 @@ export default function AuthenticatedLayout({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-8">{children}</main>
+      <main className="flex-1 p-12">{children}</main>
     </div>
   );
 }
