@@ -46,7 +46,7 @@ const toolCategoryData = {
         "rgba(139, 92, 246, 1)",
       ],
       borderWidth: 1,
-      hoverOffset: 15, // Tetap pertahankan hover effect
+      
     },
   ],
 };
@@ -70,7 +70,7 @@ const statusData = {
         "rgba(239, 68, 68, 1)",
       ],
       borderWidth: 1,
-      hoverOffset: 15,
+      
     },
   ],
 };
@@ -92,7 +92,7 @@ const borrowingTrendData = {
         "rgba(239, 68, 68, 1)",
       ],
       borderWidth: 1,
-      hoverOffset: 15,
+      
     },
   ],
 };
@@ -146,7 +146,7 @@ const pieOptions: ChartOptions<"pie"> = {
             0
           );
           const percentage = Math.round((value / total) * 100);
-          return `${label}: ${value} (${percentage}%)`;
+          return `${label}: ${value} `;
         },
       },
     },
@@ -294,7 +294,7 @@ const MediaDashboard = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Pie Chart 1 - Kategori Alat */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 hover:shadow-md">
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 ">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Distribusi Kategori Alat
                 </h2>
@@ -321,7 +321,7 @@ const MediaDashboard = () => {
               </div>
 
               {/* Pie Chart 2 - Status Alat */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 hover:shadow-md">
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 ">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Status Alat
                 </h2>
@@ -348,7 +348,7 @@ const MediaDashboard = () => {
               </div>
 
               {/* Pie Chart 3 - Trend Peminjaman */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 hover:shadow-md">
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 ">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Trend Peminjaman
                 </h2>
