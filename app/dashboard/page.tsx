@@ -1,50 +1,463 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthenticatedLayout from "../components/AuthenticatedLayout";
-import { Bar, Pie, Line, } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartOptions,
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// Register komponen Chart.js yang diperlukan untuk Pie Chart
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-
-// Data dan options chart
-const BarData = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+// Data untuk Pie Charts - tanpa spacing dan borderRadius untuk menghilangkan celah
+const toolCategoryData = {
+  labels: ["Perkakas", "Elektronik", "Kendaraan", "Peralatan Medis", "Lainnya"],
   datasets: [
     {
-      label: 'Contoh Data',
-      data: [12, 19, 10, 5],
-      backgroundColor: 'rgba(54, 162, 235, 0.5)',
+      label: "Jumlah Alat",
+      data: [45, 30, 15, 8, 12],
+      backgroundColor: [
+        "rgba(79, 70, 229, 0.9)",
+        "rgba(236, 72, 153, 0.9)",
+        "rgba(249, 115, 22, 0.9)",
+        "rgba(16, 185, 129, 0.9)",
+        "rgba(139, 92, 246, 0.9)",
+      ],
+      borderColor: [
+        "rgba(79, 70, 229, 1)",
+        "rgba(236, 72, 153, 1)",
+        "rgba(249, 115, 22, 1)",
+        "rgba(16, 185, 129, 1)",
+        "rgba(139, 92, 246, 1)",
+      ],
+      borderWidth: 1,
+      hoverOffset: 15, // Tetap pertahankan hover effect
     },
   ],
 };
 
-const options = {
-  responsive: true,
-  plugins: {
-    legend: { position: "top" as const },
-    title: { display: true, text: 'Contoh Chart' },
-  },
+const statusData = {
+  labels: ["Tersedia", "Dipinjam", "Dalam Perbaikan", "Hilang"],
+  datasets: [
+    {
+      label: "Status Alat",
+      data: [65, 25, 7, 3],
+      backgroundColor: [
+        "rgba(16, 185, 129, 0.9)",
+        "rgba(59, 130, 246, 0.9)",
+        "rgba(245, 158, 11, 0.9)",
+        "rgba(239, 68, 68, 0.9)",
+      ],
+      borderColor: [
+        "rgba(16, 185, 129, 1)",
+        "rgba(59, 130, 246, 1)",
+        "rgba(245, 158, 11, 1)",
+        "rgba(239, 68, 68, 1)",
+      ],
+      borderWidth: 1,
+      hoverOffset: 15,
+    },
+  ],
 };
 
+const borrowingTrendData = {
+  labels: ["Peminjaman Aktif", "Sudah Dikembalikan", "Terlambat"],
+  datasets: [
+    {
+      label: "Trend Peminjaman",
+      data: [35, 55, 10],
+      backgroundColor: [
+        "rgba(59, 130, 246, 0.9)",
+        "rgba(16, 185, 129, 0.9)",
+        "rgba(239, 68, 68, 0.9)",
+      ],
+      borderColor: [
+        "rgba(59, 130, 246, 1)",
+        "rgba(16, 185, 129, 1)",
+        "rgba(239, 68, 68, 1)",
+      ],
+      borderWidth: 1,
+      hoverOffset: 15,
+    },
+  ],
+};
 
+// Options untuk Pie Charts dengan animasi - tanpa spacing
+const pieOptions: ChartOptions<"pie"> = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: "right",
+      labels: {
+        font: {
+          size: 13,
+          family: "'Inter', 'sans-serif'",
+        },
+        color: "#374151",
+        padding: 20,
+        usePointStyle: true,
+        pointStyle: "circle",
+      },
+    },
+    title: {
+      display: true,
+      color: "#1F2937",
+      font: {
+        size: 18,
+        weight: "bold",
+        family: "'Inter', 'sans-serif'",
+      },
+      padding: {
+        top: 10,
+        bottom: 20,
+      },
+    },
+    tooltip: {
+      backgroundColor: "rgba(255, 255, 255, 0.95)",
+      titleColor: "#1F2937",
+      bodyColor: "#374151",
+      borderColor: "#E5E7EB",
+      borderWidth: 1,
+      cornerRadius: 8,
+      boxPadding: 10,
+      usePointStyle: true,
+      callbacks: {
+        label: function (context) {
+          const label = context.label || "";
+          const value = context.raw || 0;
+          const total = context.dataset.data.reduce(
+            (a: number, b: number) => a + b,
+            0
+          );
+          const percentage = Math.round((value / total) * 100);
+          return `${label}: ${value} (${percentage}%)`;
+        },
+      },
+    },
+  },
+  animation: {
+    animateScale: true,
+    animateRotate: true,
+    duration: 1500,
+    easing: "easeOutQuart",
+  },
+  transitions: {
+    active: {
+      animation: {
+        duration: 500,
+      },
+    },
+  },
+  // Menghilangkan celah antara bagian pie chart
+  cutout: "0%", // Pastikan tidak ada donut hole
+  radius: "90%", // Pastikan pie chart memenuhi container
+};
 
 const MediaDashboard = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulasi loading data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute>
+        <AuthenticatedLayout>
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6 flex items-center justify-center">
+            <div className="flex flex-col items-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mb-4"></div>
+              <p className="text-gray-600">Memuat dashboard...</p>
+            </div>
+          </div>
+        </AuthenticatedLayout>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6">
           <div className="max-w-7xl mx-auto">
-            {/* untuk memanggil chart.js */}
-            <Bar data={BarData} options={options} />
-            
+            <div className="mb-8 text-center">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                Dashboard Analytics
+              </h1>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Visualisasi data peminjaman alat dan inventaris dalam bentuk
+                grafik interaktif
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              {/* Statistik Cards */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-lg bg-indigo-100">
+                    <svg
+                      className="w-6 h-6 text-indigo-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Alat
+                    </p>
+                    <p className="text-2xl font-bold text-gray-800">110</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-lg bg-blue-100">
+                    <svg
+                      className="w-6 h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Peminjaman Aktif
+                    </p>
+                    <p className="text-2xl font-bold text-gray-800">35</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-lg bg-green-100">
+                    <svg
+                      className="w-6 h-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      Tersedia
+                    </p>
+                    <p className="text-2xl font-bold text-gray-800">65</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Pie Chart 1 - Kategori Alat */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 hover:shadow-md">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+                  Distribusi Kategori Alat
+                </h2>
+                <div className="h-72 relative">
+                  <Pie
+                    data={toolCategoryData}
+                    options={{
+                      ...pieOptions,
+                      plugins: {
+                        ...pieOptions.plugins,
+                        title: {
+                          display: true,
+                          text: "Kategori Alat",
+                          color: "#1F2937",
+                          font: {
+                            size: 16,
+                            weight: "600",
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Pie Chart 2 - Status Alat */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 hover:shadow-md">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+                  Status Alat
+                </h2>
+                <div className="h-72 relative">
+                  <Pie
+                    data={statusData}
+                    options={{
+                      ...pieOptions,
+                      plugins: {
+                        ...pieOptions.plugins,
+                        title: {
+                          display: true,
+                          text: "Status Alat",
+                          color: "#1F2937",
+                          font: {
+                            size: 16,
+                            weight: "600",
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Pie Chart 3 - Trend Peminjaman */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 hover:shadow-md">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+                  Trend Peminjaman
+                </h2>
+                <div className="h-72 relative">
+                  <Pie
+                    data={borrowingTrendData}
+                    options={{
+                      ...pieOptions,
+                      plugins: {
+                        ...pieOptions.plugins,
+                        title: {
+                          display: true,
+                          text: "Trend Peminjaman",
+                          color: "#1F2937",
+                          font: {
+                            size: 16,
+                            weight: "600",
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Informasi Tambahan */}
+            <div className="mt-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Analytics Overview
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-700 mb-3">
+                    Kategori Terpopuler
+                  </h3>
+                  <ul className="space-y-2">
+                    {toolCategoryData.labels.map((label, index) => (
+                      <li
+                        key={index}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="text-gray-600">{label}</span>
+                        <span className="font-medium text-gray-800">
+                          {toolCategoryData.datasets[0].data[index]} unit
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-gray-700 mb-3">
+                    Insights
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 text-green-500 mt-1">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <p className="ml-2 text-sm text-gray-600">
+                        <span className="font-medium">Perkakas</span> adalah
+                        kategori dengan jumlah terbanyak (45 unit)
+                      </p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 text-blue-500 mt-1">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <p className="ml-2 text-sm text-gray-600">
+                        <span className="font-medium">10%</span> peminjaman
+                        mengalami keterlambatan
+                      </p>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 text-orange-500 mt-1">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <p className="ml-2 text-sm text-gray-600">
+                        <span className="font-medium">3 alat</span> dilaporkan
+                        hilang dan perlu ditindaklanjuti
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </AuthenticatedLayout>
     </ProtectedRoute>
   );
 };
-
 
 export default MediaDashboard;
