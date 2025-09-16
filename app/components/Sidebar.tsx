@@ -132,26 +132,6 @@ export default function Sidebar() {
               ref={dropdownRef}
               className="absolute top-full left-0 right-0 mt-2 bg-gray-800 backdrop-blur-md rounded-xl shadow-2xl border border-gray-600 z-50 overflow-hidden animate-fade-in"
             >
-              <Link
-                href="/profile"
-                className="flex items-center gap-3 px-4 py-3 text-gray-200 hover:bg-gray-700 transition-colors duration-200"
-                onClick={() => setDropdownOpen(false)}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                Profile
-              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 w-full text-left px-4 py-3 text-red-400 hover:bg-red-900/50 transition-colors duration-200 border-t border-gray-600"
