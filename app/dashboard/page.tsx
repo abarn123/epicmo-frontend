@@ -140,7 +140,7 @@ const pieOptions: ChartOptions<"pie"> = {
       callbacks: {
         label: function (context) {
           const label = context.label || "";
-          const value = context.raw || 0;
+          const value = Number(context.raw) || 0;
           const total = context.dataset.data.reduce(
             (a: number, b: number) => a + b,
             0
@@ -311,7 +311,7 @@ const MediaDashboard = () => {
                           color: "#1F2937",
                           font: {
                             size: 16,
-                            weight: "600",
+                            weight: 600,
                           },
                         },
                       },
@@ -338,7 +338,7 @@ const MediaDashboard = () => {
                           color: "#1F2937",
                           font: {
                             size: 16,
-                            weight: "600",
+                            weight: 600,
                           },
                         },
                       },
@@ -365,7 +365,7 @@ const MediaDashboard = () => {
                           color: "#1F2937",
                           font: {
                             size: 16,
-                            weight: "600",
+                            weight: 600,
                           },
                         },
                       },
