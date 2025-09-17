@@ -22,6 +22,8 @@ type BorrowFormData = {
   date_borrow: string;
   date_return: string | null;
   tools_status: string;
+  due_date: string; // Tambahan: tanggal batas peminjaman
+  reason: string;   // Tambahan: alasan meminjam
 };
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
@@ -37,11 +39,17 @@ export default function AddBorrowPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [showCategoryTools, setShowCategoryTools] = useState<boolean>(false);
 
+  // Hitung tanggal 7 hari dari sekarang untuk due_date default
+  const defaultDueDate = new Date();
+  defaultDueDate.setDate(defaultDueDate.getDate() + 7);
+
   const [formData, setFormData] = useState<BorrowFormData>({
     user_id: null,
     date_borrow: new Date().toISOString().split("T")[0],
     date_return: null,
-    tools_status: "borrowed" // Status default untuk peminjaman
+    tools_status: "borrowed", // Status default untuk peminjaman
+    due_date: defaultDueDate.toISOString().split("T")[0], // Default 7 hari dari sekarang
+    reason: "" // Alasan peminjaman default kosong
   });
 
   useEffect(() => {
@@ -142,7 +150,7 @@ export default function AddBorrowPage() {
     );
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -164,6 +172,19 @@ export default function AddBorrowPage() {
         toast.error("User ID belum tersedia. Silakan tunggu sebentar...");
         setSubmitting(false);
         return;
+      }
+
+      // Validasi tanggal
+      const borrowDate = new Date(formData.date_borrow);
+      const dueDate = new Date(formData.due_date);
+      
+      if (dueDate <= borrowDate) {
+        throw new Error("Tanggal batas peminjaman harus setelah tanggal peminjaman");
+      }
+
+      // Validasi alasan
+      if (!formData.reason.trim()) {
+        throw new Error("Alasan peminjaman harus diisi");
       }
 
       // Dapatkan alat yang dipilih
@@ -194,6 +215,8 @@ export default function AddBorrowPage() {
         })),
         date_borrow: formData.date_borrow,
         date_return: null,
+        due_date: formData.due_date, // Tambahkan due_date ke payload
+        reason: formData.reason      // Tambahkan reason ke payload
       };
 
       console.log("Payload yang dikirim:", payload);
@@ -492,11 +515,54 @@ export default function AddBorrowPage() {
                       id="date_borrow"
                       name="date_borrow"
                       value={formData.date_borrow}
-                      onChange={handleDateChange}
+                      onChange={handleInputChange}
                       className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                       required
                       style={{ color: "#000" }}
                     />
+                  </div>
+
+                  <div className="col-span-6 sm:col-span-3">
+                    <label
+                      htmlFor="due_date"
+                      className="block text-sm font-medium text-black"
+                    >
+                      Tanggal Batas Peminjaman <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      id="due_date"
+                      name="due_date"
+                      value={formData.due_date}
+                      onChange={handleInputChange}
+                      min={formData.date_borrow}
+                      className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
+                      required
+                      style={{ color: "#000" }}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Tanggal terakhir untuk mengembalikan alat
+                    </p>
+                  </div>
+
+                  <div className="col-span-6">
+                    <label
+                      htmlFor="reason"
+                      className="block text-sm font-medium text-black"
+                    >
+                      Alasan Peminjaman <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="reason"
+                      name="reason"
+                      value={formData.reason}
+                      onChange={handleInputChange}
+                      rows={3}
+                      className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
+                      placeholder="Jelaskan alasan dan tujuan peminjaman alat"
+                      required
+                      style={{ color: "#000" }}
+                    ></textarea>
                   </div>
                 </div>
 
@@ -533,7 +599,7 @@ export default function AddBorrowPage() {
                           <path
                             className="opacity-75"
                             fill="currentColor"
-                            d="M4 12a8 8 0 018-极V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c极 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            d="M4 12a8 8 0 018-极V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c极 3.042 1.135 5.824 3 7.938极3-2.647z"
                           ></path>
                         </svg>
                         <span className="text-black">Memuat User...</span>
@@ -547,7 +613,7 @@ export default function AddBorrowPage() {
                           viewBox="0 0 24 24"
                         >
                           <circle
-                            className="opacity-25"
+                            className="opacity极25"
                             cx="12"
                             cy="12"
                             r="10"
