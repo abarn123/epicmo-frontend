@@ -360,12 +360,12 @@ export default function ToolBorrowingSystem() {
             Terjadi Kesalahan
           </h3>
           <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
+            <button
+            onClick={() => window.location.href = "/log_tools/add"}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-          >
-            Coba Lagi
-          </button>
+            >
+            Pinjam Alat
+            </button>
         </div>
       </div>
     );
