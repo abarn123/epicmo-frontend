@@ -33,139 +33,60 @@ type BorrowRecord = {
   tools_id: string;
 };
 
-type GroupedBorrowRecord = {
-  user: string;
-  user_id: string;
-  date_borrow: string;
-  date_return: string | null;
-  tools_status: "borrowed" | "return";
-  items: {
-    log_tools: string;
-    item_name: string;
-    quantity: number;
-    tools_id: string;
-  }[];
-};
-
-// Axios instance dengan interceptor untuk menambahkan token
-const createApiInstance = () => {
-  const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://192.168.110.193:8080",
-    timeout: 10000,
-  });
-
-  instance.interceptors.request.use((config) => {
-    // Mengambil token dari localStorage
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    } else {
-      console.error("Token tidak ditemukan di localStorage");
-    }
-    return config;
-  });
-
-  instance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-        toast.error("Sesi kedaluwarsa. Silakan login kembali.");
-      }
-      return Promise.reject(error);
-    }
-  );
-
-  return instance;
-};
-
 // Table Row Component
-function BorrowTableRow({
-  record,
-}: {
-  record: GroupedBorrowRecord;
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
+function BorrowTableRow({ record }: { record: BorrowRecord }) {
   const router = useRouter();
 
   const handleReturn = () => {
     // Navigasi ke halaman edit dengan membawa data yang diperlukan
-    const logToolsIds = record.items.map(item => item.log_tools);
-    router.push(`/log_tools/edit?id=${logToolsIds.join(',')}`);
+    router.push(`/log_tools/edit?id=${record.log_tools}`);
   };
 
   return (
-    <>
-      <tr className="border-b border-gray-200 hover:bg-gray-50">
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="font-medium text-gray-900">
-            {record.items.length} alat
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="ml-2 text-blue-600 text-sm"
-            >
-              {isExpanded ? "▲ Sembunyikan" : "▼ Lihat Detail"}
-            </button>
-          </div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-gray-700">{record.user}</div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-gray-700">
-            {record.items.reduce((sum, item) => sum + item.quantity, 0)}
-          </div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-gray-700">
-            {new Date(record.date_borrow).toLocaleDateString()}
-          </div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-gray-700">
-            {record.date_return
-              ? new Date(record.date_return).toLocaleDateString()
-              : "-"}
-          </div>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <span
-            className={`px-2 py-1 text-xs rounded-full ${
-              record.tools_status === "borrowed"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-green-100 text-green-800"
-            }`}
+    <tr className="border-b border-gray-200 hover:bg-gray-50">
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="font-medium text-gray-900">{record.item_name}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">{record.user}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">{record.quantity}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">
+          {new Date(record.date_borrow).toLocaleDateString()}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-gray-700">
+          {record.date_return
+            ? new Date(record.date_return).toLocaleDateString()
+            : "-"}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <span
+          className={`px-2 py-1 text-xs rounded-full ${
+            record.tools_status === "borrowed"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-green-100 text-green-800"
+          }`}
+        >
+          {record.tools_status === "borrowed" ? "Dipinjam" : "Dikembalikan"}
+        </span>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        {record.tools_status === "borrowed" && (
+          <button
+            onClick={handleReturn}
+            className="text-blue-600 hover:text-blue-900"
           >
-            {record.tools_status === "borrowed" ? "Dipinjam" : "Dikembalikan"}
-          </span>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          {record.tools_status === "borrowed" && (
-            <button
-              onClick={handleReturn}
-              className="text-blue-600 hover:text-blue-900"
-            >
-              Tandai Dikembalikan
-            </button>
-          )}
-        </td>
-      </tr>
-      {isExpanded &&
-        record.items.map((item, index) => (
-          <tr key={item.log_tools} className="bg-gray-50">
-            <td className="px-6 py-2 pl-10 text-sm text-gray-500">
-              {index + 1}. {item.item_name}
-            </td>
-            <td className="px-6 py-2 text-sm text-gray-500"></td>
-            <td className="px-6 py-2 text-sm text-gray-500">{item.quantity}</td>
-            <td className="px-6 py-2 text-sm text-gray-500"></td>
-            <td className="px-6 py-2 text-sm text-gray-500"></td>
-            <td className="px-6 py-2 text-sm text-gray-500"></td>
-            <td className="px-6 py-2 text-sm text-gray-500"></td>
-          </tr>
-        ))}
-    </>
+            Tandai Dikembalikan
+          </button>
+        )}
+      </td>
+    </tr>
   );
 }
 
@@ -173,49 +94,12 @@ function BorrowTableRow({
 export default function ToolBorrowingSystem() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [borrowRecords, setBorrowRecords] = useState<BorrowRecord[]>([]);
-  const [groupedRecords, setGroupedRecords] = useState<GroupedBorrowRecord[]>(
-    []
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
   const router = useRouter();
-
-  // Create API instance with interceptors
-  const api = createApiInstance();
-
-  // Fungsi untuk mengelompokkan data peminjaman berdasarkan user dan tanggal
-  const groupBorrowRecords = (
-    records: BorrowRecord[]
-  ): GroupedBorrowRecord[] => {
-    const groupedMap: {[key: string]: GroupedBorrowRecord} = {};
-
-    records.forEach((record) => {
-      const key = `${record.user_id}-${record.date_borrow}`;
-      
-      if (!groupedMap[key]) {
-        groupedMap[key] = {
-          user: record.user,
-          user_id: record.user_id,
-          date_borrow: record.date_borrow,
-          date_return: record.date_return,
-          tools_status: record.tools_status,
-          items: []
-        };
-      }
-      
-      groupedMap[key].items.push({
-        log_tools: record.log_tools,
-        item_name: record.item_name,
-        quantity: record.quantity,
-        tools_id: record.tools_id,
-      });
-    });
-
-    return Object.values(groupedMap);
-  };
 
   // Fetch tools and borrow records
   useEffect(() => {
@@ -224,8 +108,23 @@ export default function ToolBorrowingSystem() {
         setLoading(true);
         setError(null);
 
+        // Mengambil token dari localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token tidak ditemukan di localStorage");
+        }
+
+        // Konfigurasi headers dengan token
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+
         // Fetch tools
-        const toolsRes = await api.get("/data2");
+        const toolsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data2`,
+          { headers, timeout: 10000 }
+        );
         let toolsData = toolsRes.data;
 
         // Handle different response structures
@@ -251,7 +150,10 @@ export default function ToolBorrowingSystem() {
         setTools(processedTools);
 
         // Fetch borrow records
-        const recordsRes = await api.get("/data3");
+        const recordsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data3`,
+          { headers, timeout: 10000 }
+        );
         let recordsData = recordsRes.data;
 
         // Handle different response structures
@@ -280,7 +182,6 @@ export default function ToolBorrowingSystem() {
           : [];
 
         setBorrowRecords(mappedRecords);
-        setGroupedRecords(groupBorrowRecords(mappedRecords));
       } catch (err) {
         console.error("Kesalahan pengambilan data:", err);
         let errorMessage = "Gagal memuat data.";
@@ -288,7 +189,12 @@ export default function ToolBorrowingSystem() {
           if (err.code === "ERR_NETWORK") {
             errorMessage =
               "Kesalahan Jaringan: Tidak dapat terhubung ke server API. Pastikan server backend berjalan di " +
-              api.defaults.baseURL;
+              process.env.NEXT_PUBLIC_API_URL;
+          } else if (err.response?.status === 401) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+            errorMessage = "Sesi kedaluwarsa. Silakan login kembali.";
+            toast.error(errorMessage);
           } else if (err.response) {
             errorMessage = `Kesalahan API: ${err.response.status} - ${
               err.response.data?.message || err.message
@@ -309,12 +215,10 @@ export default function ToolBorrowingSystem() {
     fetchData();
   }, []);
 
-  const filteredRecords = groupedRecords.filter(
+  const filteredRecords = borrowRecords.filter(
     (record) =>
       record.user.toLowerCase().includes(search.toLowerCase()) ||
-      record.items.some((item) =>
-        item.item_name.toLowerCase().includes(search.toLowerCase())
-      ) ||
+      record.item_name.toLowerCase().includes(search.toLowerCase()) ||
       record.tools_status.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -472,16 +376,16 @@ export default function ToolBorrowingSystem() {
                   ></path>
                 </svg>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
-                  {groupedRecords.length === 0
+                  {borrowRecords.length === 0
                     ? "Tidak ada catatan peminjaman ditemukan"
                     : "Tidak ada catatan yang cocok ditemukan"}
                 </h3>
                 <p className="text-gray-500 mb-4">
-                  {groupedRecords.length === 0
+                  {borrowRecords.length === 0
                     ? "Mulai dengan meminjam alat"
                     : "Coba istilah pencarian yang berbeda"}
                 </p>
-                {groupedRecords.length === 0 && (
+                {borrowRecords.length === 0 && (
                   <Link
                     href="/log_tools/add"
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
@@ -501,7 +405,7 @@ export default function ToolBorrowingSystem() {
                             scope="col"
                             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           >
-                            Alat
+                            Nama Alat
                           </th>
                           <th
                             scope="col"
@@ -544,7 +448,7 @@ export default function ToolBorrowingSystem() {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {currentItems.map((record, index) => (
                           <BorrowTableRow
-                            key={`${record.user_id}-${record.date_borrow}-${index}`}
+                            key={`${record.log_tools}-${index}`}
                             record={record}
                           />
                         ))}

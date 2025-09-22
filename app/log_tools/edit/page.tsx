@@ -33,43 +33,6 @@ type BorrowRecord = {
   tools_id: string;
 };
 
-// Axios instance dengan interceptor untuk menambahkan token
-const createApiInstance = () => {
-  const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://192.168.110.193:8080",
-    timeout: 0,
-  });
-
-  instance.interceptors.request.use((config) => {
-    // Mengambil token dari localStorage
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      } else {
-        console.error("Token tidak ditemukan di localStorage");
-      }
-    }
-    return config;
-  });
-
-  instance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("token");
-          window.location.href = "/login";
-        }
-        toast.error("Sesi kedaluwarsa. Silakan login kembali.");
-      }
-      return Promise.reject(error);
-    }
-  );
-
-  return instance;
-};
-
 export default function EditBorrowRecord() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [borrowRecords, setBorrowRecords] = useState<BorrowRecord[]>([]);
@@ -81,9 +44,6 @@ export default function EditBorrowRecord() {
   const searchParams = useSearchParams();
   const logToolsIds = searchParams?.get("id")?.split(",") || [];
 
-  // Create API instance with interceptors
-  const api = createApiInstance();
-
   // Fetch tools and borrow records
   useEffect(() => {
     const fetchData = async () => {
@@ -91,8 +51,23 @@ export default function EditBorrowRecord() {
         setLoading(true);
         setError(null);
 
+        // Mengambil token dari localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token tidak ditemukan di localStorage");
+        }
+
+        // Konfigurasi headers dengan token
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+
         // Fetch tools
-        const toolsRes = await api.get("/data2");
+        const toolsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data2`,
+          { headers, timeout: 10000 }
+        );
         let toolsData = toolsRes.data;
 
         // Handle different response structures
@@ -118,7 +93,10 @@ export default function EditBorrowRecord() {
         setTools(processedTools);
 
         // Fetch borrow records
-        const recordsRes = await api.get("/data3");
+        const recordsRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data3`,
+          { headers, timeout: 10000 }
+        );
         let recordsData = recordsRes.data;
 
         // Handle different response structures
@@ -161,7 +139,12 @@ export default function EditBorrowRecord() {
           if (err.code === "ERR_NETWORK") {
             errorMessage =
               "Kesalahan Jaringan: Tidak dapat terhubung ke server API. Pastikan server backend berjalan di " +
-              api.defaults.baseURL;
+              process.env.NEXT_PUBLIC_API_URL;
+          } else if (err.response?.status === 401) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+            errorMessage = "Sesi kedaluwarsa. Silakan login kembali.";
+            toast.error(errorMessage);
           } else if (err.response) {
             errorMessage = `Kesalahan API: ${err.response.status} - ${
               err.response.data?.message || err.message
@@ -182,80 +165,96 @@ export default function EditBorrowRecord() {
     fetchData();
   }, [logToolsIds.join(",")]); // Menggunakan join untuk menghindari perubahan array yang tidak perlu
 
- const handleReturn = async () => {
-  try {
-    setSubmitting(true);
-    setError(null);
+  const handleReturn = async () => {
+    try {
+      setSubmitting(true);
+      setError(null);
 
-    console.log("Selected records:", selectedRecords);
+      console.log("Selected records:", selectedRecords);
 
-    // Update each selected record - hanya mengirim data yang diperlukan
-    const updatePromises = selectedRecords.map(record => {
-      // Payload kosong atau hanya status jika diperlukan
-      // Sesuaikan dengan kebutuhan API backend Anda
-      const payload = {
-        // Jika backend hanya perlu tahu bahwa status berubah ke "return"
-        tools_status: "return",
-        date_return: new Date().toISOString() // Tambahkan timestamp pengembalian
+      // Mengambil token dari localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan di localStorage");
+      }
+
+      // Konfigurasi headers dengan token
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       };
-      
-      console.log(`Updating record ${record.log_tools} with:`, payload);
-      
-      // Gunakan endpoint /data3/{id} dengan method PUT
-      return api.put(`/data3/${record.log_tools}`, payload);
-    });
 
-    const results = await Promise.all(updatePromises);
-    console.log("Update results:", results);
-    
-    // Periksa response dari backend
-    const allSuccess = results.every(result => 
-      result.data && result.data.status === true
-    );
-    
-    if (allSuccess) {
-      toast.success("Alat berhasil dikembalikan dan stok diperbarui");
-      
-      // Redirect setelah berhasil
-      setTimeout(() => {
-        router.push("/log_tools");
-      }, 1500);
-    } else {
-      const errorMessages = results
-        .filter(result => !result.data || result.data.status === false)
-        .map(result => result.data?.message || "Unknown error")
-        .join(", ");
-      
-      throw new Error(`Beberapa pengembalian gagal: ${errorMessages}`);
-    }
-    
-  } catch (err) {
-    console.error("Kesalahan mengembalikan alat:", err);
-    let errorMessage = "Gagal mengembalikan alat.";
-    
-    if (axios.isAxiosError(err)) {
-      if (err.response) {
-        // Handle response error dari backend
-        const backendMessage = err.response.data?.message;
-        errorMessage = `Kesalahan: ${backendMessage || err.message}`;
+      // Update each selected record - hanya mengirim data yang diperlukan
+      const updatePromises = selectedRecords.map(record => {
+        // Payload kosong atau hanya status jika diperlukan
+        // Sesuaikan dengan kebutuhan API backend Anda
+        const payload = {
+          // Jika backend hanya perlu tahu bahwa status berubah ke "return"
+          tools_status: "return",
+          date_return: new Date().toISOString() // Tambahkan timestamp pengembalian
+        };
         
-        // Tampilkan detail error di console untuk debugging
-        console.error("Detail error backend:", err.response.data);
-      } else if (err.code === "ERR_NETWORK") {
-        errorMessage = "Kesalahan jaringan: Tidak dapat terhubung ke server";
+        console.log(`Updating record ${record.log_tools} with:`, payload);
+        
+        // Gunakan endpoint /data3/{id} dengan method PUT
+        return axios.put(
+          `${process.env.NEXT_PUBLIC_API_URL}/data3/${record.log_tools}`,
+          payload,
+          { headers, timeout: 10000 }
+        );
+      });
+
+      const results = await Promise.all(updatePromises);
+      console.log("Update results:", results);
+      
+      // Periksa response dari backend
+      const allSuccess = results.every(result => 
+        result.data && result.data.status === true
+      );
+      
+      if (allSuccess) {
+        toast.success("Alat berhasil dikembalikan dan stok diperbarui");
+        
+        // Redirect setelah berhasil
+        setTimeout(() => {
+          router.push("/log_tools");
+        }, 1500);
       } else {
+        const errorMessages = results
+          .filter(result => !result.data || result.data.status === false)
+          .map(result => result.data?.message || "Unknown error")
+          .join(", ");
+        
+        throw new Error(`Beberapa pengembalian gagal: ${errorMessages}`);
+      }
+      
+    } catch (err) {
+      console.error("Kesalahan mengembalikan alat:", err);
+      let errorMessage = "Gagal mengembalikan alat.";
+      
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          // Handle response error dari backend
+          const backendMessage = err.response.data?.message;
+          errorMessage = `Kesalahan: ${backendMessage || err.message}`;
+          
+          // Tampilkan detail error di console untuk debugging
+          console.error("Detail error backend:", err.response.data);
+        } else if (err.code === "ERR_NETWORK") {
+          errorMessage = "Kesalahan jaringan: Tidak dapat terhubung ke server";
+        } else {
+          errorMessage = err.message;
+        }
+      } else if (err instanceof Error) {
         errorMessage = err.message;
       }
-    } else if (err instanceof Error) {
-      errorMessage = err.message;
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setSubmitting(false);
     }
-    
-    setError(errorMessage);
-    toast.error(errorMessage);
-  } finally {
-    setSubmitting(false);
-  }
-};
+  };
 
   if (loading) {
     return (

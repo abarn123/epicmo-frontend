@@ -35,7 +35,7 @@ export default function EditToolPage() {
     setLoading(true);
     setError(null);
     axios
-      .get(`http://192.168.110.100:8080/data2/${toolId}`, {
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/data2/${toolId}`, {
         timeout: 5000,
         headers: {
           Authorization: `Bearer ${token}`,
