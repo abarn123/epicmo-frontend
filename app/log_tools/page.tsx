@@ -23,23 +23,40 @@ type Tool = {
 
 type BorrowRecord = {
   log_tools: string;
+  transaction_id: string;
   user: string;
+  user_id: string;
+  tools_id: string;
   item_name: string;
   quantity: number;
   date_borrow: string;
   date_return: string | null;
-  tools_status: "borrowed" | "return";
-  user_id: string;
-  tools_id: string;
+  status: "borrowed" | "return";
 };
 
 // Table Row Component
-function BorrowTableRow({ record }: { record: BorrowRecord }) {
+function BorrowTableRow({ record, refresh }: { record: BorrowRecord; refresh: () => void }) {
   const router = useRouter();
 
-  const handleReturn = () => {
-    // Navigasi ke halaman edit dengan membawa data yang diperlukan
-    router.push(`/log_tools/edit?id=${record.log_tools}`);
+  const handleReturn = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan");
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions/return/${record.transaction_id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      toast.success("Alat berhasil dikembalikan");
+      refresh(); // reload data setelah update
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal mengembalikan alat");
+    }
   };
 
   return (
@@ -60,24 +77,22 @@ function BorrowTableRow({ record }: { record: BorrowRecord }) {
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-gray-700">
-          {record.date_return
-            ? new Date(record.date_return).toLocaleDateString()
-            : "-"}
+          {record.date_return ? new Date(record.date_return).toLocaleDateString() : "-"}
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span
           className={`px-2 py-1 text-xs rounded-full ${
-            record.tools_status === "borrowed"
+            record.status === "borrowed"
               ? "bg-yellow-100 text-yellow-800"
               : "bg-green-100 text-green-800"
           }`}
         >
-          {record.tools_status === "borrowed" ? "Dipinjam" : "Dikembalikan"}
+          {record.status === "borrowed" ? "Dipinjam" : "Dikembalikan"}
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        {record.tools_status === "borrowed" && (
+        {record.status === "borrowed" && (
           <button
             onClick={handleReturn}
             className="text-blue-600 hover:text-blue-900"
@@ -99,119 +114,111 @@ export default function ToolBorrowingSystem() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-  const router = useRouter();
 
   // Fetch tools and borrow records
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // Mengambil token dari localStorage
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Token tidak ditemukan di localStorage");
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan di localStorage");
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
+      // Fetch tools
+      const toolsRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
+        headers,
+        timeout: 10000,
+      });
+      let toolsData = toolsRes.data;
+
+      if (toolsData && typeof toolsData === "object") {
+        if (Array.isArray(toolsData.data)) {
+          toolsData = toolsData.data;
         }
+      }
 
-        // Konfigurasi headers dengan token
-        const headers = {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        };
+      const processedTools: Tool[] = Array.isArray(toolsData)
+        ? toolsData.map((tool: any, index: number) => ({
+            id: tool.id?.toString() || `generated-${index}-${Date.now()}`,
+            item_name: tool.item_name || "No name",
+            stock: tool.stock || 0,
+            item_condition: tool.item_condition || "",
+            category: tool.category || "Lainnya",
+          }))
+        : [];
 
-        // Fetch tools
-        const toolsRes = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/data2`,
-          { headers, timeout: 10000 }
-        );
-        let toolsData = toolsRes.data;
+      setTools(processedTools);
 
-        // Handle different response structures
-        if (toolsData && typeof toolsData === "object") {
-          if (Array.isArray(toolsData.data)) {
-            toolsData = toolsData.data;
-          } else if (Array.isArray(toolsData)) {
-            // Jika response langsung array
-            toolsData = toolsData;
-          }
+      // Fetch borrow records
+      const recordsRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data3`, {
+        headers,
+        timeout: 10000,
+      });
+      let recordsData = recordsRes.data;
+
+      if (recordsData && typeof recordsData === "object") {
+        if (Array.isArray(recordsData.data)) {
+          recordsData = recordsData.data;
         }
+      }
 
-        const processedTools: Tool[] = Array.isArray(toolsData)
-          ? toolsData.map((tool: any, index: number) => ({
-              id: tool.id?.toString() || `generated-${index}-${Date.now()}`,
-              item_name: tool.item_name || "No name",
-              stock: tool.stock || 0,
-              item_condition: tool.item_condition || "",
-              category: tool.category || "Lainnya",
-            }))
-          : [];
-
-        setTools(processedTools);
-
-        // Fetch borrow records
-        const recordsRes = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/data3`,
-          { headers, timeout: 10000 }
-        );
-        let recordsData = recordsRes.data;
-
-        // Handle different response structures
-        if (recordsData && typeof recordsData === "object") {
-          if (Array.isArray(recordsData.data)) {
-            recordsData = recordsData.data;
-          } else if (Array.isArray(recordsData)) {
-            recordsData = recordsData;
-          }
-        }
-
-        const mappedRecords: BorrowRecord[] = Array.isArray(recordsData)
-          ? recordsData.map((record: any) => ({
-              log_tools:
-                record.log_tools?.toString() || `generated-${Date.now()}`,
+      const mappedRecords: BorrowRecord[] = Array.isArray(recordsData)
+        ? recordsData.flatMap((record: any) =>
+            (record.items || []).map((item: any) => ({
+              log_tools: record.transaction_id?.toString() || `generated-${Date.now()}`,
+              transaction_id: record.transaction_id?.toString() || "0",
               user_id: record.user_id?.toString() || "0",
               user: record.user || "Unknown User",
-              tools_id: record.tools_id?.toString() || "0",
-              item_name: record.item_name || "Unknown Tool",
-              quantity: record.quantity || 0,
+              tools_id: item.tools_id?.toString() || "0",
+              item_name: item.item_name || "Unknown Tool",
+              quantity: item.quantity || 0,
               date_borrow: record.date_borrow || new Date().toISOString(),
               date_return: record.date_return || null,
-              tools_status:
-                record.tools_status === "return" ? "return" : "borrowed",
+              status: record.status === "return" ? "return" : "borrowed",
             }))
-          : [];
+          )
+        : [];
 
-        setBorrowRecords(mappedRecords);
-      } catch (err) {
-        console.error("Kesalahan pengambilan data:", err);
-        let errorMessage = "Gagal memuat data.";
-        if (axios.isAxiosError(err)) {
-          if (err.code === "ERR_NETWORK") {
-            errorMessage =
-              "Kesalahan Jaringan: Tidak dapat terhubung ke server API. Pastikan server backend berjalan di " +
-              process.env.NEXT_PUBLIC_API_URL;
-          } else if (err.response?.status === 401) {
-            localStorage.removeItem("token");
-            window.location.href = "/login";
-            errorMessage = "Sesi kedaluwarsa. Silakan login kembali.";
-            toast.error(errorMessage);
-          } else if (err.response) {
-            errorMessage = `Kesalahan API: ${err.response.status} - ${
-              err.response.data?.message || err.message
-            }`;
-          } else {
-            errorMessage = err.message;
-          }
-        } else if (err instanceof Error) {
+      setBorrowRecords(mappedRecords);
+    } catch (err: any) {
+      console.error("Kesalahan pengambilan data:", err);
+      let errorMessage = "Gagal memuat data.";
+      if (axios.isAxiosError(err)) {
+        if (err.code === "ERR_NETWORK") {
+          errorMessage =
+            "Kesalahan Jaringan: Tidak dapat terhubung ke server API. Pastikan server backend berjalan di " +
+            process.env.NEXT_PUBLIC_API_URL;
+        } else if (err.response?.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+          errorMessage = "Sesi kedaluwarsa. Silakan login kembali.";
+          toast.error(errorMessage);
+        } else if (err.response?.status === 403) {
+          errorMessage = "Akses ditolak. Anda tidak memiliki izin untuk mengakses data ini.";
+          toast.error(errorMessage);
+        } else if (err.response) {
+          errorMessage = `Kesalahan API: ${err.response.status} - ${
+            err.response.data?.message || err.message
+          }`;
+        } else {
           errorMessage = err.message;
         }
-        setError(errorMessage);
-        toast.error(errorMessage);
-      } finally {
-        setLoading(false);
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
       }
-    };
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -219,16 +226,13 @@ export default function ToolBorrowingSystem() {
     (record) =>
       record.user.toLowerCase().includes(search.toLowerCase()) ||
       record.item_name.toLowerCase().includes(search.toLowerCase()) ||
-      record.tools_status.toLowerCase().includes(search.toLowerCase())
+      record.status.toLowerCase().includes(search.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredRecords.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredRecords.length / itemsPerPage)
-  );
+  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / itemsPerPage));
 
   if (loading) {
     return (
@@ -264,12 +268,18 @@ export default function ToolBorrowingSystem() {
             Terjadi Kesalahan
           </h3>
           <p className="text-gray-600 mb-6">{error}</p>
-            <button
-            onClick={() => window.location.href = "/log_tools/add"}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-            >
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 mr-2"
+          >
+            Coba Lagi
+          </button>
+          <button
+            onClick={() => (window.location.href = "/log_tools/add")}
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700"
+          >
             Pinjam Alat
-            </button>
+          </button>
         </div>
       </div>
     );
@@ -279,16 +289,13 @@ export default function ToolBorrowingSystem() {
     <ProtectedRoute>
       <AuthenticatedLayout>
         <div className="p-8 bg-gray-50 min-h-screen">
-          {/* Container utama dengan lebar maksimum untuk desktop */}
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
               <div className="flex-1">
                 <h1 className="text-3xl font-bold text-gray-800 mb-1">
                   Sistem Peminjaman Alat
                 </h1>
-                <p className="text-gray-500">
-                  Kelola peminjaman dan pengembalian alat
-                </p>
+                <p className="text-gray-500">Kelola peminjaman dan pengembalian alat</p>
               </div>
               <div className="mb-4 md:mb-0 md:ml-4 flex justify-end gap-3">
                 <Link
@@ -301,12 +308,7 @@ export default function ToolBorrowingSystem() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                   Kembali ke Alat
                 </Link>
@@ -320,12 +322,7 @@ export default function ToolBorrowingSystem() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   Pinjam Alat
                 </Link>
@@ -341,12 +338,7 @@ export default function ToolBorrowingSystem() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
                 <input
@@ -368,12 +360,7 @@ export default function ToolBorrowingSystem() {
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
                   {borrowRecords.length === 0
@@ -401,56 +388,18 @@ export default function ToolBorrowingSystem() {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Nama Alat
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Peminjam
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Jumlah
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Tanggal Pinjam
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Tanggal Kembali
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Status
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Aksi
-                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Alat</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peminjam</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {currentItems.map((record, index) => (
-                          <BorrowTableRow
-                            key={`${record.log_tools}-${index}`}
-                            record={record}
-                          />
+                          <BorrowTableRow key={`${record.log_tools}-${index}`} record={record} refresh={fetchData} />
                         ))}
                       </tbody>
                     </table>
@@ -461,9 +410,7 @@ export default function ToolBorrowingSystem() {
                   <div className="flex justify-center mt-8">
                     <nav className="inline-flex rounded-md shadow-sm -space-x-px">
                       <button
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(1, prev - 1))
-                        }
+                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
                         className={`px-3 py-2 rounded-l-md border ${
                           currentPage === 1
@@ -473,27 +420,21 @@ export default function ToolBorrowingSystem() {
                       >
                         Sebelumnya
                       </button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (number) => (
-                          <button
-                            key={number}
-                            onClick={() => setCurrentPage(number)}
-                            className={`px-4 py-2 border ${
-                              currentPage === number
-                                ? "bg-blue-50 border-blue-500 text-blue-600"
-                                : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                            }`}
-                          >
-                            {number}
-                          </button>
-                        )
-                      )}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                        <button
+                          key={number}
+                          onClick={() => setCurrentPage(number)}
+                          className={`px-4 py-2 border ${
+                            currentPage === number
+                              ? "bg-blue-50 border-blue-500 text-blue-600"
+                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                          }`}
+                        >
+                          {number}
+                        </button>
+                      ))}
                       <button
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(totalPages, prev + 1)
-                          )
-                        }
+                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                         disabled={currentPage === totalPages}
                         className={`px-3 py-2 rounded-r-md border ${
                           currentPage === totalPages
@@ -501,7 +442,7 @@ export default function ToolBorrowingSystem() {
                             : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                         }`}
                       >
-                        Berikutnya
+                        Selanjutnya
                       </button>
                     </nav>
                   </div>
