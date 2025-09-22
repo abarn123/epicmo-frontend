@@ -100,6 +100,7 @@ const MediaDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [summary, setSummary] = useState<any>({});
   const [toolsByCategory, setToolsByCategory] = useState<any[]>([]);
+  const [roleUsers, setRoleUsers] = useState<any>({});
 const [statusSummary, setStatusSummary] = useState<any[]>([]);
 const [borrowingTrend, setBorrowingTrend] = useState<any[]>([]);
   useEffect(() => {
@@ -109,22 +110,50 @@ const [borrowingTrend, setBorrowingTrend] = useState<any[]>([]);
 // Retrieve token from localStorage (or another secure place)
 const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
 
-const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
+const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jumlahdata`, {
   headers: {
     Authorization: `Bearer ${token}`, // wajib, karena ada AuthMiddleware
   }
 })
 
-        setSummary(res.data.summary);
-        setToolsByCategory(res.data.toolsByCategory);
-        setStatusSummary(res.data.statusSummary);
-        setBorrowingTrend(res.data.borrowingTrend);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+const resCondition = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/kondisi-tools`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+const resRoleUsers = await axios.get(
+  `${process.env.NEXT_PUBLIC_API_URL}/role-users`,
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
+
+const resStatusPeminjaman = await axios.get(
+  `${process.env.NEXT_PUBLIC_API_URL}/status-logtools`,
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
+
+setRoleUsers(resRoleUsers.data.data.data || {}); 
+
+
+      
+
+        setSummary(res.data.data);
+        setToolsByCategory(res.data.toolsByCategory || []);
+        setStatusSummary(resCondition.data.data || []);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  
+
 
     fetchData();
   }, []);
@@ -145,12 +174,12 @@ const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
   }
 
   // ===== Chart Data (dinamis dari backend) =====
-  const toolCategoryData = {
-    labels: toolsByCategory.map((item) => item.category),
+  const RoleUser = {
+    labels: Object.keys(roleUsers),
     datasets: [
       {
-        label: "Jumlah Alat",
-        data: toolsByCategory.map((item) => item.total),
+        label: "Role Users",
+        data: Object.values(roleUsers),
         backgroundColor: [
           "rgba(79, 70, 229, 0.9)",
           "rgba(236, 72, 153, 0.9)",
@@ -170,8 +199,8 @@ const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
     ],
   };
 
-  const statusData = {
-    labels: statusSummary.map((item) => item.status),
+  const statusAlat = {
+    labels: statusSummary.map((item) => item.item_condition),
     datasets: [
       {
         label: "Status Alat",
@@ -193,11 +222,11 @@ const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
     ],
   };
 
-  const borrowingTrendData = {
+  const StatusPeminjaman = {
     labels: borrowingTrend.map((item) => item.label),
     datasets: [
       {
-        label: "Trend Peminjaman",
+        label: " Peminjaman",
         data: borrowingTrend.map((item) => item.total),
         backgroundColor: [
           "rgba(59, 130, 246, 0.9)",
@@ -230,6 +259,38 @@ const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              
+              {/* Card User */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-lg bg-green-100">
+                    <svg
+                      className="w-6 h-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">
+                      User
+                    </p>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {summary.total_users}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              
+
               {/* Card Total Alat */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center">
@@ -253,13 +314,13 @@ const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
                       Total Alat
                     </p>
                     <p className="text-2xl font-bold text-gray-800">
-                      {summary.totalTools}
+                      {summary.total_tools}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Card Peminjaman Aktif */}
+              {/* Card total Peminjaman  */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center">
                   <div className="p-3 rounded-lg bg-blue-100">
@@ -279,54 +340,26 @@ const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">
-                      Peminjaman Aktif
+                      Total Peminjaman
                     </p>
                     <p className="text-2xl font-bold text-gray-800">
-                      {summary.activeBorrowings}
+                      {summary.total_logtools}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Card Alat Tersedia */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-lg bg-green-100">
-                    <svg
-                      className="w-6 h-6 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Tersedia
-                    </p>
-                    <p className="text-2xl font-bold text-gray-800">
-                      {summary.availableTools}
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Chart Kategori Alat */}
+              {/* Chart role user */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-                  Distribusi Kategori Alat
+                  Role Users
                 </h2>
                 <div className="h-72 relative">
-                  <Pie data={toolCategoryData} options={pieOptions} />
+                  <Pie data={RoleUser} options={pieOptions} />
                 </div>
               </div>
 
@@ -336,17 +369,17 @@ const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
                   Status Alat
                 </h2>
                 <div className="h-72 relative">
-                  <Pie data={statusData} options={pieOptions} />
+                  <Pie data={statusAlat} options={pieOptions} />
                 </div>
               </div>
 
               {/* Chart Trend Peminjaman */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-                  Trend Peminjaman
+                  Peminjaman
                 </h2>
                 <div className="h-72 relative">
-                  <Pie data={borrowingTrendData} options={pieOptions} />
+                  <Pie data={StatusPeminjaman} options={pieOptions} />
                 </div>
               </div>
             </div>
