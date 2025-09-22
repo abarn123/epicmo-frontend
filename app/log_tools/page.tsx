@@ -34,9 +34,25 @@ type BorrowRecord = {
   status: "borrowed" | "return";
 };
 
-// Table Row Component
-function BorrowTableRow({ record, refresh }: { record: BorrowRecord; refresh: () => void }) {
+type GroupedBorrowRecord = {
+  transaction_id: string;
+  user: string;
+  user_id: string;
+  date_borrow: string;
+  date_return: string | null;
+  status: "borrowed" | "return";
+  items: {
+    log_tools: string;
+    tools_id: string;
+    item_name: string;
+    quantity: number;
+  }[];
+};
+
+// Table Row Component for grouped records
+function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refresh: () => void }) {
   const router = useRouter();
+  const [showItems, setShowItems] = useState(false);
 
   const handleReturn = async () => {
     try {
@@ -59,61 +75,126 @@ function BorrowTableRow({ record, refresh }: { record: BorrowRecord; refresh: ()
     }
   };
 
+  const toggleShowItems = () => {
+    setShowItems(!showItems);
+  };
+
   return (
-    <tr className="border-b border-gray-200 hover:bg-gray-50">
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="font-medium text-gray-900">{record.item_name}</div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-gray-700">{record.user}</div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-gray-700">{record.quantity}</div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-gray-700">
-          {new Date(record.date_borrow).toLocaleDateString()}
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-gray-700">
-          {record.date_return ? new Date(record.date_return).toLocaleDateString() : "-"}
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span
-          className={`px-2 py-1 text-xs rounded-full ${
-            record.status === "borrowed"
-              ? "bg-yellow-100 text-yellow-800"
-              : "bg-green-100 text-green-800"
-          }`}
-        >
-          {record.status === "borrowed" ? "Dipinjam" : "Dikembalikan"}
-        </span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        {record.status === "borrowed" && (
+    <>
+      <tr className="border-b border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+        <td className="px-6 py-4 whitespace-nowrap">
           <button
-            onClick={handleReturn}
-            className="text-blue-600 hover:text-blue-900"
+            onClick={toggleShowItems}
+            className="flex items-center text-gray-700 hover:text-blue-600 transition-colors"
           >
-            Tandai Dikembalikan
+            <svg
+              className={`w-4 h-4 mr-2 transform transition-transform ${showItems ? "rotate-90" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+            {record.items.length} alat
           </button>
-        )}
-      </td>
-    </tr>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="font-medium text-gray-900">{record.user}</div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-gray-700">{record.items.reduce((total, item) => total + item.quantity, 0)}</div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-gray-700">
+            {new Date(record.date_borrow).toLocaleDateString()}
+          </div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-gray-700">
+            {record.date_return ? new Date(record.date_return).toLocaleDateString() : "-"}
+          </div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <span
+            className={`px-2 py-1 text-xs rounded-full ${
+              record.status === "borrowed"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-green-100 text-green-800"
+            }`}
+          >
+            {record.status === "borrowed" ? "Dipinjam" : "Dikembalikan"}
+          </span>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          {record.status === "borrowed" && (
+            <button
+              onClick={handleReturn}
+              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
+            >
+              Kembalikan
+            </button>
+          )}
+        </td>
+      </tr>
+      {showItems && record.items.map((item, index) => (
+        <tr key={`${item.log_tools}-${index}`} className="border-b border-gray-200 bg-blue-50 hover:bg-blue-100 transition-colors">
+          <td className="px-6 py-4 whitespace-nowrap pl-12">
+            <div className="text-gray-700 flex items-center">
+              <span className="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+              {item.item_name}
+            </div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap"></td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-gray-700">{item.quantity}</div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap"></td>
+          <td className="px-6 py-4 whitespace-nowrap"></td>
+          <td className="px-6 py-4 whitespace-nowrap"></td>
+          <td className="px-6 py-4 whitespace-nowrap"></td>
+        </tr>
+      ))}
+    </>
   );
 }
 
 // Main Component
 export default function ToolBorrowingSystem() {
   const [tools, setTools] = useState<Tool[]>([]);
-  const [borrowRecords, setBorrowRecords] = useState<BorrowRecord[]>([]);
+  const [borrowRecords, setBorrowRecords] = useState<GroupedBorrowRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
+
+  // Group records by transaction_id
+  const groupRecords = (records: BorrowRecord[]): GroupedBorrowRecord[] => {
+    const grouped: Record<string, GroupedBorrowRecord> = {};
+    
+    records.forEach(record => {
+      if (!grouped[record.transaction_id]) {
+        grouped[record.transaction_id] = {
+          transaction_id: record.transaction_id,
+          user: record.user,
+          user_id: record.user_id,
+          date_borrow: record.date_borrow,
+          date_return: record.date_return,
+          status: record.status,
+          items: []
+        };
+      }
+      
+      grouped[record.transaction_id].items.push({
+        log_tools: record.log_tools,
+        tools_id: record.tools_id,
+        item_name: record.item_name,
+        quantity: record.quantity
+      });
+    });
+    
+    return Object.values(grouped);
+  };
 
   // Fetch tools and borrow records
   const fetchData = async () => {
@@ -184,7 +265,9 @@ export default function ToolBorrowingSystem() {
           )
         : [];
 
-      setBorrowRecords(mappedRecords);
+      // Group records by transaction_id
+      const groupedRecords = groupRecords(mappedRecords);
+      setBorrowRecords(groupedRecords);
     } catch (err: any) {
       console.error("Kesalahan pengambilan data:", err);
       let errorMessage = "Gagal memuat data.";
@@ -225,7 +308,9 @@ export default function ToolBorrowingSystem() {
   const filteredRecords = borrowRecords.filter(
     (record) =>
       record.user.toLowerCase().includes(search.toLowerCase()) ||
-      record.item_name.toLowerCase().includes(search.toLowerCase()) ||
+      record.items.some(item => 
+        item.item_name.toLowerCase().includes(search.toLowerCase())
+      ) ||
       record.status.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -343,7 +428,7 @@ export default function ToolBorrowingSystem() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Cari catatan..."
+                  placeholder="Cari berdasarkan peminjam, alat, atau status..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -388,7 +473,7 @@ export default function ToolBorrowingSystem() {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Alat</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alat</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peminjam</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
@@ -399,7 +484,7 @@ export default function ToolBorrowingSystem() {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {currentItems.map((record, index) => (
-                          <BorrowTableRow key={`${record.log_tools}-${index}`} record={record} refresh={fetchData} />
+                          <BorrowTableRow key={`${record.transaction_id}-${index}`} record={record} refresh={fetchData} />
                         ))}
                       </tbody>
                     </table>
