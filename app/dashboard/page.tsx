@@ -130,21 +130,19 @@ const resRoleUsers = await axios.get(
   }
 );
 
-const resStatusPeminjaman = await axios.get(
+const resBorrowingTrend = await axios.get(
   `${process.env.NEXT_PUBLIC_API_URL}/status-logtools`,
   {
     headers: { Authorization: `Bearer ${token}` },
   }
 );
 
-setRoleUsers(resRoleUsers.data.data.data || {}); 
-
-
-      
-
-        setSummary(res.data.data);
-        setToolsByCategory(res.data.toolsByCategory || []);
-        setStatusSummary(resCondition.data.data || []);
+    setRoleUsers(resRoleUsers.data.data.data || {});
+    setBorrowingTrend(resBorrowingTrend.data.data.by_status || {});
+    setSummary(res.data.data);
+    setToolsByCategory(res.data.toolsByCategory || []);
+    setStatusSummary(resCondition.data.data || []);
+          
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -206,8 +204,8 @@ setRoleUsers(resRoleUsers.data.data.data || {});
         label: "Status Alat",
         data: statusSummary.map((item) => item.total),
         backgroundColor: [
-          "rgba(16, 185, 129, 0.9)",
-          "rgba(59, 130, 246, 0.9)",
+          "rgba(29, 124, 233, 0.9)",
+          "rgba(31, 231, 81, 0.9)",
           "rgba(245, 158, 11, 0.9)",
           "rgba(239, 68, 68, 0.9)",
         ],
@@ -223,15 +221,14 @@ setRoleUsers(resRoleUsers.data.data.data || {});
   };
 
   const StatusPeminjaman = {
-    labels: borrowingTrend.map((item) => item.label),
+    labels: Object.keys(borrowingTrend),
     datasets: [
       {
         label: " Peminjaman",
-        data: borrowingTrend.map((item) => item.total),
+        data: Object.values(borrowingTrend),
         backgroundColor: [
           "rgba(59, 130, 246, 0.9)",
           "rgba(16, 185, 129, 0.9)",
-          "rgba(239, 68, 68, 0.9)",
         ],
         borderColor: [
           "rgba(59, 130, 246, 1)",
