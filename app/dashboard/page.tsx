@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthenticatedLayout from "../components/AuthenticatedLayout";
 import { Pie } from "react-chartjs-2";
@@ -14,7 +15,7 @@ import {
   ChartOptions,
 } from "chart.js";
 
-// Register komponen Chart.js yang diperlukan untuk Pie Chart
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,80 +25,7 @@ ChartJS.register(
   Legend
 );
 
-// Data untuk Pie Charts - tanpa spacing dan borderRadius untuk menghilangkan celah
-const toolCategoryData = {
-  labels: ["Perkakas", "Elektronik", "Kendaraan", "Peralatan Medis", "Lainnya"],
-  datasets: [
-    {
-      label: "Jumlah Alat",
-      data: [45, 30, 15, 8, 12],
-      backgroundColor: [
-        "rgba(79, 70, 229, 0.9)",
-        "rgba(236, 72, 153, 0.9)",
-        "rgba(249, 115, 22, 0.9)",
-        "rgba(16, 185, 129, 0.9)",
-        "rgba(139, 92, 246, 0.9)",
-      ],
-      borderColor: [
-        "rgba(79, 70, 229, 1)",
-        "rgba(236, 72, 153, 1)",
-        "rgba(249, 115, 22, 1)",
-        "rgba(16, 185, 129, 1)",
-        "rgba(139, 92, 246, 1)",
-      ],
-      borderWidth: 1,
-      
-    },
-  ],
-};
-
-const statusData = {
-  labels: ["Tersedia", "Dipinjam", "Dalam Perbaikan", "Hilang"],
-  datasets: [
-    {
-      label: "Status Alat",
-      data: [65, 25, 7, 3],
-      backgroundColor: [
-        "rgba(16, 185, 129, 0.9)",
-        "rgba(59, 130, 246, 0.9)",
-        "rgba(245, 158, 11, 0.9)",
-        "rgba(239, 68, 68, 0.9)",
-      ],
-      borderColor: [
-        "rgba(16, 185, 129, 1)",
-        "rgba(59, 130, 246, 1)",
-        "rgba(245, 158, 11, 1)",
-        "rgba(239, 68, 68, 1)",
-      ],
-      borderWidth: 1,
-      
-    },
-  ],
-};
-
-const borrowingTrendData = {
-  labels: ["Peminjaman Aktif", "Sudah Dikembalikan", "Terlambat"],
-  datasets: [
-    {
-      label: "Trend Peminjaman",
-      data: [35, 55, 10],
-      backgroundColor: [
-        "rgba(59, 130, 246, 0.9)",
-        "rgba(16, 185, 129, 0.9)",
-        "rgba(239, 68, 68, 0.9)",
-      ],
-      borderColor: [
-        "rgba(59, 130, 246, 1)",
-        "rgba(16, 185, 129, 1)",
-        "rgba(239, 68, 68, 1)",
-      ],
-      borderWidth: 1,
-      
-    },
-  ],
-};
-
-// Options untuk Pie Charts dengan animasi - tanpa spacing
+// Options untuk Pie Chart
 const pieOptions: ChartOptions<"pie"> = {
   responsive: true,
   maintainAspectRatio: false,
@@ -146,7 +74,7 @@ const pieOptions: ChartOptions<"pie"> = {
             0
           );
           const percentage = Math.round((value / total) * 100);
-          return `${label}: ${value} `;
+          return `${label}: ${value} (${percentage}%)`;
         },
       },
     },
@@ -164,21 +92,41 @@ const pieOptions: ChartOptions<"pie"> = {
       },
     },
   },
-  // Menghilangkan celah antara bagian pie chart
-  cutout: "0%", // Pastikan tidak ada donut hole
-  radius: "90%", // Pastikan pie chart memenuhi container
+  cutout: "0%",
+  radius: "90%",
 };
 
 const MediaDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
-
+  const [summary, setSummary] = useState<any>({});
+  const [toolsByCategory, setToolsByCategory] = useState<any[]>([]);
+const [statusSummary, setStatusSummary] = useState<any[]>([]);
+const [borrowingTrend, setBorrowingTrend] = useState<any[]>([]);
   useEffect(() => {
-    // Simulasi loading data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    const fetchData = async () => {
+      try {
+        
+// Retrieve token from localStorage (or another secure place)
+const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
 
-    return () => clearTimeout(timer);
+const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
+  headers: {
+    Authorization: `Bearer ${token}`, // wajib, karena ada AuthMiddleware
+  }
+})
+
+        setSummary(res.data.summary);
+        setToolsByCategory(res.data.toolsByCategory);
+        setStatusSummary(res.data.statusSummary);
+        setBorrowingTrend(res.data.borrowingTrend);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (isLoading) {
@@ -196,6 +144,76 @@ const MediaDashboard = () => {
     );
   }
 
+  // ===== Chart Data (dinamis dari backend) =====
+  const toolCategoryData = {
+    labels: toolsByCategory.map((item) => item.category),
+    datasets: [
+      {
+        label: "Jumlah Alat",
+        data: toolsByCategory.map((item) => item.total),
+        backgroundColor: [
+          "rgba(79, 70, 229, 0.9)",
+          "rgba(236, 72, 153, 0.9)",
+          "rgba(249, 115, 22, 0.9)",
+          "rgba(16, 185, 129, 0.9)",
+          "rgba(139, 92, 246, 0.9)",
+        ],
+        borderColor: [
+          "rgba(79, 70, 229, 1)",
+          "rgba(236, 72, 153, 1)",
+          "rgba(249, 115, 22, 1)",
+          "rgba(16, 185, 129, 1)",
+          "rgba(139, 92, 246, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const statusData = {
+    labels: statusSummary.map((item) => item.status),
+    datasets: [
+      {
+        label: "Status Alat",
+        data: statusSummary.map((item) => item.total),
+        backgroundColor: [
+          "rgba(16, 185, 129, 0.9)",
+          "rgba(59, 130, 246, 0.9)",
+          "rgba(245, 158, 11, 0.9)",
+          "rgba(239, 68, 68, 0.9)",
+        ],
+        borderColor: [
+          "rgba(16, 185, 129, 1)",
+          "rgba(59, 130, 246, 1)",
+          "rgba(245, 158, 11, 1)",
+          "rgba(239, 68, 68, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const borrowingTrendData = {
+    labels: borrowingTrend.map((item) => item.label),
+    datasets: [
+      {
+        label: "Trend Peminjaman",
+        data: borrowingTrend.map((item) => item.total),
+        backgroundColor: [
+          "rgba(59, 130, 246, 0.9)",
+          "rgba(16, 185, 129, 0.9)",
+          "rgba(239, 68, 68, 0.9)",
+        ],
+        borderColor: [
+          "rgba(59, 130, 246, 1)",
+          "rgba(16, 185, 129, 1)",
+          "rgba(239, 68, 68, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
@@ -212,7 +230,7 @@ const MediaDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              {/* Statistik Cards */}
+              {/* Card Total Alat */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center">
                   <div className="p-3 rounded-lg bg-indigo-100">
@@ -234,11 +252,14 @@ const MediaDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Total Alat
                     </p>
-                    <p className="text-2xl font-bold text-gray-800">110</p>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {summary.totalTools}
+                    </p>
                   </div>
                 </div>
               </div>
 
+              {/* Card Peminjaman Aktif */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center">
                   <div className="p-3 rounded-lg bg-blue-100">
@@ -260,11 +281,14 @@ const MediaDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Peminjaman Aktif
                     </p>
-                    <p className="text-2xl font-bold text-gray-800">35</p>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {summary.activeBorrowings}
+                    </p>
                   </div>
                 </div>
               </div>
 
+              {/* Card Alat Tersedia */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center">
                   <div className="p-3 rounded-lg bg-green-100">
@@ -286,96 +310,46 @@ const MediaDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Tersedia
                     </p>
-                    <p className="text-2xl font-bold text-gray-800">65</p>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {summary.availableTools}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
+            {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Pie Chart 1 - Kategori Alat */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 ">
+              {/* Chart Kategori Alat */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Distribusi Kategori Alat
                 </h2>
                 <div className="h-72 relative">
-                  <Pie
-                    data={toolCategoryData}
-                    options={{
-                      ...pieOptions,
-                      plugins: {
-                        ...pieOptions.plugins,
-                        title: {
-                          display: true,
-                          text: "Kategori Alat",
-                          color: "#1F2937",
-                          font: {
-                            size: 16,
-                            weight: 600,
-                          },
-                        },
-                      },
-                    }}
-                  />
+                  <Pie data={toolCategoryData} options={pieOptions} />
                 </div>
               </div>
 
-              {/* Pie Chart 2 - Status Alat */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 ">
+              {/* Chart Status Alat */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Status Alat
                 </h2>
                 <div className="h-72 relative">
-                  <Pie
-                    data={statusData}
-                    options={{
-                      ...pieOptions,
-                      plugins: {
-                        ...pieOptions.plugins,
-                        title: {
-                          display: true,
-                          text: "Status Alat",
-                          color: "#1F2937",
-                          font: {
-                            size: 16,
-                            weight: 600,
-                          },
-                        },
-                      },
-                    }}
-                  />
+                  <Pie data={statusData} options={pieOptions} />
                 </div>
               </div>
 
-              {/* Pie Chart 3 - Trend Peminjaman */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition-transform duration-300 ">
+              {/* Chart Trend Peminjaman */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Trend Peminjaman
                 </h2>
                 <div className="h-72 relative">
-                  <Pie
-                    data={borrowingTrendData}
-                    options={{
-                      ...pieOptions,
-                      plugins: {
-                        ...pieOptions.plugins,
-                        title: {
-                          display: true,
-                          text: "Trend Peminjaman",
-                          color: "#1F2937",
-                          font: {
-                            size: 16,
-                            weight: 600,
-                          },
-                        },
-                      },
-                    }}
-                  />
+                  <Pie data={borrowingTrendData} options={pieOptions} />
                 </div>
               </div>
             </div>
-
-           
           </div>
         </div>
       </AuthenticatedLayout>
