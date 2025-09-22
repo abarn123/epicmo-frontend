@@ -75,7 +75,7 @@ function ToolCard({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                d="M9 19v-6a2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
             <span>Stock: {tool.stock}</span>
@@ -115,7 +115,7 @@ function ToolCard({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                d="M11 极H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
             Edit
@@ -428,7 +428,7 @@ export default function ToolsPage() {
     // For other errors, show generic error message
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+        <div className="bg-white p-8 rounded-xl shadow-lg极-w-md w-full text-center">
           <div className="text-red-500 mb-4">
             <svg
               className="w-16 h-16 mx-auto"
@@ -444,7 +444,7 @@ export default function ToolsPage() {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semib极 text-gray-900 mb-2">
             Terjadi Kesalahan
           </h3>
           <p className="text-gray-600 mb-6">{error}</p>
@@ -477,7 +477,7 @@ export default function ToolsPage() {
               {role !== "freelance" && (
                 <Link
                   href="/tools/add"
-                  className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-6极0 hover:to-indigo-700 transition shadow-md flex items-center"
                 >
                   <svg
                     className="w-5 h-5 mr-2"
@@ -509,7 +509,7 @@ export default function ToolsPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2极5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
                 Peminjaman
@@ -517,120 +517,124 @@ export default function ToolsPage() {
             </div>
           </div>
 
-          {tools.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-              <svg
-                className="w-16 h-16 mx-auto text-gray-400 mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <h3 className="text-lg font-medium text-gray-900 mb-1">
-                Belum ada alat
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Mulai dengan menambahkan alat baru
-              </p>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-              >
-                Tambah Alat Pertama
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentTools.map((tool) => (
-                  <ToolCard
-                    key={`tool-${tool.id}`}
-                    tool={tool}
-                    onDelete={handleDeleteTool}
-                    role={role || ""}
+          <div className="flex-1">
+            {tools.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+                <svg
+                  className="w-16 h-16 mx-auto text-gray-400 mb-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
-                ))}
+                </svg>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                  Belum ada alat
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  Mulai dengan menambahkan alat baru
+                </p>
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+                >
+                  Tambah Alat Pertama
+                </button>
               </div>
-            </>
-          )}
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {currentTools.map((tool) => (
+                    <ToolCard
+                      key={`tool-${tool.id}`}
+                      tool={tool}
+                      onDelete={handleDeleteTool}
+                      role={role || ""}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
-          {/* Sticky Pagination Footer - Updated to match user management style */}
+          {/* Sticky Pagination Footer - Fixed position */}
           {totalPages > 1 && (
-            <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 border-t border-gray-200 sticky bottom-0 left-0 z-10 flex justify-center py-4 mt-8">
-              <nav
-                className="inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <button
-                  onClick={() => paginate(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-2 rounded-l-md border ${
-                    currentPage === 1
-                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                  }`}
+            <div className="mt-auto pt-6">
+              <div className="w-full flex justify-center">
+                <nav
+                  className="inline-flex rounded-md shadow-sm -space-x-px"
+                  aria-label="Pagination"
                 >
-                  <span className="sr-only">Previous</span>
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                  <button
+                    onClick={() => paginate(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-2 rounded-l-md border ${
+                      currentPage === 1
+                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                    }`}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (number) => (
-                    <button
-                      key={number}
-                      onClick={() => paginate(number)}
-                      className={`px-4 py-2 border ${
-                        currentPage === number
-                          ? "bg-blue-50 border-blue-500 text-blue-600"
-                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                      }`}
+                    <span className="sr-only">Previous</span>
+                    <svg
+                      className="h-5 w-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
                     >
-                      {number}
-                    </button>
-                  )
-                )}
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
 
-                <button
-                  onClick={() =>
-                    paginate(Math.min(totalPages, currentPage + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  className={`px-3 py-2 rounded-r-md border ${
-                    currentPage === totalPages
-                      ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="sr-only">Next</span>
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (number) => (
+                      <button
+                        key={number}
+                        onClick={() => paginate(number)}
+                        className={`px-4 py-2 border ${
+                          currentPage === number
+                            ? "bg-blue-50 border-blue-500 text-blue-600"
+                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                        }`}
+                      >
+                        {number}
+                      </button>
+                    )
+                  )}
+
+                  <button
+                    onClick={() =>
+                      paginate(Math.min(totalPages, currentPage + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-2 rounded-r-md border ${
+                      currentPage === totalPages
+                        ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                    }`}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </nav>
+                    <span className="sr-only">Next</span>
+                    <svg
+                      className="h-5 w-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </nav>
+              </div>
             </div>
           )}
         </div>
