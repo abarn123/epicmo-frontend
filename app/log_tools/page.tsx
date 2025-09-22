@@ -382,8 +382,8 @@ export default function ToolBorrowingSystem() {
                 )}
               </div>
             ) : (
-              <>
-                <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+              <div className="flex flex-col min-h-[500px]">
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg flex-grow">
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
@@ -407,7 +407,7 @@ export default function ToolBorrowingSystem() {
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="flex justify-center mt-8">
+                  <div className="mt-8 flex justify-center">
                     <nav className="inline-flex rounded-md shadow-sm -space-x-px">
                       <button
                         onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
@@ -447,7 +447,7 @@ export default function ToolBorrowingSystem() {
                     </nav>
                   </div>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>
