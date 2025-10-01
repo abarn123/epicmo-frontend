@@ -151,7 +151,10 @@ const resBorrowingTrend = await axios.get(
   };
 
   
-
+const isEmptyChart = (data: any) => {
+    if (!data || !data.datasets || !data.datasets.length) return true;
+    return data.datasets[0].data.every((val: any) => !val || val === 0);
+  };
 
     fetchData();
   }, []);
@@ -170,6 +173,14 @@ const resBorrowingTrend = await axios.get(
       </ProtectedRoute>
     );
   }
+
+  
+
+  // Helper untuk cek data chart kosong
+  const isEmptyChart = (data: any) => {
+    if (!data || !data.datasets || !data.datasets.length) return true;
+    return data.datasets[0].data.every((val: any) => !val || val === 0);
+  };
 
   // ===== Chart Data (dinamis dari backend) =====
   const RoleUser = {
@@ -219,12 +230,11 @@ const resBorrowingTrend = await axios.get(
       },
     ],
   };
-
   const StatusPeminjaman = {
     labels: Object.keys(borrowingTrend),
     datasets: [
       {
-        label: " Peminjaman",
+        label: "Peminjaman",
         data: Object.values(borrowingTrend),
         backgroundColor: [
           "rgba(15, 71, 253, 0.9)",
@@ -238,6 +248,9 @@ const resBorrowingTrend = await axios.get(
       },
     ],
   };
+
+  // Helper untuk cek data chart kosong
+  
 
   return (
     <ProtectedRoute>
@@ -255,7 +268,6 @@ const resBorrowingTrend = await axios.get(
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              
               {/* Card User */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center">
@@ -284,8 +296,6 @@ const resBorrowingTrend = await axios.get(
                   </div>
                 </div>
               </div>
-
-              
 
               {/* Card Total Alat */}
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
@@ -344,7 +354,6 @@ const resBorrowingTrend = await axios.get(
                   </div>
                 </div>
               </div>
-
             </div>
 
             {/* Charts */}
@@ -354,8 +363,12 @@ const resBorrowingTrend = await axios.get(
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Role Users
                 </h2>
-                <div className="h-72 relative">
-                  <Pie data={RoleUser} options={pieOptions} />
+                <div className="h-72 relative flex items-center justify-center">
+                  {isEmptyChart(RoleUser) ? (
+                    <span className="text-gray-400 text-center w-full">Tidak ada data</span>
+                  ) : (
+                    <Pie data={RoleUser} options={pieOptions} />
+                  )}
                 </div>
               </div>
 
@@ -364,8 +377,12 @@ const resBorrowingTrend = await axios.get(
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Status Alat
                 </h2>
-                <div className="h-72 relative">
-                  <Pie data={statusAlat} options={pieOptions} />
+                <div className="h-72 relative flex items-center justify-center">
+                  {isEmptyChart(statusAlat) ? (
+                    <span className="text-gray-400 text-center w-full">Tidak ada data</span>
+                  ) : (
+                    <Pie data={statusAlat} options={pieOptions} />
+                  )}
                 </div>
               </div>
 
@@ -374,8 +391,12 @@ const resBorrowingTrend = await axios.get(
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                   Peminjaman
                 </h2>
-                <div className="h-72 relative">
-                  <Pie data={StatusPeminjaman} options={pieOptions} />
+                <div className="h-72 relative flex items-center justify-center">
+                  {isEmptyChart(StatusPeminjaman) ? (
+                    <span className="text-gray-400 text-center w-full">Tidak ada data</span>
+                  ) : (
+                    <Pie data={StatusPeminjaman} options={pieOptions} />
+                  )}
                 </div>
               </div>
             </div>
