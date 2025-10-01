@@ -875,12 +875,13 @@ export default function UserManagement() {
                     : "Coba dengan kata kunci lain"}
                 </p>
                 {users.length === 0 && (
-                  <button
-                    onClick={handleAddUser}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-                  >
-                    Tambah Pengguna Pertama
-                  </button>
+                    <Link href="/user/add" passHref>
+                    <button
+                      className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+                    >
+                      Tambah Pengguna Pertama
+                    </button>
+                    </Link>
                 )}
               </div>
             ) : (
