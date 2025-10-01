@@ -330,45 +330,7 @@ export default function ToolBorrowingSystem() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full text-center">
-          <div className="text-red-500 mb-4">
-            <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            Terjadi Kesalahan
-          </h3>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 mr-2"
-          >
-            Coba Lagi
-          </button>
-          <button
-            onClick={() => (window.location.href = "/log_tools/add")}
-            className="px-4 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700"
-          >
-            Pinjam Alat
-          </button>
-        </div>
-      </div>
-    );
-  }
+  
 
   return (
     <ProtectedRoute>
@@ -449,8 +411,8 @@ export default function ToolBorrowingSystem() {
                 </svg>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
                   {borrowRecords.length === 0
-                    ? "Tidak ada catatan peminjaman ditemukan"
-                    : "Tidak ada catatan yang cocok ditemukan"}
+                    ? "Belum ada data peminjaman"
+                    : "Tidak ada data yang cocok ditemukan"}
                 </h3>
                 <p className="text-gray-500 mb-4">
                   {borrowRecords.length === 0
