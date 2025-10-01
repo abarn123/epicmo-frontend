@@ -231,8 +231,8 @@ const resBorrowingTrend = await axios.get(
           "rgba(16, 185, 129, 0.9)",
         ],
         borderColor: [
-          "rgba(59, 130, 246, 1)",
-          "rgba(16, 185, 129, 1)",
+          "rgba(15, 71, 253, 0.9)",
+          "rgba(16, 185, 129, 0.9)",
         ],
         borderWidth: 1,
       },
