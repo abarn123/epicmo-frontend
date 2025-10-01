@@ -539,12 +539,12 @@ export default function ToolsPage() {
                 <p className="text-gray-500 mb-4">
                   Mulai dengan menambahkan alat baru
                 </p>
-                <button
-                  onClick={() => setShowAddModal(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+                <Link
+                  href="/tools/add"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md inline-block"
                 >
                   Tambah Alat Pertama
-                </button>
+                </Link>
               </div>
             ) : (
               <>
