@@ -227,13 +227,12 @@ const resBorrowingTrend = await axios.get(
         label: " Peminjaman",
         data: Object.values(borrowingTrend),
         backgroundColor: [
-          "rgba(59, 130, 246, 0.9)",
+          "rgba(15, 71, 253, 0.9)",
           "rgba(16, 185, 129, 0.9)",
         ],
         borderColor: [
           "rgba(59, 130, 246, 1)",
           "rgba(16, 185, 129, 1)",
-          "rgba(239, 68, 68, 1)",
         ],
         borderWidth: 1,
       },
