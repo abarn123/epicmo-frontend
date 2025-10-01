@@ -60,7 +60,7 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
       if (!token) throw new Error("Token tidak ditemukan");
 
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/transactions/return/${record.transaction_id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/data3/${record.transaction_id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

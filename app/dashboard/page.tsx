@@ -137,7 +137,7 @@ const resBorrowingTrend = await axios.get(
   }
 );
 
-    setRoleUsers(resRoleUsers.data.data.data || {});
+    setRoleUsers(resRoleUsers.data.data.by_role || {});
     setBorrowingTrend(resBorrowingTrend.data.data.by_status || {});
     setSummary(res.data.data);
     setToolsByCategory(res.data.toolsByCategory || []);
@@ -340,7 +340,7 @@ const resBorrowingTrend = await axios.get(
                       Total Peminjaman
                     </p>
                     <p className="text-2xl font-bold text-gray-800">
-                      {summary.total_logtools}
+                      {summary.total_transactions}
                     </p>
                   </div>
                 </div>
