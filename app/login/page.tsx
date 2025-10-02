@@ -54,6 +54,13 @@ export default function LoginPage() {
         localStorage.setItem("userName", data.user.name);
       }
 
+      // Simpan username jika remember dicentang
+      if (remember) {
+        localStorage.setItem("rememberedUsername", formData.name);
+      } else {
+        localStorage.removeItem("rememberedUsername");
+      }
+
       login(data.token, data.user?.id);
 
       // Setelah login(data.token);
@@ -72,6 +79,15 @@ window.location.href = redirects[role] || "/user";
       setLoading(false);
     }
   };
+
+  const [remember, setRemember] = useState(false);
+  React.useEffect(() => {
+  const saved = localStorage.getItem("rememberedUsername");
+  if (saved) {
+    setFormData((prev) => ({ ...prev, name: saved }));
+    setRemember(true);
+  }
+}, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100">
@@ -129,10 +145,12 @@ window.location.href = redirects[role] || "/user";
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
-                id="remember"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
+  id="remember"
+  type="checkbox"
+  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+  checked={remember}
+  onChange={() => setRemember(!remember)}
+/>
               <label
                 htmlFor="remember"
                 className="ml-2 block text-sm text-gray-600"
@@ -140,9 +158,7 @@ window.location.href = redirects[role] || "/user";
                 Remember me
               </label>
             </div>
-            <a href="#" className="text-sm text-blue-600 hover:underline">
-              Forgot password?
-            </a>
+            
           </div>
           <button
             type="submit"
@@ -151,16 +167,11 @@ window.location.href = redirects[role] || "/user";
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
+          <footer className="mt-8 text-center text-xs text-gray-400">
+            &copy; 2025 Epicmo. All rights reserved.
+          </footer>
         </form>
-        <p className="mt-8 text-center text-sm text-gray-500">
-          Don't have an account?{" "}
-          <a
-            href="register"
-            className="text-blue-600 font-semibold hover:underline"
-          >
-            Sign up
-          </a>
-        </p>
+        
       </div>
     </div>
   );
