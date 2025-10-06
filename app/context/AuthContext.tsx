@@ -12,6 +12,7 @@ interface AuthContextType {
   userName: string | null;
   userId: number | null;
   userPhoto: string | null;
+  role: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,17 +25,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userName, setUserName] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
 
   // ambil token + userId dari localStorage pas app pertama kali load
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedId = localStorage.getItem("userId");
+  const storedToken = localStorage.getItem("token");
+  const storedId = localStorage.getItem("userId");
+  const storedRole = localStorage.getItem("role");
 
-    if (storedToken) setToken(storedToken);
-    if (storedId) setUserId(Number(storedId));
+  if (storedToken) setToken(storedToken);
+  if (storedId) setUserId(Number(storedId));
+  if (storedRole) setRole(storedRole);
 
-    setLoading(false);
+  setLoading(false);
   }, []);
 
   // fetch user detail kalau token dan userId ada
@@ -73,6 +77,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setUserName(fallbackName ?? null);
         }
         setUserPhoto(data.data?.photo ?? null);
+        if (data.data?.role) {
+          setRole(data.data.role);
+          localStorage.setItem("role", data.data.role);
+        } else {
+          setRole(null);
+          localStorage.removeItem("role");
+        }
       } catch (e) {
         console.error("Error fetching user:", e);
         // fallback ke localStorage jika error
@@ -86,9 +97,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [token, userId]);
 
   // login nyimpen token + userId
-  const login = (newToken: string, id: number) => {
+  const login = (newToken: string, id: number, userRole?: string) => {
     localStorage.setItem("token", newToken);
     localStorage.setItem("userId", id.toString());
+    if (userRole) {
+      localStorage.setItem("role", userRole);
+      setRole(userRole);
+    }
     setToken(newToken);
     setUserId(id);
   };
@@ -96,10 +111,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem("role");
     setToken(null);
     setUserName(null);
     setUserId(null);
     setUserPhoto(null);
+    setRole(null);
     router.push("/login");
   };
 
@@ -116,6 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         userName,
         userId,
         userPhoto,
+        role,
       }}
     >
       {children}
