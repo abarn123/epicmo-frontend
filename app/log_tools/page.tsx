@@ -213,17 +213,27 @@ function BorrowTableRow({
         </td>
         {/* Kolom alasan peminjaman untuk admin */}
         <td
-          className="px-6 py-4 text-gray-700 max-w-xs min-w-[120px] w-[220px]"
-          style={{ maxWidth: 300, minWidth: 120, width: 220 }}
+          className="px-2 py-4 text-gray-700 align-top max-w-[90px] min-w-[70px] w-[90px]"
+          style={{ maxWidth: 90, minWidth: 70, width: 90 }}
         >
-          <div
-            className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-            style={{ maxWidth: 220 }}
-          >
-            <span className="block truncate whitespace-nowrap">
-              {record.reason || "-"}
-            </span>
-          </div>
+          <span className="block whitespace-pre-line break-words text-xs leading-snug">
+            {record.reason
+              ? record.reason
+                  .split(" ")
+                  .reduce((acc: string[], word: string, idx: number) => {
+                    if (acc.length === 0) return [word];
+                    const last = acc[acc.length - 1];
+                    // 3 kata per baris
+                    if (last.split(" ").length < 3) {
+                      acc[acc.length - 1] = last + " " + word;
+                    } else {
+                      acc.push(word);
+                    }
+                    return acc;
+                  }, [])
+                  .join("\n")
+              : "-"}
+          </span>
         </td>
         <td
           className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium w-32"
@@ -463,7 +473,7 @@ export default function ToolBorrowingSystem() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="bg-gray-50 min-h-screen ml-56 py-8">
+        <div className="bg-gray-50 min-h-screen py-8 pl-8">
           <div>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
               <div className="flex-1">
@@ -602,8 +612,8 @@ export default function ToolBorrowingSystem() {
                             Status
                           </th>
                           <th
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-w-[120px] min-w-[80px] w-[120px]"
-                            style={{ minWidth: 80, maxWidth: 120, width: 120 }}
+                            className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-w-[90px] min-w-[70px] w-[90px]"
+                            style={{ minWidth: 70, maxWidth: 90, width: 90 }}
                           >
                             Alasan
                           </th>

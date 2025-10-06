@@ -750,7 +750,7 @@ export default function UserManagement() {
     }
     // Default error UI
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
           <div className="text-red-500 mb-4">
             <svg
@@ -768,19 +768,14 @@ export default function UserManagement() {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            Terjadi Kesalahan
-          </h3>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              window.location.reload();
-            }}
+            Akses Ditolak!</h3>
+          <p className="text-gray-600 mb-6">Anda tidak memiliki akses untuk ke halaman ini.</p>
+            <button
+            onClick={() => window.history.back()}
             className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-          >
-            Coba Lagi
-          </button>
+            >
+            Kembali
+            </button>
         </div>
       </div>
     );
