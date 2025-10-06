@@ -319,17 +319,18 @@ export default function AttendancePage() {
                     />
                   </svg>
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    Gagal Memuat Data
+                  Tidak ada data absen
                   </h3>
                   <p className="text-gray-500 mb-4">
                     {error}
                   </p>
                   <button
-                    onClick={() => window.location.reload()}
+                    onClick={() => window.location.href= "/attendance/data"}
                     className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
                   >
-                    Coba Lagi
+                    Tambah Absen Pertama
                   </button>
+                  
                 </div>
               </div>
             </div>
