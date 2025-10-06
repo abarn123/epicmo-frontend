@@ -101,60 +101,61 @@ const MediaDashboard = () => {
   const [summary, setSummary] = useState<any>({});
   const [toolsByCategory, setToolsByCategory] = useState<any[]>([]);
   const [roleUsers, setRoleUsers] = useState<any>({});
-const [statusSummary, setStatusSummary] = useState<any[]>([]);
-const [borrowingTrend, setBorrowingTrend] = useState<any[]>([]);
+  const [statusSummary, setStatusSummary] = useState<any[]>([]);
+  const [borrowingTrend, setBorrowingTrend] = useState<any[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        
-// Retrieve token from localStorage (or another secure place)
-const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
+        // Retrieve token from localStorage (or another secure place)
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : "";
 
-const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jumlahdata`, {
-  headers: {
-    Authorization: `Bearer ${token}`, // wajib, karena ada AuthMiddleware
-  }
-})
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/jumlahdata`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // wajib, karena ada AuthMiddleware
+            },
+          }
+        );
 
-const resCondition = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/kondisi-tools`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+        const resCondition = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/kondisi-tools`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-const resRoleUsers = await axios.get(
-  `${process.env.NEXT_PUBLIC_API_URL}/role-users`,
-  {
-    headers: { Authorization: `Bearer ${token}` },
-  }
-);
+        const resRoleUsers = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/role-users`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-const resBorrowingTrend = await axios.get(
-  `${process.env.NEXT_PUBLIC_API_URL}/status-logtools`,
-  {
-    headers: { Authorization: `Bearer ${token}` },
-  }
-);
+        const resBorrowingTrend = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/status-logtools`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-    setRoleUsers(resRoleUsers.data.data.by_role || {});
-    setBorrowingTrend(resBorrowingTrend.data.data.by_status || {});
-    setSummary(res.data.data);
-    setToolsByCategory(res.data.toolsByCategory || []);
-    setStatusSummary(resCondition.data.data || []);
-          
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        setRoleUsers(resRoleUsers.data.data.by_role || {});
+        setBorrowingTrend(resBorrowingTrend.data.data.by_status || {});
+        setSummary(res.data.data);
+        setToolsByCategory(res.data.toolsByCategory || []);
+        setStatusSummary(resCondition.data.data || []);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  
-const isEmptyChart = (data: any) => {
-    if (!data || !data.datasets || !data.datasets.length) return true;
-    return data.datasets[0].data.every((val: any) => !val || val === 0);
-  };
+    const isEmptyChart = (data: any) => {
+      if (!data || !data.datasets || !data.datasets.length) return true;
+      return data.datasets[0].data.every((val: any) => !val || val === 0);
+    };
 
     fetchData();
   }, []);
@@ -173,8 +174,6 @@ const isEmptyChart = (data: any) => {
       </ProtectedRoute>
     );
   }
-
-  
 
   // Helper untuk cek data chart kosong
   const isEmptyChart = (data: any) => {
@@ -239,10 +238,14 @@ const isEmptyChart = (data: any) => {
         backgroundColor: [
           "rgba(15, 71, 253, 0.9)",
           "rgba(16, 185, 129, 0.9)",
+          "rgba(128, 103, 30, 0.9)",
+          "rgba(239, 18, 18, 0.9)",
         ],
         borderColor: [
           "rgba(15, 71, 253, 0.9)",
           "rgba(16, 185, 129, 0.9)",
+          "rgba(124, 106, 52, 0.9)",
+          "rgba(239, 18, 18, 0.9)",
         ],
         borderWidth: 1,
       },
@@ -250,7 +253,6 @@ const isEmptyChart = (data: any) => {
   };
 
   // Helper untuk cek data chart kosong
-  
 
   return (
     <ProtectedRoute>
@@ -287,9 +289,7 @@ const isEmptyChart = (data: any) => {
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      User
-                    </p>
+                    <p className="text-sm font-medium text-gray-600">User</p>
                     <p className="text-2xl font-bold text-gray-800">
                       {summary.total_users}
                     </p>
@@ -365,7 +365,9 @@ const isEmptyChart = (data: any) => {
                 </h2>
                 <div className="h-72 relative flex items-center justify-center">
                   {isEmptyChart(RoleUser) ? (
-                    <span className="text-gray-400 text-center w-full">Tidak ada data</span>
+                    <span className="text-gray-400 text-center w-full">
+                      Tidak ada data
+                    </span>
                   ) : (
                     <Pie data={RoleUser} options={pieOptions} />
                   )}
@@ -379,7 +381,9 @@ const isEmptyChart = (data: any) => {
                 </h2>
                 <div className="h-72 relative flex items-center justify-center">
                   {isEmptyChart(statusAlat) ? (
-                    <span className="text-gray-400 text-center w-full">Tidak ada data</span>
+                    <span className="text-gray-400 text-center w-full">
+                      Tidak ada data
+                    </span>
                   ) : (
                     <Pie data={statusAlat} options={pieOptions} />
                   )}
@@ -393,7 +397,9 @@ const isEmptyChart = (data: any) => {
                 </h2>
                 <div className="h-72 relative flex items-center justify-center">
                   {isEmptyChart(StatusPeminjaman) ? (
-                    <span className="text-gray-400 text-center w-full">Tidak ada data</span>
+                    <span className="text-gray-400 text-center w-full">
+                      Tidak ada data
+                    </span>
                   ) : (
                     <Pie data={StatusPeminjaman} options={pieOptions} />
                   )}

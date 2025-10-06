@@ -52,7 +52,13 @@ type GroupedBorrowRecord = {
 };
 
 // Table Row Component for grouped records
-function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refresh: () => void }) {
+function BorrowTableRow({
+  record,
+  refresh,
+}: {
+  record: GroupedBorrowRecord;
+  refresh: () => void;
+}) {
   // Approve peminjaman
   const handleApprove = async () => {
     try {
@@ -126,11 +132,35 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
 
   // Badge status
   const getStatusBadge = (status: string) => {
-    if (status === "pending") return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Pending</span>;
-    if (status === "borrowed") return <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Dipinjam</span>;
-    if (status === "return") return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Dikembalikan</span>;
-    if (status === "rejected") return <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Ditolak</span>;
-     return <span className="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-600">-</span>;
+    if (status === "pending")
+      return (
+        <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
+          Pending
+        </span>
+      );
+    if (status === "borrowed")
+      return (
+        <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+          Dipinjam
+        </span>
+      );
+    if (status === "return")
+      return (
+        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+          Dikembalikan
+        </span>
+      );
+    if (status === "rejected")
+      return (
+        <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
+          Ditolak
+        </span>
+      );
+    return (
+      <span className="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-600">
+        -
+      </span>
+    );
   };
 
   // Kolom alasan (untuk admin, bisa tambahkan role check jika perlu)
@@ -145,12 +175,19 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
             className="flex items-center text-gray-700 hover:text-blue-600 transition-colors"
           >
             <svg
-              className={`w-4 h-4 mr-2 transform transition-transform ${showItems ? "rotate-90" : ""}`}
+              className={`w-4 h-4 mr-2 transform transition-transform ${
+                showItems ? "rotate-90" : ""
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
             {record.items.length} alat
           </button>
@@ -158,9 +195,7 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="font-medium text-gray-900">{record.user}</div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-gray-700">{record.items.reduce((total, item) => total + item.quantity, 0)}</div>
-        </td>
+        {/* Hapus kolom jumlah */}
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="text-gray-700">
             {new Date(record.date_borrow).toLocaleDateString()}
@@ -168,17 +203,32 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="text-gray-700">
-            {record.date_return ? new Date(record.date_return).toLocaleDateString() : "-"}
+            {record.date_return
+              ? new Date(record.date_return).toLocaleDateString()
+              : "-"}
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           {getStatusBadge(record.status)}
         </td>
         {/* Kolom alasan peminjaman untuk admin */}
-        <td className="px-6 py-4 whitespace-nowrap text-gray-700">
-          {record.reason || "-"}
+        <td
+          className="px-6 py-4 text-gray-700 max-w-xs min-w-[120px] w-[220px]"
+          style={{ maxWidth: 300, minWidth: 120, width: 220 }}
+        >
+          <div
+            className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+            style={{ maxWidth: 220 }}
+          >
+            <span className="block truncate whitespace-nowrap">
+              {record.reason || "-"}
+            </span>
+          </div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <td
+          className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium w-32"
+          style={{ width: 96 }}
+        >
           {record.status === "pending" && role === "admin" ? (
             <>
               <button
@@ -204,24 +254,26 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
           ) : null}
         </td>
       </tr>
-      {showItems && record.items.map((item, index) => (
-        <tr key={`${item.log_tools}-${index}`} className="border-b border-gray-200 bg-blue-50 hover:bg-blue-100 transition-colors">
-          <td className="px-6 py-4 whitespace-nowrap pl-12">
-            <div className="text-gray-700 flex items-center">
-              <span className="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
-              {item.item_name}
-            </div>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap"></td>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <div className="text-gray-700">{item.quantity}</div>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap"></td>
-          <td className="px-6 py-4 whitespace-nowrap"></td>
-          <td className="px-6 py-4 whitespace-nowrap"></td>
-          <td className="px-6 py-4 whitespace-nowrap"></td>
-        </tr>
-      ))}
+      {showItems &&
+        record.items.map((item, index) => (
+          <tr
+            key={`${item.log_tools}-${index}`}
+            className="border-b border-gray-200 bg-blue-50 hover:bg-blue-100 transition-colors"
+          >
+            <td className="px-6 py-4 whitespace-nowrap pl-12">
+              <div className="text-gray-700 flex items-center">
+                <span className="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                {item.item_name}
+              </div>
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap"></td>
+            {/* Hapus kolom jumlah pada detail alat */}
+            <td className="px-6 py-4 whitespace-nowrap"></td>
+            <td className="px-6 py-4 whitespace-nowrap"></td>
+            <td className="px-6 py-4 whitespace-nowrap"></td>
+            <td className="px-6 py-4 whitespace-nowrap"></td>
+          </tr>
+        ))}
     </>
   );
 }
@@ -239,7 +291,7 @@ export default function ToolBorrowingSystem() {
   // Group records by transaction_id
   const groupRecords = (records: BorrowRecord[]): GroupedBorrowRecord[] => {
     const grouped: Record<string, GroupedBorrowRecord> = {};
-    records.forEach(record => {
+    records.forEach((record) => {
       if (!grouped[record.transaction_id]) {
         grouped[record.transaction_id] = {
           transaction_id: record.transaction_id,
@@ -249,14 +301,14 @@ export default function ToolBorrowingSystem() {
           date_return: record.date_return,
           status: record.status,
           reason: record.reason, // ambil reason dari parent transaksi
-          items: []
+          items: [],
         };
       }
       grouped[record.transaction_id].items.push({
         log_tools: record.log_tools,
         tools_id: record.tools_id,
         item_name: record.item_name,
-        quantity: record.quantity
+        quantity: record.quantity,
       });
     });
     return Object.values(grouped);
@@ -277,10 +329,13 @@ export default function ToolBorrowingSystem() {
       };
 
       // Fetch tools
-      const toolsRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
-        headers,
-        timeout: 10000,
-      });
+      const toolsRes = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/data2`,
+        {
+          headers,
+          timeout: 10000,
+        }
+      );
       let toolsData = toolsRes.data;
 
       if (toolsData && typeof toolsData === "object") {
@@ -302,10 +357,13 @@ export default function ToolBorrowingSystem() {
       setTools(processedTools);
 
       // Fetch borrow records
-      const recordsRes = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data3`, {
-        headers,
-        timeout: 10000,
-      });
+      const recordsRes = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/data3`,
+        {
+          headers,
+          timeout: 10000,
+        }
+      );
       let recordsData = recordsRes.data;
 
       if (recordsData && typeof recordsData === "object") {
@@ -317,7 +375,8 @@ export default function ToolBorrowingSystem() {
       const mappedRecords: BorrowRecord[] = Array.isArray(recordsData)
         ? recordsData.flatMap((record: any) =>
             (record.items || []).map((item: any) => ({
-              log_tools: record.transaction_id?.toString() || `generated-${Date.now()}`,
+              log_tools:
+                record.transaction_id?.toString() || `generated-${Date.now()}`,
               transaction_id: record.transaction_id?.toString() || "0",
               user_id: record.user_id?.toString() || "0",
               user: record.user || "Unknown User",
@@ -349,7 +408,8 @@ export default function ToolBorrowingSystem() {
           errorMessage = "Sesi kedaluwarsa. Silakan login kembali.";
           toast.error(errorMessage);
         } else if (err.response?.status === 403) {
-          errorMessage = "Akses ditolak. Anda tidak memiliki izin untuk mengakses data ini.";
+          errorMessage =
+            "Akses ditolak. Anda tidak memiliki izin untuk mengakses data ini.";
           toast.error(errorMessage);
         } else if (err.response) {
           errorMessage = `Kesalahan API: ${err.response.status} - ${
@@ -375,7 +435,7 @@ export default function ToolBorrowingSystem() {
   const filteredRecords = borrowRecords.filter(
     (record) =>
       record.user.toLowerCase().includes(search.toLowerCase()) ||
-      record.items.some(item => 
+      record.items.some((item) =>
         item.item_name.toLowerCase().includes(search.toLowerCase())
       ) ||
       record.status.toLowerCase().includes(search.toLowerCase())
@@ -384,7 +444,10 @@ export default function ToolBorrowingSystem() {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredRecords.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / itemsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredRecords.length / itemsPerPage)
+  );
 
   if (loading) {
     return (
@@ -397,19 +460,19 @@ export default function ToolBorrowingSystem() {
     );
   }
 
-  
-
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="p-8 bg-gray-50 min-h-screen">
-          <div className="max-w-7xl mx-auto">
+  <div className="bg-gray-50 min-h-screen ml-56 py-8">
+          <div>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
               <div className="flex-1">
                 <h1 className="text-3xl font-bold text-gray-800 mb-1">
                   Sistem Peminjaman Alat
                 </h1>
-                <p className="text-gray-500">Kelola peminjaman dan pengembalian alat</p>
+                <p className="text-gray-500">
+                  Kelola peminjaman dan pengembalian alat
+                </p>
               </div>
               <div className="mb-4 md:mb-0 md:ml-4 flex justify-end gap-3">
                 <Link
@@ -422,7 +485,12 @@ export default function ToolBorrowingSystem() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
                   </svg>
                   Kembali ke Alat
                 </Link>
@@ -436,7 +504,12 @@ export default function ToolBorrowingSystem() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
                   </svg>
                   Pinjam Alat
                 </Link>
@@ -452,7 +525,12 @@ export default function ToolBorrowingSystem() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 </div>
                 <input
@@ -474,7 +552,12 @@ export default function ToolBorrowingSystem() {
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
                   {borrowRecords.length === 0
@@ -498,23 +581,47 @@ export default function ToolBorrowingSystem() {
             ) : (
               <div className="flex flex-col min-h-[500px]">
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg flex-grow">
-                  <div className="overflow-x-auto">
+                  <div>
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alat</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peminjam</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alasan</th>
-                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Alat
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Peminjam
+                          </th>
+                          {/* Hapus header kolom jumlah */}
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Tanggal Pinjam
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Tanggal Kembali
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-w-[120px] min-w-[80px] w-[120px]"
+                            style={{ minWidth: 80, maxWidth: 120, width: 120 }}
+                          >
+                            Alasan
+                          </th>
+                          <th
+                            className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32"
+                            style={{ width: 96 }}
+                          >
+                            Aksi
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {currentItems.map((record, index) => (
-                          <BorrowTableRow key={`${record.transaction_id}-${index}`} record={record} refresh={fetchData} />
+                          <BorrowTableRow
+                            key={`${record.transaction_id}-${index}`}
+                            record={record}
+                            refresh={fetchData}
+                          />
                         ))}
                       </tbody>
                     </table>
@@ -525,7 +632,9 @@ export default function ToolBorrowingSystem() {
                   <div className="mt-8 flex justify-center">
                     <nav className="inline-flex rounded-md shadow-sm -space-x-px">
                       <button
-                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(1, prev - 1))
+                        }
                         disabled={currentPage === 1}
                         className={`px-3 py-2 rounded-l-md border ${
                           currentPage === 1
@@ -535,21 +644,27 @@ export default function ToolBorrowingSystem() {
                       >
                         Sebelumnya
                       </button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-                        <button
-                          key={number}
-                          onClick={() => setCurrentPage(number)}
-                          className={`px-4 py-2 border ${
-                            currentPage === number
-                              ? "bg-blue-50 border-blue-500 text-blue-600"
-                              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                          }`}
-                        >
-                          {number}
-                        </button>
-                      ))}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (number) => (
+                          <button
+                            key={number}
+                            onClick={() => setCurrentPage(number)}
+                            className={`px-4 py-2 border ${
+                              currentPage === number
+                                ? "bg-blue-50 border-blue-500 text-blue-600"
+                                : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                            }`}
+                          >
+                            {number}
+                          </button>
+                        )
+                      )}
                       <button
-                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(totalPages, prev + 1)
+                          )
+                        }
                         disabled={currentPage === totalPages}
                         className={`px-3 py-2 rounded-r-md border ${
                           currentPage === totalPages

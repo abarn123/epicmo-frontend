@@ -68,7 +68,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-900 to-black border-r border-gray-700 flex flex-col shadow-2xl z-30">
+    <aside className="fixed top-0 left-0 h-full w-56 bg-gradient-to-b from-gray-900 to-black border-r border-gray-700 flex flex-col shadow-2xl z-30">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.3))] opacity-5"></div>
 
@@ -238,7 +238,6 @@ export default function Sidebar() {
                 User
               </span>
             </Link>
-            
           )}
           {canAccess("gallery") && (
             <Link
