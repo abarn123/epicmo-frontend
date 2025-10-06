@@ -31,7 +31,8 @@ type BorrowRecord = {
   quantity: number;
   date_borrow: string;
   date_return: string | null;
-  status: "borrowed" | "return";
+  status: "pending" | "borrowed" | "return";
+  reason?: string;
 };
 
 type GroupedBorrowRecord = {
@@ -40,7 +41,8 @@ type GroupedBorrowRecord = {
   user_id: string;
   date_borrow: string;
   date_return: string | null;
-  status: "borrowed" | "return";
+  status: "pending" | "borrowed" | "return";
+  reason?: string;
   items: {
     log_tools: string;
     tools_id: string;
@@ -51,8 +53,51 @@ type GroupedBorrowRecord = {
 
 // Table Row Component for grouped records
 function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refresh: () => void }) {
+  // Approve peminjaman
+  const handleApprove = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan");
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/data3/approve/${record.transaction_id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success("Peminjaman disetujui");
+      refresh();
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal menyetujui peminjaman");
+    }
+  };
+
+  // Reject peminjaman
+  const handleReject = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan");
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/data3/reject/${record.transaction_id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success("Peminjaman ditolak");
+      refresh();
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal menolak peminjaman");
+    }
+  };
   const router = useRouter();
   const [showItems, setShowItems] = useState(false);
+  // Ambil role dari AuthContext
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // @ts-ignore
+  const { role } = require("../context/AuthContext").useAuth();
 
   const handleReturn = async () => {
     try {
@@ -78,6 +123,18 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
   const toggleShowItems = () => {
     setShowItems(!showItems);
   };
+
+  // Badge status
+  const getStatusBadge = (status: string) => {
+    if (status === "pending") return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Pending</span>;
+    if (status === "borrowed") return <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Dipinjam</span>;
+    if (status === "return") return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Dikembalikan</span>;
+    if (status === "rejected") return <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Ditolak</span>;
+     return <span className="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-600">-</span>;
+  };
+
+  // Kolom alasan (untuk admin, bisa tambahkan role check jika perlu)
+  // ...existing code...
 
   return (
     <>
@@ -115,25 +172,36 @@ function BorrowTableRow({ record, refresh }: { record: GroupedBorrowRecord; refr
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <span
-            className={`px-2 py-1 text-xs rounded-full ${
-              record.status === "borrowed"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-green-100 text-green-800"
-            }`}
-          >
-            {record.status === "borrowed" ? "Dipinjam" : "Dikembalikan"}
-          </span>
+          {getStatusBadge(record.status)}
+        </td>
+        {/* Kolom alasan peminjaman untuk admin */}
+        <td className="px-6 py-4 whitespace-nowrap text-gray-700">
+          {record.reason || "-"}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          {record.status === "borrowed" && (
+          {record.status === "pending" && role === "admin" ? (
+            <>
+              <button
+                onClick={handleApprove}
+                className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 mr-2"
+              >
+                Setujui
+              </button>
+              <button
+                onClick={handleReject}
+                className="px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700"
+              >
+                Tolak
+              </button>
+            </>
+          ) : record.status === "borrowed" ? (
             <button
               onClick={handleReturn}
               className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
             >
               Kembalikan
             </button>
-          )}
+          ) : null}
         </td>
       </tr>
       {showItems && record.items.map((item, index) => (
@@ -171,7 +239,6 @@ export default function ToolBorrowingSystem() {
   // Group records by transaction_id
   const groupRecords = (records: BorrowRecord[]): GroupedBorrowRecord[] => {
     const grouped: Record<string, GroupedBorrowRecord> = {};
-    
     records.forEach(record => {
       if (!grouped[record.transaction_id]) {
         grouped[record.transaction_id] = {
@@ -181,10 +248,10 @@ export default function ToolBorrowingSystem() {
           date_borrow: record.date_borrow,
           date_return: record.date_return,
           status: record.status,
+          reason: record.reason, // ambil reason dari parent transaksi
           items: []
         };
       }
-      
       grouped[record.transaction_id].items.push({
         log_tools: record.log_tools,
         tools_id: record.tools_id,
@@ -192,7 +259,6 @@ export default function ToolBorrowingSystem() {
         quantity: record.quantity
       });
     });
-    
     return Object.values(grouped);
   };
 
@@ -260,7 +326,8 @@ export default function ToolBorrowingSystem() {
               quantity: item.quantity || 0,
               date_borrow: record.date_borrow || new Date().toISOString(),
               date_return: record.date_return || null,
-              status: record.status === "return" ? "return" : "borrowed",
+              status: record.status, // ambil status langsung dari backend
+              reason: record.reason, // ambil reason dari parent transaksi
             }))
           )
         : [];
@@ -441,6 +508,7 @@ export default function ToolBorrowingSystem() {
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alasan</th>
                           <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
                       </thead>
