@@ -463,7 +463,7 @@ export default function ToolBorrowingSystem() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-  <div className="bg-gray-50 min-h-screen ml-56 py-8">
+        <div className="bg-gray-50 min-h-screen ml-56 py-8">
           <div>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
               <div className="flex-1">
