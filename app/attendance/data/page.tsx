@@ -5,9 +5,8 @@ import {
   FiCheck,
   FiX,
   FiClock,
-  FiMapPin,
   FiCalendar,
-  FiUser,
+  FiRefreshCw,
 } from "react-icons/fi";
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -20,7 +19,7 @@ interface AttendanceFormData {
   name: string;
   date: string;
   time: string;
-  status: "ready" | "finish" ;
+  status: "ready" | "finish";
 }
 
 interface UserData {
@@ -52,13 +51,29 @@ export default function AttendanceFormPage() {
       name: userName || "",
     }));
   }, [userId, userName]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [users, setUsers] = useState<UserData[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
 
-  // Tidak perlu fetch users, user diambil dari context
+  // Check available cameras
+  useEffect(() => {
+    const checkCameras = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        setHasMultipleCameras(videoDevices.length > 1);
+      } catch (err) {
+        console.error("Error checking cameras:", err);
+      }
+    };
+
+    checkCameras();
+  }, []);
 
   // Update time every second
   useEffect(() => {
@@ -84,26 +99,26 @@ export default function AttendanceFormPage() {
 
     const initializeCamera = async () => {
       try {
-        const isMobile =
-          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-            navigator.userAgent
-          );
+        // Stop existing stream
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop());
+        }
 
         const constraints: MediaStreamConstraints = {
           audio: false,
           video: {
-            facingMode: isMobile ? { exact: "user" } : "user",
+            facingMode: facingMode,
             width: { ideal: 1280 },
             height: { ideal: 720 },
           },
         };
 
         mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
-          if (isMobile) {
-            videoRef.current.style.transform = "scaleX(-1)";
-          }
+          // Only mirror for front camera
+          videoRef.current.style.transform = facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
         }
         setStream(mediaStream);
       } catch (err) {
@@ -117,7 +132,13 @@ export default function AttendanceFormPage() {
     return () => {
       mediaStream?.getTracks().forEach((track) => track.stop());
     };
-  }, []);
+  }, [facingMode]);
+
+  const switchCamera = () => {
+    setFacingMode(prev => prev === "user" ? "environment" : "user");
+    setCapturedPhoto(null);
+    setFormData(prev => ({ ...prev, photo: "" }));
+  };
 
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -129,14 +150,27 @@ export default function AttendanceFormPage() {
     canvasRef.current.height = videoRef.current.videoHeight;
 
     context.save();
-    context.scale(-1, 1);
-    context.drawImage(
-      videoRef.current,
-      -canvasRef.current.width,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
+    
+    // Only mirror for front camera
+    if (facingMode === "user") {
+      context.scale(-1, 1);
+      context.drawImage(
+        videoRef.current,
+        -canvasRef.current.width,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+    } else {
+      context.drawImage(
+        videoRef.current,
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+    }
+    
     context.restore();
 
     const photoData = canvasRef.current.toDataURL("image/jpeg");
@@ -148,8 +182,6 @@ export default function AttendanceFormPage() {
     setCapturedPhoto(null);
     setFormData((prev) => ({ ...prev, photo: "" }));
   };
-
-  // Tidak perlu handleUserSelect
 
   const validateForm = (): boolean => {
     if (!formData.photo) {
@@ -184,14 +216,13 @@ export default function AttendanceFormPage() {
       };
 
       const response = await axios.post(
-       `${process.env.NEXT_PUBLIC_API_URL}/data4/add`,
+        `${process.env.NEXT_PUBLIC_API_URL}/data4/add`,
         payload,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          
           timeout: 10000,
         }
       );
@@ -278,10 +309,23 @@ export default function AttendanceFormPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Camera Section */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-black mb-2">
-                Foto Selfie
-              </label>
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden h-64 flex items-center justify-center">
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-black">
+                  Foto Selfie
+                </label>
+                {hasMultipleCameras && !capturedPhoto && (
+                  <button
+                    type="button"
+                    onClick={switchCamera}
+                    className="flex items-center px-3 py-1 bg-gray-600 text-white rounded-md text-sm hover:bg-gray-700 transition"
+                  >
+                    <FiRefreshCw className="mr-1" />
+                    {facingMode === "user" ? "Kamera Belakang" : "Kamera Depan"}
+                  </button>
+                )}
+              </div>
+              
+              <div className="relative bg-gray-100 rounded-lg overflow-hidden h-64 flex items-center justify-center border-2 border-gray-300">
                 {capturedPhoto ? (
                   <img
                     src={capturedPhoto}
@@ -298,13 +342,21 @@ export default function AttendanceFormPage() {
                   />
                 )}
                 <canvas ref={canvasRef} className="hidden" />
+                
+                {/* Camera overlay frame */}
+                {!capturedPhoto && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-48 h-48 border-2 border-white border-dashed rounded-lg bg-transparent"></div>
+                  </div>
+                )}
               </div>
+              
               <div className="mt-3 flex justify-center gap-3">
                 {capturedPhoto ? (
                   <button
                     type="button"
                     onClick={retakePhoto}
-                    className="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                    className="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
                   >
                     <FiX className="mr-2" /> Ambil Ulang Foto
                   </button>
@@ -312,7 +364,7 @@ export default function AttendanceFormPage() {
                   <button
                     type="button"
                     onClick={capturePhoto}
-                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
                   >
                     <FiCamera className="mr-2" /> Ambil Foto
                   </button>
@@ -335,7 +387,7 @@ export default function AttendanceFormPage() {
                   name="user_id"
                   value={formData.user_id}
                   readOnly
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
                 />
               </div>
               <div>
@@ -351,7 +403,7 @@ export default function AttendanceFormPage() {
                   name="name"
                   value={formData.name}
                   readOnly
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
                 />
               </div>
 
@@ -420,7 +472,6 @@ export default function AttendanceFormPage() {
                 >
                   <option value="ready">Sudah siap</option>
                   <option value="finish">Telah selesai</option>
-                  
                 </select>
               </div>
             </div>
@@ -434,7 +485,7 @@ export default function AttendanceFormPage() {
             <button
               type="submit"
               disabled={loading || !capturedPhoto}
-              className={`w-full flex items-center justify-center px-4 py-3 rounded-md text-white font-medium ${
+              className={`w-full flex items-center justify-center px-4 py-3 rounded-md text-white font-medium transition ${
                 loading || !capturedPhoto
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 hover:bg-green-700"

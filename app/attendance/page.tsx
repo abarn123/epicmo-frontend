@@ -1,6 +1,13 @@
 "use client";
 import Sidebar from "../components/Sidebar";
-import { FiMenu, FiSearch, FiDownload, FiCalendar, FiFilter, FiX } from "react-icons/fi";
+import {
+  FiMenu,
+  FiSearch,
+  FiDownload,
+  FiCalendar,
+  FiFilter,
+  FiX,
+} from "react-icons/fi";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -11,7 +18,7 @@ interface AttendanceRecord {
   name: string;
   date: string;
   time: string;
-  status: "ready" | "finish" ;
+  status: "ready" | "finish";
 }
 
 export default function AttendancePage() {
@@ -26,6 +33,11 @@ export default function AttendancePage() {
   const [filterStatus, setFilterStatus] = useState("");
   const itemsPerPage = 5;
   const router = useRouter();
+
+  // Modal state for image preview
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState<string>("");
+  const [previewName, setPreviewName] = useState<string>("");
 
   // Fungsi untuk memformat waktu dari berbagai kemungkinan format
   const formatTimeFromAPI = (timeString: string | undefined) => {
@@ -70,11 +82,14 @@ export default function AttendancePage() {
           setError("Token tidak ditemukan. Silakan login kembali.");
           return;
         }
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data4`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data4`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         let data = response.data;
 
         // Jika data dibungkus dalam objek, ambil array-nya
@@ -113,7 +128,7 @@ export default function AttendancePage() {
         setAttendanceData(processed);
       } catch (err: any) {
         console.error("Error fetching data:", err);
-        
+
         if (axios.isAxiosError(err)) {
           if (err.response?.status === 401) {
             setError("Token tidak valid. Silakan login kembali.");
@@ -122,9 +137,15 @@ export default function AttendancePage() {
           } else if (err.code === "ERR_NETWORK") {
             setError("Kesalahan jaringan: Tidak dapat terhubung ke server.");
           } else if (err.response?.status === 403) {
-            setError("Akses ditolak. Anda tidak memiliki izin untuk mengakses data ini.");
+            setError(
+              "Akses ditolak. Anda tidak memiliki izin untuk mengakses data ini."
+            );
           } else if (err.response) {
-            setError(`Gagal mengambil data: ${err.response.status} - ${err.response.data?.message || err.message}`);
+            setError(
+              `Gagal mengambil data: ${err.response.status} - ${
+                err.response.data?.message || err.message
+              }`
+            );
           } else {
             setError("Gagal mengambil data absensi");
           }
@@ -258,10 +279,12 @@ export default function AttendancePage() {
         )}
 
         {/* Mobile Sidebar */}
-        <div className={`
+        <div
+          className={`
           fixed top-0 left-0 h-full w-64 z-50 transform transition-transform duration-300 ease-in-out md:hidden
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        `}>
+        `}
+        >
           <Sidebar />
           {/* Close button overlay for mobile */}
           <button
@@ -284,7 +307,9 @@ export default function AttendancePage() {
             >
               <FiMenu />
             </button>
-            <h1 className="text-lg font-bold text-gray-800">Absensi Karyawan</h1>
+            <h1 className="text-lg font-bold text-gray-800">
+              Absensi Karyawan
+            </h1>
             <div className="w-10" />
           </div>
 
@@ -319,18 +344,15 @@ export default function AttendancePage() {
                     />
                   </svg>
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
-                  Tidak ada data absen
+                    Tidak ada data absen
                   </h3>
-                  <p className="text-gray-500 mb-4">
-                    {error}
-                  </p>
+                  <p className="text-gray-500 mb-4">{error}</p>
                   <button
-                    onClick={() => window.location.href= "/attendance/data"}
+                    onClick={() => (window.location.href = "/attendance/data")}
                     className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
                   >
                     Tambah Absen Pertama
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -357,10 +379,12 @@ export default function AttendancePage() {
       )}
 
       {/* Mobile Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed top-0 left-0 h-full w-64 z-50 transform transition-transform duration-300 ease-in-out md:hidden
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      `}>
+      `}
+      >
         <Sidebar />
         {/* Close button overlay for mobile */}
         <button
@@ -442,7 +466,6 @@ export default function AttendancePage() {
                       <option value="">Semua Status</option>
                       <option value="ready">Sudah Siap</option>
                       <option value="finish">Telah selesai</option>
-
                     </select>
                   </div>
 
@@ -523,7 +546,10 @@ export default function AttendancePage() {
                         </thead>
                         <tbody className="bg-white/60 backdrop-blur-sm divide-y divide-gray-100">
                           {currentItems.map((record, index) => (
-                            <tr key={record.id} className="hover:bg-white/80 transition-all duration-200">
+                            <tr
+                              key={record.id}
+                              className="hover:bg-white/80 transition-all duration-200"
+                            >
                               <td className="px-3 md:px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
                                 {indexOfFirstItem + index + 1}
                               </td>
@@ -531,16 +557,30 @@ export default function AttendancePage() {
                                 <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 shadow-md ring-2 ring-white">
                                   {record.photo ? (
                                     <img
-                                      className="h-full w-full object-cover"
+                                      className="h-full w-full object-cover cursor-pointer"
                                       src={
                                         record.photo.startsWith("http")
                                           ? record.photo
                                           : record.photo.length > 100 &&
                                             !record.photo.startsWith("data:")
-                                            ? `data:image/jpeg;base64,${record.photo}`
-                                            : record.photo
+                                          ? `data:image/jpeg;base64,${record.photo}`
+                                          : record.photo
                                       }
                                       alt={record.name}
+                                      onClick={() => {
+                                        setPreviewSrc(
+                                          record.photo.startsWith("http")
+                                            ? record.photo
+                                            : record.photo.length > 100 &&
+                                              !record.photo.startsWith("data:")
+                                            ? `data:image/jpeg;base64,${record.photo}`
+                                            : record.photo
+                                        );
+                                        setPreviewName(
+                                          record.name || String(record.id)
+                                        );
+                                        setPreviewOpen(true);
+                                      }}
                                       onError={(e) => {
                                         (e.target as HTMLImageElement).src =
                                           "/images/employee1.jpg";
@@ -573,8 +613,8 @@ export default function AttendancePage() {
                                   )}`}
                                 >
                                   {record.status === "ready" && "Sudah siap"}
-                                  {record.status === "finish" && "Telah selesai"}
-                                  
+                                  {record.status === "finish" &&
+                                    "Telah selesai"}
                                 </span>
                               </td>
                             </tr>
@@ -588,9 +628,14 @@ export default function AttendancePage() {
                   {totalPages > 1 && (
                     <div className="mt-8 flex justify-center">
                       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-2">
-                        <nav className="flex items-center space-x-1" aria-label="Pagination">
+                        <nav
+                          className="flex items-center space-x-1"
+                          aria-label="Pagination"
+                        >
                           <button
-                            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                            onClick={() =>
+                              setCurrentPage(Math.max(1, currentPage - 1))
+                            }
                             disabled={currentPage === 1}
                             className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                               currentPage === 1
@@ -598,12 +643,23 @@ export default function AttendancePage() {
                                 : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"
                             }`}
                           >
-                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                            <svg
+                              className="h-5 w-5"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           </button>
 
-                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                          {Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1
+                          ).map((number) => (
                             <button
                               key={number}
                               onClick={() => setCurrentPage(number)}
@@ -618,7 +674,11 @@ export default function AttendancePage() {
                           ))}
 
                           <button
-                            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                            onClick={() =>
+                              setCurrentPage(
+                                Math.min(totalPages, currentPage + 1)
+                              )
+                            }
                             disabled={currentPage === totalPages}
                             className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                               currentPage === totalPages
@@ -626,8 +686,16 @@ export default function AttendancePage() {
                                 : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"
                             }`}
                           >
-                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                            <svg
+                              className="h-5 w-5"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           </button>
                         </nav>
@@ -640,6 +708,33 @@ export default function AttendancePage() {
           </div>
         </div>
       </div>
+      {/* Image Preview Modal */}
+      {previewOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="bg-white rounded-xl shadow-lg p-6 relative max-w-xs sm:max-w-md">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+              onClick={() => setPreviewOpen(false)}
+              aria-label="Tutup preview"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+            <img
+              src={previewSrc}
+              alt={previewName}
+              className="w-full h-auto max-h-80 object-contain rounded-lg mb-4"
+            />
+            <a
+              href={previewSrc}
+              download={`foto-${previewName}.jpg`}
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+            >
+              <FiDownload className="mr-2" />
+              Download Foto
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
