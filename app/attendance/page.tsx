@@ -319,11 +319,10 @@ export default function AttendancePage() {
               <div className="mb-8 hidden md:block">
                 <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-white/20">
                   <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                    Dashboard Absensi
+                     Sistem Absensi
                   </h1>
                   <p className="text-gray-600">
-                    Sistem pemantauan kehadiran karyawan real-time
-                  </p>
+                    Pantau dan kelola data kehadiran setiap acara secara akurat dan efisien.                  </p>
                 </div>
               </div>
 
@@ -417,11 +416,10 @@ export default function AttendancePage() {
             <div className="mb-8 hidden md:block">
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-white/20">
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                  Dashboard Absensi
+                   Sistem Absensi
                 </h1>
                 <p className="text-gray-600">
-                  Sistem pemantauan kehadiran karyawan real-time
-                </p>
+                  Pantau dan kelola data kehadiran setiap acara secara akurat dan efisien.                </p>
               </div>
             </div>
 
@@ -710,31 +708,46 @@ export default function AttendancePage() {
       </div>
       {/* Image Preview Modal */}
       {previewOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="bg-white rounded-xl shadow-lg p-6 relative max-w-xs sm:max-w-md">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
-              onClick={() => setPreviewOpen(false)}
-              aria-label="Tutup preview"
-            >
-              <FiX className="w-6 h-6" />
-            </button>
-            <img
-              src={previewSrc}
-              alt={previewName}
-              className="w-full h-auto max-h-80 object-contain rounded-lg mb-4"
-            />
-            <a
-              href={previewSrc}
-              download={`foto-${previewName}.jpg`}
-              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-            >
-              <FiDownload className="mr-2" />
-              Download Foto
-            </a>
-          </div>
-        </div>
-      )}
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn">
+    <div className="relative bg-white rounded-2xl shadow-2xl w-11/12 sm:w-[420px] p-5 sm:p-6 border border-gray-200 animate-scaleIn">
+      
+      {/* Tombol close */}
+      <button
+        className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition"
+        onClick={() => setPreviewOpen(false)}
+        aria-label="Tutup preview"
+      >
+        <FiX className="w-6 h-6" />
+      </button>
+
+      {/* Judul foto */}
+      <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">
+        Preview Foto
+      </h2>
+
+      {/* Gambar */}
+      <div className="flex justify-center mb-5">
+        <img
+          src={previewSrc}
+          alt={previewName}
+          className="max-w-full max-h-[70vh] object-contain rounded-lg border border-gray-200 shadow-sm"
+        />
+      </div>
+
+      {/* Tombol download */}
+      <div className="flex justify-center">
+        <a
+          href={previewSrc}
+          download={`foto-${previewName}.jpg`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg font-medium"        >
+          <FiDownload className="w-5 h-5" />
+          Download Foto
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
