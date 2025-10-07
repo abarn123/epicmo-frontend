@@ -20,7 +20,7 @@ interface AttendanceFormData {
   name: string;
   date: string;
   time: string;
-  status: "present" | "permission" | "sick";
+  status: "ready" | "finish" ;
 }
 
 interface UserData {
@@ -41,7 +41,7 @@ export default function AttendanceFormPage() {
     name: userName || "",
     date: new Date().toISOString().split("T")[0],
     time: "",
-    status: "present",
+    status: "ready",
   });
 
   // Update formData user_id dan name jika context berubah
@@ -418,9 +418,9 @@ export default function AttendanceFormPage() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 >
-                  <option value="present">Hadir</option>
-                  <option value="permission">Izin</option>
-                  <option value="sick">Sakit</option>
+                  <option value="ready">Sudah siap</option>
+                  <option value="finish">Telah selesai</option>
+                  
                 </select>
               </div>
             </div>

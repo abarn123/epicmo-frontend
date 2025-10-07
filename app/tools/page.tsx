@@ -211,6 +211,7 @@ function ToolCard({
 }
 
 // Main ToolsPage component
+
 export default function ToolsPage() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
@@ -219,6 +220,7 @@ export default function ToolsPage() {
   const [editingTool, setEditingTool] = useState<Tool | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6);
+  const [search, setSearch] = useState("");
   const router = useRouter();
   const { token, loading: authLoading } = useAuth();
   const [role, setRole] = useState<string | null>(null);
@@ -231,13 +233,11 @@ export default function ToolsPage() {
     if (authLoading) return;
     const fetchTools = async () => {
       try {
-        // Check if token exists
         if (!token) {
           setError("User is not authenticated");
           setLoading(false);
           return;
         }
-
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -249,43 +249,47 @@ export default function ToolsPage() {
             toolsData = toolsData.data;
           }
         }
-
         if (!Array.isArray(toolsData)) {
           throw new Error("API did not return an array of tools");
         }
-
         const processedTools = toolsData.map((t: any, index: number) => ({
           id: t.id?.toString() || `generated-${index}-${Date.now()}`,
           item_name: t.item_name || "No name",
           stock: t.stock || 0,
-          item_condition: t.item_condition ?? t.condition ?? "", // menyesuaikan dengan field database
+          item_condition: t.item_condition ?? t.condition ?? "",
           category: t.category || "Lainnya",
         }));
-
         setTools(processedTools);
       } catch (err) {
         console.error("Fetch error:", err);
         if (axios.isAxiosError(err) && err.response?.status === 401) {
           setError("User is not authenticated");
         } else {
-          setError(
-            err instanceof Error ? err.message : "Unknown error occurred"
-          );
+          setError(err instanceof Error ? err.message : "Unknown error occurred");
         }
         toast.error("Gagal memuat data alat");
       } finally {
         setLoading(false);
       }
     };
-
     fetchTools();
   }, [token, authLoading]);
 
-  // Pagination logic (matching user management style)
+  // FILTERING/SEARCH
+  const filteredTools = tools.filter((tool) => {
+    const q = search.toLowerCase();
+    return (
+      tool.item_name.toLowerCase().includes(q) ||
+      tool.category.toLowerCase().includes(q) ||
+      tool.item_condition.toLowerCase().includes(q)
+    );
+  });
+
+  // Pagination logic
   const indexOfLastTool = currentPage * itemsPerPage;
   const indexOfFirstTool = indexOfLastTool - itemsPerPage;
-  const currentTools = tools.slice(indexOfFirstTool, indexOfLastTool);
-  const totalPages = Math.ceil(tools.length / itemsPerPage);
+  const currentTools = filteredTools.slice(indexOfFirstTool, indexOfLastTool);
+  const totalPages = Math.ceil(filteredTools.length / itemsPerPage);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -306,7 +310,7 @@ export default function ToolsPage() {
       };
       setTools([...tools, createdTool]);
       setShowAddModal(false);
-      setCurrentPage(1); // Reset to first page
+      setCurrentPage(1);
       toast.success("Alat berhasil ditambahkan");
     } catch (err) {
       console.error("Error adding tool:", err);
@@ -346,14 +350,12 @@ export default function ToolsPage() {
       );
       const updatedTools = tools.filter((u) => u.id !== toolsId);
       setTools(updatedTools);
-
       if (
         updatedTools.length > 0 &&
         currentPage > Math.ceil(updatedTools.length / itemsPerPage)
       ) {
         setCurrentPage(Math.ceil(updatedTools.length / itemsPerPage));
       }
-
       toast.success("Alat berhasil dihapus");
     } catch (err) {
       console.error("Error deleting tool:", err);
@@ -472,12 +474,30 @@ export default function ToolsPage() {
                 Kelola data alat dengan mudah dan efisien
               </p>
             </div>
-            <div className="mb-4 md:mb-0 md:ml-4 flex justify-end space-x-4">
+            <div className="mb-4 md:mb-0 md:ml-4 flex flex-col md:flex-row justify-end space-y-3 md:space-y-0 md:space-x-4">
+              {/* SEARCH BAR */}
+              <div className="relative max-w-xs w-full md:w-64">
+                <input
+                  type="text"
+                  placeholder="Cari alat, kategori, kondisi..."
+                  value={search}
+                  onChange={e => {
+                    setSearch(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
               {/* Tombol tambah alat hanya jika bukan freelance */}
               {role !== "freelance" && (
                 <Link
                   href="/tools/add"
-                  className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-6极0 hover:to-indigo-700 transition shadow-md flex items-center"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md flex items-center"
                 >
                   <svg
                     className="w-5 h-5 mr-2"
@@ -518,7 +538,7 @@ export default function ToolsPage() {
           </div>
 
           <div className="flex-1">
-            {tools.length === 0 ? (
+            {filteredTools.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm p-8 text-center">
                 <svg
                   className="w-16 h-16 mx-auto text-gray-400 mb-4"
@@ -534,10 +554,10 @@ export default function ToolsPage() {
                   />
                 </svg>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
-                  Belum ada alat
+                  Tidak ada alat ditemukan
                 </h3>
                 <p className="text-gray-500 mb-4">
-                  Mulai dengan menambahkan alat baru
+                  Coba kata kunci lain atau tambahkan alat baru
                 </p>
                 <Link
                   href="/tools/add"

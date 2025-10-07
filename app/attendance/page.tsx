@@ -11,7 +11,7 @@ interface AttendanceRecord {
   name: string;
   date: string;
   time: string;
-  status: "present" | "permission" | "sick";
+  status: "ready" | "finish" ;
 }
 
 export default function AttendancePage() {
@@ -142,9 +142,9 @@ export default function AttendancePage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "present":
+      case "ready":
         return "bg-green-100 text-green-800";
-      case "sick":
+      case "finish":
         return "bg-red-100 text-red-800";
       case "permission":
         return "bg-blue-100 text-blue-800";
@@ -440,9 +440,9 @@ export default function AttendancePage() {
                       onChange={(e) => setFilterStatus(e.target.value)}
                     >
                       <option value="">Semua Status</option>
-                      <option value="present">Hadir</option>
-                      <option value="permission">Izin</option>
-                      <option value="sick">Sakit</option>
+                      <option value="ready">Sudah Siap</option>
+                      <option value="finish">Telah selesai</option>
+
                     </select>
                   </div>
 
@@ -572,9 +572,9 @@ export default function AttendancePage() {
                                     record.status
                                   )}`}
                                 >
-                                  {record.status === "present" && "Hadir"}
-                                  {record.status === "permission" && "Izin"}
-                                  {record.status === "sick" && "Sakit"}
+                                  {record.status === "ready" && "Sudah siap"}
+                                  {record.status === "finish" && "Telah selesai"}
+                                  
                                 </span>
                               </td>
                             </tr>
