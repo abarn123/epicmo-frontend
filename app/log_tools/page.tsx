@@ -134,13 +134,13 @@ function BorrowTableRow({
   const getStatusBadge = (status: string) => {
     if (status === "pending")
       return (
-        <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
-          Pending
+        <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+          Menunggu disetujui
         </span>
       );
     if (status === "borrowed")
       return (
-        <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+        <span className="px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800">
           Dipinjam
         </span>
       );
