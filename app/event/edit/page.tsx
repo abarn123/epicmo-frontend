@@ -29,7 +29,6 @@ export default function EditEvent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // ✅ Ambil semua data equipment
   const fetchEquipment = async (token: string) => {
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
@@ -43,7 +42,6 @@ export default function EditEvent() {
     }
   };
 
-  // ✅ Ambil data event berdasarkan ID
   const fetchEventData = async (token: string, eventId: string) => {
     try {
       const res = await axios.get(
@@ -80,7 +78,6 @@ export default function EditEvent() {
     }
   };
 
-  // ✅ Load data event + equipment
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -99,7 +96,6 @@ export default function EditEvent() {
     loadData();
   }, [eventId]);
 
-  // ✅ Handler input biasa
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -107,7 +103,6 @@ export default function EditEvent() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handler equipment
   const handleEquipmentChange = (index: number, value: string) => {
     const newEquipment = [...formData.equipment];
     newEquipment[index] = value;
@@ -127,7 +122,6 @@ export default function EditEvent() {
     }
   };
 
-  // ✅ Submit Handler (Update)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -171,7 +165,6 @@ export default function EditEvent() {
     }
   };
 
-  // ✅ Loading Screen
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-600">
@@ -180,7 +173,6 @@ export default function EditEvent() {
     );
   }
 
-  // ✅ Render form
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
