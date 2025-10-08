@@ -102,7 +102,7 @@ const MediaDashboard = () => {
   const [toolsByCategory, setToolsByCategory] = useState<any[]>([]);
   const [roleUsers, setRoleUsers] = useState<any>({});
   const [statusSummary, setStatusSummary] = useState<any[]>([]);
-  const [borrowingTrend, setBorrowingTrend] = useState<any[]>([]);
+  const [borrowingTrend, setBorrowingTrend] = useState<Record<string, number>>({});
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -192,15 +192,11 @@ const MediaDashboard = () => {
           "rgba(79, 70, 229, 0.9)",
           "rgba(236, 72, 153, 0.9)",
           "rgba(249, 115, 22, 0.9)",
-          "rgba(16, 185, 129, 0.9)",
-          "rgba(139, 92, 246, 0.9)",
         ],
         borderColor: [
           "rgba(79, 70, 229, 1)",
           "rgba(236, 72, 153, 1)",
           "rgba(249, 115, 22, 1)",
-          "rgba(16, 185, 129, 1)",
-          "rgba(139, 92, 246, 1)",
         ],
         borderWidth: 1,
       },
@@ -216,41 +212,40 @@ const MediaDashboard = () => {
         backgroundColor: [
           "rgba(29, 124, 233, 0.9)",
           "rgba(31, 231, 81, 0.9)",
-          "rgba(245, 158, 11, 0.9)",
-          "rgba(239, 68, 68, 0.9)",
         ],
         borderColor: [
-          "rgba(16, 185, 129, 1)",
-          "rgba(59, 130, 246, 1)",
-          "rgba(245, 158, 11, 1)",
-          "rgba(239, 68, 68, 1)",
+          "rgba(29, 124, 233, 0.9)",
+          "rgba(31, 231, 81, 0.9)",
         ],
         borderWidth: 1,
       },
     ],
   };
-  const StatusPeminjaman = {
-    labels: Object.keys(borrowingTrend),
-    datasets: [
-      {
-        label: "Peminjaman",
-        data: Object.values(borrowingTrend),
-        backgroundColor: [
-          "rgba(15, 71, 253, 0.9)",
-          "rgba(16, 185, 129, 0.9)",
-          "rgba(128, 103, 30, 0.9)",
-          "rgba(239, 18, 18, 0.9)",
-        ],
-        borderColor: [
-          "rgba(15, 71, 253, 0.9)",
-          "rgba(16, 185, 129, 0.9)",
-          "rgba(124, 106, 52, 0.9)",
-          "rgba(239, 18, 18, 0.9)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
+
+  const allStatuses = ["pending", "borrowed", "return", "rejected"];
+const StatusPeminjaman = {
+  labels: allStatuses,
+  datasets: [
+    {
+      label: "Peminjaman",
+      data: allStatuses.map((status) => borrowingTrend[status] || 0),
+      backgroundColor: [
+        "rgba(128, 103, 30, 0.9)",  // pending = coklat
+        "rgba(15, 71, 253, 0.9)",   // borrowed = biru
+        "rgba(16, 185, 129, 0.9)",  // return = hijau
+        "rgba(239, 18, 18, 0.9)",   // rejected = merah
+      ],
+      borderColor: [
+        "rgba(128, 103, 30, 0.9)",
+        "rgba(15, 71, 253, 0.9)",
+        "rgba(16, 185, 129, 0.9)",
+        "rgba(239, 18, 18, 0.9)",
+      ],
+      borderWidth: 1,
+    },
+  ],
+};
+
 
   // Helper untuk cek data chart kosong
 
