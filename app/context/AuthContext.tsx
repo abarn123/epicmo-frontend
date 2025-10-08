@@ -28,34 +28,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
 
-  // ambil token + userId dari localStorage pas app pertama kali load
+
+  // Ambil token, userId, role dari localStorage lalu fetch profile, loading hanya false setelah selesai
   useEffect(() => {
-  const storedToken = localStorage.getItem("token");
-  const storedId = localStorage.getItem("userId");
-  const storedRole = localStorage.getItem("role");
+    const storedToken = localStorage.getItem("token");
+    const storedId = localStorage.getItem("userId");
+    const storedRole = localStorage.getItem("role");
 
-  if (storedToken) setToken(storedToken);
-  if (storedId) setUserId(Number(storedId));
-  if (storedRole) setRole(storedRole);
+    if (storedToken) setToken(storedToken);
+    if (storedId) setUserId(Number(storedId));
+    if (storedRole) setRole(storedRole);
 
-  setLoading(false);
-  }, []);
-
-  // fetch user detail kalau token dan userId ada
-  useEffect(() => {
+    // fetch user detail kalau token dan userId ada
     const fetchUserProfile = async () => {
-      if (!token || !userId) {
+      if (!storedToken || !storedId) {
         // fallback ke localStorage jika ada
         const fallbackName = localStorage.getItem("userName");
         setUserName(fallbackName ?? null);
         setUserPhoto(null);
+        setLoading(false);
         return;
       }
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/profile`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${storedToken}` },
           }
         );
         if (!res.ok) {
@@ -63,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           const fallbackName = localStorage.getItem("userName");
           setUserName(fallbackName ?? null);
           setUserPhoto(null);
+          setLoading(false);
           return;
         }
         const data = await res.json();
@@ -91,10 +90,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUserName(fallbackName ?? null);
         setUserId(null);
         setUserPhoto(null);
+      } finally {
+        setLoading(false);
       }
     };
     fetchUserProfile();
-  }, [token, userId]);
+  }, []);
+
+
 
   // login nyimpen token + userId
   const login = (newToken: string, id: number, userRole?: string) => {
