@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
+import AccessDenied from "../../components/AccessDenied";
 import Link from "next/link";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import AuthenticatedLayout from "../../components/AuthenticatedLayout";
@@ -20,6 +21,7 @@ export default function EditToolPage() {
   const params = useSearchParams();
   const toolId = params.get("id");
   const { token } = useAuth();
+  const { role } = useAuth();
 
   const [tool, setTool] = useState<Tool | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -143,6 +145,10 @@ export default function EditToolPage() {
         </div>
       </div>
     );
+  }
+
+  if (role && role.toLowerCase() !== "admin") {
+    return <AccessDenied message={"Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini."} />;
   }
 
   if (error) {

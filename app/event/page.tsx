@@ -116,7 +116,7 @@ export default function EventSchedule() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-800 mb-1">Jadwal Event</h1>
+            <h1 className="text-4xl  font-bold text-gray-800 mb-1">Jadwal Event</h1>
             <p className="text-gray-500">Kelola jadwal event dan peralatan yang diperlukan</p>
           </div>
 
@@ -142,7 +142,7 @@ export default function EventSchedule() {
             return (
               <div key={eventId} className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between">
-                  <h2 className="text-xl font-bold text-gray-800 mb-2 md:mb-0">{event.title}</h2>
+                  <h1 className="text-3xl font-bold text-gray-800 mb-2 md:mb-0">{event.title}</h1>
                   <div className="text-gray-600">
                     <span className="font-medium">Waktu Event : {event.date}</span>
                     <span className="mx-2">•</span>

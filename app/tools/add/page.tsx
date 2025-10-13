@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
+import AccessDenied from "../../components/AccessDenied";
 import { toast } from "react-toastify";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import AuthenticatedLayout from "../../components/AuthenticatedLayout";
@@ -10,7 +11,7 @@ import axios from "axios";
 
 export default function AddToolPage() {
   const router = useRouter();
-  const { token, loading: authLoading } = useAuth();
+  const { token, loading: authLoading, role } = useAuth();
   const [formData, setFormData] = useState({
     item_name: "",
     stock: "",
@@ -25,6 +26,11 @@ export default function AddToolPage() {
       window.location.href = "/login";
     }
   }, [token, authLoading]);
+
+  // If authenticated but not admin -> show access denied
+  if (!authLoading && role && role.toLowerCase() !== "admin") {
+    return <AccessDenied message={"Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini."} />;
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
