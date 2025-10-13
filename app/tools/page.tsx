@@ -75,7 +75,7 @@ function ToolCard({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M9 19v-6a2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
             <span>Stock: {tool.stock}</span>
@@ -115,7 +115,7 @@ function ToolCard({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M11 极H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
             Edit
@@ -430,7 +430,7 @@ export default function ToolsPage() {
     // For other errors, show generic error message
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-lg极-w-md w-full text-center">
+  <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
           <div className="text-red-500 mb-4">
             <svg
               className="w-16 h-16 mx-auto"
@@ -446,7 +446,7 @@ export default function ToolsPage() {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semib极 text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Terjadi Kesalahan
           </h3>
           <p className="text-gray-600 mb-6">{error}</p>
@@ -529,7 +529,7 @@ export default function ToolsPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2极5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
                 Peminjaman

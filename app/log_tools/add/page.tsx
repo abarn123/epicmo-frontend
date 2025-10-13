@@ -361,7 +361,7 @@ export default function AddBorrowPage() {
                     >
                       <path
                         fillRule="evenodd"
-                        d="M12.极 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 极 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 极 011.414 0z"
+                        d="M12.293 5.293a1 1 0 010 1.414L9.414 10l2.879 2.293a1 1 0 11-1.293 1.515l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.293 0z"
                         clipRule="evenodd"
                       />
                     </svg>
@@ -686,7 +686,7 @@ export default function AddBorrowPage() {
                           <path
                             className="opacity-75"
                             fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 极 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
                         </svg>
                         Memproses...

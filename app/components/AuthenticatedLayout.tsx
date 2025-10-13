@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import Sidebar from "./Sidebar";
 
@@ -12,6 +12,7 @@ export default function AuthenticatedLayout({
   children,
 }: AuthenticatedLayoutProps) {
   const { isAuthenticated, loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Show loading while checking authentication
   if (loading) {
@@ -30,16 +31,27 @@ export default function AuthenticatedLayout({
     return <>{children}</>;
   }
 
-  // If authenticated, show with static sidebar (no mobile functionality)
+  // If authenticated, show with responsive sidebar + mobile hamburger
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar (static on all devices) */}
-      <aside className="w-64 bg-white shadow-lg" aria-label="Sidebar">
-        <Sidebar />
-      </aside>
+      {/* Sidebar */}
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* Main content */}
-      <main className="flex-1 p-0">{children}</main>
+      {/* Mobile open button: attached to screen edge, square with right semicircle */}
+      <div className={`md:hidden fixed left-0 top-1/2 z-50 -translate-y-1/2 ${sidebarOpen ? 'hidden' : ''}`}>
+        <button
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open sidebar"
+          className="h-10 w-7 rounded-r-full bg-blue-600 shadow-md flex items-center justify-center ring-1 ring-blue-400 hover:shadow-lg focus:outline-none"
+        >
+          <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Main content (offset on md to make room for fixed sidebar) */}
+      <main className="flex-1 p-0 md:ml-72">{children}</main>
     </div>
   );
 }

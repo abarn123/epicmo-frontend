@@ -1,13 +1,7 @@
 "use client";
-import Sidebar from "../components/Sidebar";
-import {
-  FiMenu,
-  FiSearch,
-  FiDownload,
-  FiCalendar,
-  FiFilter,
-  FiX,
-} from "react-icons/fi";
+import ProtectedRoute from "../components/ProtectedRoute";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
+import { FiSearch, FiDownload, FiCalendar, FiFilter, FiX } from "react-icons/fi";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -22,8 +16,6 @@ interface AttendanceRecord {
 }
 
 export default function AttendancePage() {
-  // Added mobile sidebar state
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -263,55 +255,7 @@ export default function AttendancePage() {
 
     // For other errors, show generic error message in the same layout as "Belum ada alat"
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex w-full overflow-x-hidden">
-        {/* Desktop Sidebar - Always visible on desktop */}
-        <div className="hidden md:block">
-          <Sidebar />
-        </div>
-
-        {/* Mobile sidebar overlay */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity duration-300 md:hidden"
-            onClick={() => setSidebarOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Mobile Sidebar */}
-        <div
-          className={`
-          fixed top-0 left-0 h-full w-64 z-50 transform transition-transform duration-300 ease-in-out md:hidden
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
-        >
-          <Sidebar />
-          {/* Close button overlay for mobile */}
-          <button
-            className="absolute top-4 right-4 text-white/70 hover:text-white p-2"
-            onClick={() => setSidebarOpen(false)}
-            aria-label="Tutup menu"
-          >
-            <FiX className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Main content area */}
-        <div className="flex-1 md:ml-64 min-w-0">
-          {/* Mobile header with hamburger menu */}
-          <div className="md:hidden flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-30 border-b border-white/20">
-            <button
-              className="text-2xl text-gray-700 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-100"
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Buka menu"
-            >
-              <FiMenu />
-            </button>
-            <h1 className="text-lg font-bold text-gray-800">
-              Absensi Karyawan
-            </h1>
-            <div className="w-10" />
-          </div>
+        <div className="flex-1 min-w-0">
 
           <div className="p-3 sm:p-4 md:p-6 w-full max-w-full">
             <div className="mx-auto w-full px-0 sm:px-0">
@@ -354,63 +298,18 @@ export default function AttendancePage() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div>  
           </div>
         </div>
-      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex w-full overflow-x-hidden">
-      {/* Desktop Sidebar - Always visible on desktop */}
-      <div className="hidden md:block">
-        <Sidebar />
-      </div>
-
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity duration-300 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Mobile Sidebar */}
-      <div
-        className={`
-        fixed top-0 left-0 h-full w-64 z-50 transform transition-transform duration-300 ease-in-out md:hidden
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      `}
-      >
-        <Sidebar />
-        {/* Close button overlay for mobile */}
-        <button
-          className="absolute top-4 right-4 text-white/70 hover:text-white p-2"
-          onClick={() => setSidebarOpen(false)}
-          aria-label="Tutup menu"
-        >
-          <FiX className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Main content area */}
-      <div className="flex-1 md:ml-64 min-w-0">
-        {/* Mobile header with hamburger menu */}
-        <div className="md:hidden flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-30 border-b border-white/20">
-          <button
-            className="text-2xl text-gray-700 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-100"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Buka menu"
-          >
-            <FiMenu />
-          </button>
-          <h1 className="text-lg font-bold text-gray-800">Absensi Karyawan</h1>
-          <div className="w-10" />
-        </div>
-
-        <div className="p-3 sm:p-4 md:p-6 w-full max-w-full">
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex w-full overflow-x-hidden">
+          <div className="flex-1 min-w-0">
+            <div className="p-3 sm:p-4 md:p-6 w-full max-w-full">
           <div className="mx-auto w-full px-0 sm:px-0">
             {/* Header - hidden on mobile, shown on desktop */}
             <div className="mb-8 hidden md:block">
@@ -516,109 +415,117 @@ export default function AttendancePage() {
                 </div>
               ) : (
                 <>
-                  {/* Attendance Table */}
-                  <div className="bg-white/80 backdrop-blur-sm shadow-lg rounded-xl overflow-hidden border border-white/20 w-full">
-                    <div className="overflow-x-auto w-full">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                          <tr>
-                            <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                              No
-                            </th>
-                            <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                              Foto
-                            </th>
-                            <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                              Nama Karyawan
-                            </th>
-                            <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                              Tanggal
-                            </th>
-                            <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                              Waktu
-                            </th>
-                            <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                              Status
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white/60 backdrop-blur-sm divide-y divide-gray-100">
-                          {currentItems.map((record, index) => (
-                            <tr
-                              key={record.id}
-                              className="hover:bg-white/80 transition-all duration-200"
-                            >
-                              <td className="px-3 md:px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
-                                {indexOfFirstItem + index + 1}
-                              </td>
-                              <td className="px-3 md:px-4 py-4 whitespace-nowrap">
-                                <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 shadow-md ring-2 ring-white">
-                                  {record.photo ? (
-                                    <img
-                                      className="h-full w-full object-cover cursor-pointer"
-                                      src={
-                                        record.photo.startsWith("http")
-                                          ? record.photo
-                                          : record.photo.length > 100 &&
-                                            !record.photo.startsWith("data:")
-                                          ? `data:image/jpeg;base64,${record.photo}`
-                                          : record.photo
-                                      }
-                                      alt={record.name}
-                                      onClick={() => {
-                                        setPreviewSrc(
-                                          record.photo.startsWith("http")
-                                            ? record.photo
-                                            : record.photo.length > 100 &&
-                                              !record.photo.startsWith("data:")
-                                            ? `data:image/jpeg;base64,${record.photo}`
-                                            : record.photo
-                                        );
-                                        setPreviewName(
-                                          record.name || String(record.id)
-                                        );
-                                        setPreviewOpen(true);
-                                      }}
-                                      onError={(e) => {
-                                        (e.target as HTMLImageElement).src =
-                                          "/images/employee1.jpg";
-                                      }}
-                                    />
-                                  ) : (
-                                    <img
-                                      className="h-full w-full object-cover"
-                                      src="/images/employee1.jpg"
-                                      alt="default"
-                                    />
-                                  )}
-                                </div>
-                              </td>
-                              <td className="px-3 md:px-4 py-4 whitespace-nowrap max-w-[120px] md:max-w-none truncate">
-                                <div className="text-sm font-semibold text-gray-900 truncate">
-                                  {record.name}
-                                </div>
-                              </td>
-                              <td className="px-3 md:px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                                {record.date}
-                              </td>
-                              <td className="px-3 md:px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-600">
-                                {record.time}
-                              </td>
-                              <td className="px-3 md:px-4 py-4 whitespace-nowrap">
-                                <span
-                                  className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-sm ${getStatusColor(
-                                    record.status
-                                  )}`}
-                                >
-                                  {record.status === "ready" && "Sudah siap"}
-                                  {record.status === "finish" &&
-                                    "Telah selesai"}
-                                </span>
-                              </td>
+                  {/* Mobile Card List (visible on small screens) */}
+                  <div className="space-y-3 md:hidden">
+                    {currentItems.map((record, idx) => (
+                      <div
+                        key={record.id}
+                        className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-4"
+                      >
+                        <div className="h-12 w-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0">
+                          <img
+                            src={
+                              record.photo.startsWith("http")
+                                ? record.photo
+                                : record.photo.length > 100 && !record.photo.startsWith("data:")
+                                ? `data:image/jpeg;base64,${record.photo}`
+                                : record.photo || "/images/employee1.jpg"
+                            }
+                            alt={record.name}
+                            className="h-full w-full object-cover cursor-pointer"
+                            onClick={() => {
+                              setPreviewSrc(
+                                record.photo.startsWith("http")
+                                  ? record.photo
+                                  : record.photo.length > 100 && !record.photo.startsWith("data:")
+                                  ? `data:image/jpeg;base64,${record.photo}`
+                                  : record.photo
+                              );
+                              setPreviewName(record.name || String(record.id));
+                              setPreviewOpen(true);
+                            }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/images/employee1.jpg";
+                            }}
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm font-semibold text-gray-900 truncate">{record.name}</div>
+                            <div className="text-xs text-gray-500">{record.date}</div>
+                          </div>
+                          <div className="mt-1 flex items-center justify-between">
+                            <div className="text-sm text-gray-600">{record.time}</div>
+                            <div>
+                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-sm ${getStatusColor(record.status)}`}>
+                                {record.status === "ready" && "Sudah siap"}
+                                {record.status === "finish" && "Telah selesai"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop/Table view (visible on md+) */}
+                  <div className="hidden md:block">
+                    {/* Attendance Table */}
+                    <div className="bg-white/80 backdrop-blur-sm shadow-lg rounded-xl overflow-hidden border border-white/20 w-full">
+                      <div className="overflow-x-auto w-full">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                            <tr>
+                              <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">No</th>
+                              <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Foto</th>
+                              <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama Karyawan</th>
+                              <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal</th>
+                              <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Waktu</th>
+                              <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody className="bg-white/60 backdrop-blur-sm divide-y divide-gray-100">
+                            {currentItems.map((record, index) => (
+                              <tr key={record.id} className="hover:bg-white/80 transition-all duration-200">
+                                <td className="px-3 md:px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-700">{indexOfFirstItem + index + 1}</td>
+                                <td className="px-3 md:px-4 py-4 whitespace-nowrap">
+                                  <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 shadow-md ring-2 ring-white">
+                                    {record.photo ? (
+                                      <img
+                                        className="h-full w-full object-cover cursor-pointer"
+                                        src={record.photo.startsWith("http") ? record.photo : record.photo.length > 100 && !record.photo.startsWith("data:") ? `data:image/jpeg;base64,${record.photo}` : record.photo}
+                                        alt={record.name}
+                                        onClick={() => {
+                                          setPreviewSrc(record.photo.startsWith("http") ? record.photo : record.photo.length > 100 && !record.photo.startsWith("data:") ? `data:image/jpeg;base64,${record.photo}` : record.photo);
+                                          setPreviewName(record.name || String(record.id));
+                                          setPreviewOpen(true);
+                                        }}
+                                        onError={(e) => {
+                                          (e.target as HTMLImageElement).src = "/images/employee1.jpg";
+                                        }}
+                                      />
+                                    ) : (
+                                      <img className="h-full w-full object-cover" src="/images/employee1.jpg" alt="default" />
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-3 md:px-4 py-4 whitespace-nowrap max-w-[120px] md:max-w-none truncate">
+                                  <div className="text-sm font-semibold text-gray-900 truncate">{record.name}</div>
+                                </td>
+                                <td className="px-3 md:px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-600">{record.date}</td>
+                                <td className="px-3 md:px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-600">{record.time}</td>
+                                <td className="px-3 md:px-4 py-4 whitespace-nowrap">
+                                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-sm ${getStatusColor(record.status)}`}>
+                                    {record.status === "ready" && "Sudah siap"}
+                                    {record.status === "finish" && "Telah selesai"}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
 
@@ -626,75 +533,17 @@ export default function AttendancePage() {
                   {totalPages > 1 && (
                     <div className="mt-8 flex justify-center">
                       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-2">
-                        <nav
-                          className="flex items-center space-x-1"
-                          aria-label="Pagination"
-                        >
-                          <button
-                            onClick={() =>
-                              setCurrentPage(Math.max(1, currentPage - 1))
-                            }
-                            disabled={currentPage === 1}
-                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                              currentPage === 1
-                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"
-                            }`}
-                          >
-                            <svg
-                              className="h-5 w-5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
+                        <nav className="flex items-center space-x-1" aria-label="Pagination">
+                          <button onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"}`}>
+                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
                           </button>
 
-                          {Array.from(
-                            { length: totalPages },
-                            (_, i) => i + 1
-                          ).map((number) => (
-                            <button
-                              key={number}
-                              onClick={() => setCurrentPage(number)}
-                              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                currentPage === number
-                                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg"
-                                  : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"
-                              }`}
-                            >
-                              {number}
-                            </button>
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                            <button key={number} onClick={() => setCurrentPage(number)} className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === number ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"}`}>{number}</button>
                           ))}
 
-                          <button
-                            onClick={() =>
-                              setCurrentPage(
-                                Math.min(totalPages, currentPage + 1)
-                              )
-                            }
-                            disabled={currentPage === totalPages}
-                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                              currentPage === totalPages
-                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"
-                            }`}
-                          >
-                            <svg
-                              className="h-5 w-5"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
+                          <button onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm"}`}>
+                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/></svg>
                           </button>
                         </nav>
                       </div>
@@ -748,6 +597,8 @@ export default function AttendancePage() {
   </div>
 )}
 
-    </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }

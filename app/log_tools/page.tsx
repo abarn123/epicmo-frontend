@@ -288,6 +288,108 @@ function BorrowTableRow({
   );
 }
 
+// Mobile Card Component for grouped records
+function BorrowCard({ record, refresh }: { record: GroupedBorrowRecord; refresh: () => void; }) {
+  const [showItems, setShowItems] = useState(false);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // @ts-ignore
+  const { role } = require("../context/AuthContext").useAuth();
+
+  const handleApprove = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan");
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/data3/approve/${record.transaction_id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Peminjaman disetujui");
+      refresh();
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal menyetujui peminjaman");
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan");
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/data3/reject/${record.transaction_id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Peminjaman ditolak");
+      refresh();
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal menolak peminjaman");
+    }
+  };
+
+  const handleReturn = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token tidak ditemukan");
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/data3/${record.transaction_id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success("Alat berhasil dikembalikan");
+      refresh();
+    } catch (err) {
+      console.error(err);
+      toast.error("Gagal mengembalikan alat");
+    }
+  };
+
+  const toggle = () => setShowItems((s) => !s);
+
+  const getStatusBadge = (status: string) => {
+    if (status === "pending") return <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Menunggu disetujui</span>;
+    if (status === "borrowed") return <span className="px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800">Dipinjam</span>;
+    if (status === "return") return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Dikembalikan</span>;
+    if (status === "rejected") return <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Ditolak</span>;
+    return <span className="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-600">-</span>;
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold text-gray-900 truncate">{record.user}</div>
+            <div className="text-xs text-gray-500">{new Date(record.date_borrow).toLocaleDateString()}</div>
+          </div>
+          <div className="mt-2 text-sm text-gray-600 truncate">{record.items.map(i => i.item_name).slice(0,2).join(', ')}{record.items.length > 2 ? ` +${record.items.length - 2} lainnya` : ''}</div>
+          <div className="mt-2 flex items-center justify-between">
+            <div>{getStatusBadge(record.status)}</div>
+            <button onClick={toggle} className="text-sm text-blue-600">{showItems ? 'Sembunyikan' : `${record.items.length} alat`}</button>
+          </div>
+        </div>
+      </div>
+
+      {showItems && (
+        <div className="mt-3 border-t pt-3 space-y-2">
+          {record.items.map((it) => (
+            <div key={`${it.log_tools}-${it.tools_id}`} className="text-sm text-gray-700">• {it.item_name} x{it.quantity}</div>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-3 flex items-center justify-end gap-2">
+        {record.status === 'pending' && role === 'admin' ? (
+          <>
+            <button onClick={handleApprove} className="px-3 py-1 bg-green-600 text-white rounded-md text-sm">Setujui</button>
+            <button onClick={handleReject} className="px-3 py-1 bg-red-600 text-white rounded-md text-sm">Tolak</button>
+          </>
+        ) : record.status === 'borrowed' ? (
+          <button onClick={handleReturn} className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">Kembalikan</button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 // Main Component
 export default function ToolBorrowingSystem() {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -589,49 +691,32 @@ export default function ToolBorrowingSystem() {
                 )}
               </div>
             ) : (
-              <div className="flex flex-col min-h-[500px]">
-                <div className="bg-white shadow overflow-hidden sm:rounded-lg flex-grow">
+              <div className="flex flex-col min-h-[500px] space-y-4">
+                {/* Mobile cards */}
+                <div className="md:hidden space-y-3">
+                  {currentItems.map((record) => (
+                    <BorrowCard key={record.transaction_id} record={record} refresh={fetchData} />
+                  ))}
+                </div>
+
+                {/* Desktop table */}
+                <div className="hidden md:block bg-white shadow overflow-hidden sm:rounded-lg flex-grow">
                   <div>
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Alat
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Peminjam
-                          </th>
-                          {/* Hapus header kolom jumlah */}
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Tanggal Pinjam
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Tanggal Kembali
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th
-                            className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-w-[90px] min-w-[70px] w-[90px]"
-                            style={{ minWidth: 70, maxWidth: 90, width: 90 }}
-                          >
-                            Alasan
-                          </th>
-                          <th
-                            className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32"
-                            style={{ width: 96 }}
-                          >
-                            Aksi
-                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alat</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peminjam</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kembali</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                          <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-w-[90px] min-w-[70px] w-[90px]">Alasan</th>
+                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {currentItems.map((record, index) => (
-                          <BorrowTableRow
-                            key={`${record.transaction_id}-${index}`}
-                            record={record}
-                            refresh={fetchData}
-                          />
+                          <BorrowTableRow key={`${record.transaction_id}-${index}`} record={record} refresh={fetchData} />
                         ))}
                       </tbody>
                     </table>
@@ -641,47 +726,13 @@ export default function ToolBorrowingSystem() {
                 {totalPages > 1 && (
                   <div className="mt-8 flex justify-center">
                     <nav className="inline-flex rounded-md shadow-sm -space-x-px">
-                      <button
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(1, prev - 1))
-                        }
-                        disabled={currentPage === 1}
-                        className={`px-3 py-2 rounded-l-md border ${
-                          currentPage === 1
-                            ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                        }`}
-                      >
+                      <button onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} disabled={currentPage === 1} className={`px-3 py-2 rounded-l-md border ${currentPage === 1 ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"}`}>
                         Sebelumnya
                       </button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (number) => (
-                          <button
-                            key={number}
-                            onClick={() => setCurrentPage(number)}
-                            className={`px-4 py-2 border ${
-                              currentPage === number
-                                ? "bg-blue-50 border-blue-500 text-blue-600"
-                                : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                            }`}
-                          >
-                            {number}
-                          </button>
-                        )
-                      )}
-                      <button
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(totalPages, prev + 1)
-                          )
-                        }
-                        disabled={currentPage === totalPages}
-                        className={`px-3 py-2 rounded-r-md border ${
-                          currentPage === totalPages
-                            ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed"
-                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                        }`}
-                      >
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                        <button key={number} onClick={() => setCurrentPage(number)} className={`px-4 py-2 border ${currentPage === number ? "bg-blue-50 border-blue-500 text-blue-600" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"}`}>{number}</button>
+                      ))}
+                      <button onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages} className={`px-3 py-2 rounded-r-md border ${currentPage === totalPages ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"}`}>
                         Selanjutnya
                       </button>
                     </nav>

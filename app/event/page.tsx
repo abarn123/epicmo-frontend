@@ -2,9 +2,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Head from "next/head";
-import Sidebar from "../components/Sidebar";
+// Sidebar is provided by AuthenticatedLayout so don't import it here
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import ProtectedRoute from "../components/ProtectedRoute";
+import AuthenticatedLayout from "../components/AuthenticatedLayout";
 
 export default function EventSchedule() {
   const router = useRouter();
@@ -99,16 +101,17 @@ export default function EventSchedule() {
       </div>
     );
   }
-
+  
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex-1 py-8 px-4 md:pl-72 md:pr-8">
-        <Head>
-          <title>Jadwal Event</title>
-          <meta name="description" content="Halaman jadwal event dengan peta dan detail" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="flex min-h-screen bg-gray-50">
+          <div className="flex-1 py-8 px-4 md:pr-8">
+            <Head>
+              <title>Jadwal Event</title>
+              <meta name="description" content="Halaman jadwal event dengan peta dan detail" />
+              <link rel="icon" href="/favicon.ico" />
+            </Head>
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
@@ -265,5 +268,7 @@ export default function EventSchedule() {
         )}
       </div>
     </div>
+        </AuthenticatedLayout>
+      </ProtectedRoute>
   );
 }

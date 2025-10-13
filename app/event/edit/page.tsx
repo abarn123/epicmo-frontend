@@ -5,7 +5,9 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Head from "next/head";
-import Sidebar from "../../components/Sidebar";
+import ProtectedRoute from "../../components/ProtectedRoute";
+import AuthenticatedLayout from "../../components/AuthenticatedLayout";
+
 
 export default function EditEvent() {
   const router = useRouter();
@@ -182,9 +184,10 @@ export default function EditEvent() {
 
   // ✅ Render form
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex-1 py-8 px-4 md:pl-72 md:pr-8">
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="flex min-h-screen bg-gray-50">
+          <div className="flex-1 py-8 px-4 md:pr-8">
         <Head>
           <title>Edit Jadwal Event</title>
         </Head>
@@ -435,7 +438,9 @@ export default function EditEvent() {
             </form>
           </div>
         </div>
-      </div>
-    </div>
+          </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }

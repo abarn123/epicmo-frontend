@@ -5,7 +5,12 @@ import { LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState, useRef } from "react";
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const router = useRouter();
   const { logout, userName, loading, isAuthenticated } = useAuth();
   const [role, setRole] = useState<string | null>(null);
@@ -66,10 +71,34 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-gray-900 to-black border-r border-gray-700 flex flex-col shadow-2xl z-30">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.3))] opacity-5"></div>
+    <>
+      {/* Overlay for mobile when sidebar is open */}
+      <div
+        className={`${isOpen ? 'fixed inset-0 bg-black/40 z-30 md:hidden' : 'hidden'}`}
+        onClick={() => onClose && onClose()}
+      />
 
-      <div className="relative flex flex-col h-full px-6 py-6 overflow-y-auto max-h-screen scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+      <aside
+        className={`fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-gray-900 to-black border-r border-gray-700 flex flex-col shadow-2xl z-40 transform transition-transform duration-300 md:fixed md:translate-x-0 md:w-72 md:block ${
+          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+        aria-label="Sidebar"
+      >
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.3))] opacity-5"></div>
+
+        <div className="relative flex flex-col h-full px-6 py-6 overflow-y-auto max-h-screen scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+          {/* Mobile close button */}
+          <div className="md:hidden absolute top-3 right-3">
+            <button
+              onClick={() => onClose && onClose()}
+              className="p-2 rounded-md bg-white/5 hover:bg-white/10 text-white"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         {/* Logo */}
         <div className="mb-8 text-center">
           <img
@@ -278,5 +307,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

@@ -4,7 +4,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Head from "next/head";
-import Sidebar from "../../components/Sidebar";
+import ProtectedRoute from "../../components/ProtectedRoute";
+import AuthenticatedLayout from "../../components/AuthenticatedLayout";
 
 export default function AddEvent() {
   const router = useRouter();
@@ -159,15 +160,13 @@ export default function AddEvent() {
     }
   };
 
-  // Penjelasan error:
-  // 1. equipment: [] menyebabkan select tidak muncul. Default harus [""].
-  // 2. handleEquipmentChange dan removeEquipmentField harus menjaga agar minimal satu field tetap ada agar user bisa memilih barang.
-  // 3. Filter equipmentIds harus cek NaN dan null agar backend dapat array id yang valid.
+
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex-1 py-8 px-4 md:pl-72 md:pr-8">
+    <ProtectedRoute>
+      <AuthenticatedLayout>
+        <div className="flex min-h-screen bg-gray-50">
+          <div className="flex-1 py-8 px-4 md:pr-8">
         <Head>
           <title>Tambah Jadwal Event</title>
           <meta name="description" content="Tambah jadwal event baru" />
@@ -491,7 +490,9 @@ export default function AddEvent() {
             </form>
           </div>
         </div>
-      </div>
-    </div>
+          </div>
+        </div>
+      </AuthenticatedLayout>
+    </ProtectedRoute>
   );
 }
