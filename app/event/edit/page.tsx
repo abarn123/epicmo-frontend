@@ -22,7 +22,7 @@ export default function EditEvent() {
     date: "",
     time: "",
     location: "",
-    operator: "",
+    operator: [""],
     meetupTime: "",
     arrivalTime: "",
     equipment: [""],
@@ -30,10 +30,37 @@ export default function EditEvent() {
   });
 
   const [equipmentOptions, setEquipmentOptions] = useState<any[]>([]);
+  const [operatorOptions, setOperatorOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // 🔹 Ambil data operator (disamakan cara kerjanya seperti equipment)
+  const fetchOperators = async (token: string) => {
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data1`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = res.data?.data ?? res.data;
+
+      // Hanya ambil data bertipe "operator" jika ada penanda type
+      const filtered = Array.isArray(data)
+        ? data.filter(
+            (d) =>
+              d.type?.toLowerCase() === "operator" || d.fullname || d.username
+          )
+        : [];
+
+      setOperatorOptions(filtered);
+    } catch (err) {
+      console.error("Gagal mengambil operator:", err);
+      toast.error("Gagal mengambil data operator");
+      setOperatorOptions([]);
+    }
+  };
+
+  // 🔹 Ambil data equipment
   const fetchEquipment = async (token: string) => {
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
@@ -48,27 +75,33 @@ export default function EditEvent() {
     }
   };
 
+  // 🔹 Ambil data event
   const fetchEventData = async (token: string, eventId: string) => {
     try {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       const data = res.data?.data ?? res.data;
+
+      const normalize = (val: any) => {
+        if (Array.isArray(val))
+          return val.map((v) => String(v.id || v._id || v));
+        if (typeof val === "string" && val.includes(","))
+          return val.split(",").map((s) => s.trim());
+        if (val) return [String(val)];
+        return [""];
+      };
 
       setFormData({
         title: data.title || "",
         date: data.date?.slice(0, 10) || "",
         time: data.time || "",
         location: data.location || "",
-        operator: data.operator || "",
+        operator: normalize(data.operator),
         meetupTime: data.meetupTime || "",
         arrivalTime: data.arrivalTime || "",
-        equipment:
-          Array.isArray(data.equipment) && data.equipment.length > 0
-            ? data.equipment.map((eq: any) => String(eq.id || eq._id || eq))
-            : [""],
+        equipment: normalize(data.equipment),
         note: data.note || "",
       });
     } catch (err: any) {
@@ -78,11 +111,10 @@ export default function EditEvent() {
         err?.response?.data?.message ||
           "Gagal mengambil data event. Pastikan ID valid."
       );
-    } finally {
-      setLoading(false);
     }
   };
 
+  // 🔹 Ambil semua data awal
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -96,6 +128,7 @@ export default function EditEvent() {
     const loadData = async () => {
       setLoading(true);
       await Promise.all([
+        fetchOperators(token),
         fetchEquipment(token),
         fetchEventData(token, eventId),
       ]);
@@ -105,6 +138,7 @@ export default function EditEvent() {
     loadData();
   }, [eventId]);
 
+  // 🔹 Input teks
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -112,6 +146,27 @@ export default function EditEvent() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 🔹 Operator dropdown
+  const handleOperatorChange = (index: number, value: string) => {
+    const newOperators = [...formData.operator];
+    newOperators[index] = value;
+    setFormData((prev) => ({ ...prev, operator: newOperators }));
+  };
+
+  const addOperatorField = () =>
+    setFormData((prev) => ({
+      ...prev,
+      operator: [...prev.operator, ""],
+    }));
+
+  const removeOperatorField = (index: number) => {
+    if (formData.operator.length > 1) {
+      const newOperators = formData.operator.filter((_, i) => i !== index);
+      setFormData((prev) => ({ ...prev, operator: newOperators }));
+    }
+  };
+
+  // 🔹 Equipment dropdown
   const handleEquipmentChange = (index: number, value: string) => {
     const newEquipment = [...formData.equipment];
     newEquipment[index] = value;
@@ -131,6 +186,7 @@ export default function EditEvent() {
     }
   };
 
+  // 🔹 Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -140,15 +196,13 @@ export default function EditEvent() {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token tidak ditemukan");
 
-      const equipmentIds = formData.equipment
-        .map((id) => (id && !isNaN(Number(id)) ? Number(id) : id))
-        .filter((id) => id);
+      const updatedEvent = {
+        ...formData,
+        operator: formData.operator.filter(Boolean),
+        equipment: formData.equipment.filter(Boolean),
+      };
 
-      const updatedEvent = { ...formData, equipment: equipmentIds };
-
-      console.log("Mengirim data:", updatedEvent);
-
-      const res = await axios.put(
+      await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/events/edit/${eventId}`,
         updatedEvent,
         {
@@ -159,22 +213,12 @@ export default function EditEvent() {
         }
       );
 
-      console.log("Respon update:", res.status, res.data);
-
-      toast.success("Event berhasil diperbarui ");
+      toast.success("Event berhasil diperbarui!");
       setTimeout(() => router.push("/event"), 1500);
     } catch (err: any) {
       console.error("Error updating event:", err);
-      toast.error(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Terjadi kesalahan saat memperbarui event"
-      );
-      setError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "Terjadi kesalahan saat memperbarui event"
-      );
+      toast.error(err?.response?.data?.message || "Gagal memperbarui event");
+      setError(err?.response?.data?.message || "Gagal memperbarui event");
     } finally {
       setSaving(false);
     }
@@ -190,7 +234,7 @@ export default function EditEvent() {
 
   if (!authLoading && role && role.toLowerCase() !== "admin") {
     return (
-      <AccessDenied message="Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini." />
+      <AccessDenied message="Akses ditolak. Anda tidak memiliki izin ke halaman ini." />
     );
   }
 
@@ -206,34 +250,32 @@ export default function EditEvent() {
             </Head>
 
             <div className="max-w-4xl mx-auto">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-                <div className="flex items-center mb-4">
-                  <Link
-                    href="/event"
-                    className="mr-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              <div className="flex items-center mb-8">
+                <Link
+                  href="/event"
+                  className="mr-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <svg
-                      className="w-5 h-5 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                      />
-                    </svg>
-                  </Link>
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-800 mb-1">
-                      Edit Jadwal Event
-                    </h1>
-                    <p className="text-gray-500">
-                      Ubah detail event dan simpan perubahan
-                    </p>
-                  </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                  </svg>
+                </Link>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-800 mb-1">
+                    Edit Jadwal Event
+                  </h1>
+                  <p className="text-gray-500">
+                    Ubah detail event dan simpan perubahan
+                  </p>
                 </div>
               </div>
 
@@ -252,7 +294,7 @@ export default function EditEvent() {
                   </div>
 
                   <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* BAGIAN KIRI */}
+                    {/* Kolom Kiri */}
                     <div className="space-y-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-500 mb-2">
@@ -297,83 +339,64 @@ export default function EditEvent() {
                         </div>
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-2">
-                          Lokasi *
-                        </label>
-                        <input
-                          type="text"
-                          name="location"
-                          value={formData.location}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700"
-                        />
-                        {formData.location && (
-                          <div className="w-full h-48 rounded-lg overflow-hidden mt-2 border border-gray-300">
-                            <iframe
-                              title="Google Maps"
-                              width="100%"
-                              height="100%"
-                              style={{ border: 0 }}
-                              loading="lazy"
-                              src={`https://www.google.com/maps?q=${encodeURIComponent(
-                                formData.location
-                              )}&output=embed`}
-                            ></iframe>
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-2">
-                          Operator *
-                        </label>
-                        <input
-                          type="text"
-                          name="operator"
-                          value={formData.operator}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700"
-                        />
-                      </div>
-                    </div>
-
-                    {/* BAGIAN KANAN */}
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-2">
-                            Waktu Kumpul di Kantor
-                          </label>
-                          <input
-                            type="time"
-                            name="meetupTime"
-                            value={formData.meetupTime}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-2">
-                            Waktu Tiba di Lokasi
-                          </label>
-                          <input
-                            type="time"
-                            name="arrivalTime"
-                            value={formData.arrivalTime}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700"
-                          />
-                        </div>
-                      </div>
-
-                      {/* EQUIPMENT */}
+                      {/* Operator */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="block text-sm font-medium text-gray-500">
-                            Equipment/Barang
+                            Operator *
+                          </label>
+                          <button
+                            type="button"
+                            onClick={addOperatorField}
+                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            + Tambah Operator
+                          </button>
+                        </div>
+                        <div className="space-y-2">
+                          {formData.operator.map((operatorId, index) => (
+                            <div key={index} className="flex gap-2">
+                              <select
+                                value={operatorId || ""}
+                                onChange={(e) =>
+                                  handleOperatorChange(index, e.target.value)
+                                }
+                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="">Pilih operator...</option>
+                                {operatorOptions.map((op) => (
+                                  <option
+                                    key={op.id ?? op._id}
+                                    value={String(op.id ?? op._id)}
+                                  >
+                                    {op.fullname ||
+                                      op.name ||
+                                      op.username ||
+                                      op.operator_name}
+                                  </option>
+                                ))}
+                              </select>
+                              {formData.operator.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeOperatorField(index)}
+                                  className="px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Kolom Kanan */}
+                    <div className="space-y-6">
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium text-gray-500">
+                            Equipment *
                           </label>
                           <button
                             type="button"
@@ -397,9 +420,9 @@ export default function EditEvent() {
                                 {equipmentOptions.map((eq) => (
                                   <option
                                     key={eq.id ?? eq._id}
-                                    value={eq.id ?? eq._id}
+                                    value={String(eq.id ?? eq._id)}
                                   >
-                                    {eq.item_name}
+                                    {eq.item_name || eq.name || eq.nama}
                                   </option>
                                 ))}
                               </select>

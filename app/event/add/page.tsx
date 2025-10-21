@@ -12,22 +12,25 @@ import { useAuth } from "../../context/AuthContext";
 export default function AddEvent() {
   const { role, loading: authLoading } = useAuth();
   const router = useRouter();
+
   const [formData, setFormData] = useState({
     title: "",
     date: "",
     time: "",
     location: "",
-    operator: "",
+    operator: [""], // ✅ ubah jadi array
     meetupTime: "",
     arrivalTime: "",
-    equipment: [""], // default satu field kosong agar select muncul
+    equipment: [""],
     note: "",
   });
 
   const [equipmentOptions, setEquipmentOptions] = useState<any[]>([]);
+  const [operatorOptions, setOperatorOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Fetch Equipment
   useEffect(() => {
     const fetchEquipment = async () => {
       try {
@@ -36,46 +39,83 @@ export default function AddEvent() {
           setError("Token tidak ditemukan, silakan login kembali");
           return;
         }
-
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/data2`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
         let data = response.data;
-        if (data && data.data) {
-          data = data.data;
-        }
-
+        if (data && data.data) data = data.data;
         setEquipmentOptions(Array.isArray(data) ? data : []);
-      } catch (err) {
+      } catch {
         setError("Gagal memuat data equipment");
         setEquipmentOptions([]);
       }
     };
-
     fetchEquipment();
   }, []);
 
+  // Fetch Operator
+  useEffect(() => {
+    const fetchOperators = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("Token tidak ditemukan, silakan login kembali");
+          return;
+        }
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data1`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        let data = response.data;
+        if (data && data.data) data = data.data;
+        setOperatorOptions(Array.isArray(data) ? data : []);
+      } catch {
+        setError("Gagal memuat data operator");
+        setOperatorOptions([]);
+      }
+    };
+    fetchOperators();
+  }, []);
+
+  // 🔹 Input handler umum
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // 🔹 Operator handlers (multi)
+  const handleOperatorChange = (index: number, value: string) => {
+    const newOps = [...formData.operator];
+    newOps[index] = value;
+    setFormData((prev) => ({ ...prev, operator: newOps }));
+  };
+
+  const addOperatorField = () => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      operator: [...prev.operator, ""],
     }));
   };
 
+  const removeOperatorField = (index: number) => {
+    if (formData.operator.length > 1) {
+      const newOps = formData.operator.filter((_, i) => i !== index);
+      setFormData((prev) => ({ ...prev, operator: newOps }));
+    }
+  };
+
+  // 🔹 Equipment handlers
   const handleEquipmentChange = (index: number, value: string) => {
-    const newEquipment = [...formData.equipment];
-    newEquipment[index] = value;
-    setFormData((prev) => ({
-      ...prev,
-      equipment: newEquipment,
-    }));
+    const newEq = [...formData.equipment];
+    newEq[index] = value;
+    setFormData((prev) => ({ ...prev, equipment: newEq }));
   };
 
   const addEquipmentField = () => {
@@ -87,14 +127,12 @@ export default function AddEvent() {
 
   const removeEquipmentField = (index: number) => {
     if (formData.equipment.length > 1) {
-      const newEquipment = formData.equipment.filter((_, i) => i !== index);
-      setFormData((prev) => ({
-        ...prev,
-        equipment: newEquipment,
-      }));
+      const newEq = formData.equipment.filter((_, i) => i !== index);
+      setFormData((prev) => ({ ...prev, equipment: newEq }));
     }
   };
 
+  // 🔹 Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -102,13 +140,14 @@ export default function AddEvent() {
 
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token tidak ditemukan, silakan login kembali");
-      }
+      if (!token) throw new Error("Token tidak ditemukan, silakan login kembali");
 
-      // Kirim array id equipment yang valid (bukan kosong)
       const equipmentIds = formData.equipment
-        .map((id) => id && !isNaN(Number(id)) ? Number(id) : null)
+        .map((id) => (id && !isNaN(Number(id)) ? Number(id) : null))
+        .filter((id) => id !== null);
+
+      const operatorIds = formData.operator
+        .map((id) => (id && !isNaN(Number(id)) ? Number(id) : null))
         .filter((id) => id !== null);
 
       const newEvent = {
@@ -116,20 +155,19 @@ export default function AddEvent() {
         date: formData.date,
         time: formData.time,
         location: formData.location,
-        operator: formData.operator,
+        operator: operatorIds, // ✅ kirim array operator
         meetupTime: formData.meetupTime,
         arrivalTime: formData.arrivalTime,
         equipment: equipmentIds,
         note: formData.note || "",
       };
 
-      // Validasi field wajib
       if (
         !newEvent.title ||
         !newEvent.date ||
         !newEvent.time ||
         !newEvent.location ||
-        !newEvent.operator ||
+        operatorIds.length === 0 ||
         !newEvent.meetupTime ||
         !newEvent.arrivalTime
       ) {
@@ -155,19 +193,18 @@ export default function AddEvent() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-        err?.message ||
-        "Terjadi kesalahan saat menambahkan event"
+          err?.message ||
+          "Terjadi kesalahan saat menambahkan event"
       );
     } finally {
       setLoading(false);
     }
   };
 
-
-
-  // If authenticated but not admin -> show access denied
   if (!authLoading && role && role.toLowerCase() !== "admin") {
-    return <AccessDenied message={"Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini."} />;
+    return (
+      <AccessDenied message="Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini." />
+    );
   }
 
   return (
@@ -175,329 +212,252 @@ export default function AddEvent() {
       <AuthenticatedLayout>
         <div className="flex min-h-screen bg-gray-50">
           <div className="flex-1 py-8 px-4 md:pr-8">
-        <Head>
-          <title>Tambah Jadwal Event</title>
-          <meta name="description" content="Tambah jadwal event baru" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+            <Head>
+              <title>Tambah Jadwal Event</title>
+              <meta name="description" content="Tambah jadwal event baru" />
+            </Head>
 
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
-            <div className="flex-1">
-              <div className="flex items-center mb-4">
-                <Link
-                  href="/event"
-                  className="mr-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                    />
-                  </svg>
-                </Link>
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-800 mb-1">
-                    Tambah Jadwal Event
-                  </h1>
-                  <p className="text-gray-500">
-                    Buat jadwal event baru dengan detail lengkap
-                  </p>
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-3xl font-bold mb-6">Tambah Jadwal Event</h1>
+
+              {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <span className="text-red-600 font-medium">{error}</span>
                 </div>
-              </div>
-            </div>
-          </div>
+              )}
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-red-600 font-medium">{error}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Form */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <form onSubmit={handleSubmit}>
-              <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-                <h2 className="text-xl font-bold text-gray-800">
-                  Informasi Event
-                </h2>
-              </div>
-
-              <div className="p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Kolom Kiri */}
-                  <div className="space-y-6">
-                    {/* Judul Event */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-2">
-                        Judul Event *
-                      </label>
-                      <input
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Masukkan judul event"
-                      />
-                    </div>
-
-                    {/* Tanggal dan Waktu */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <form onSubmit={handleSubmit}>
+                  <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Kiri */}
+                    <div className="space-y-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-500 mb-2">
-                          Tanggal Event *
+                          Judul Event *
                         </label>
                         <input
-                          type="date"
-                          name="date"
-                          value={formData.date}
+                          type="text"
+                          name="title"
+                          value={formData.title}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Masukkan judul event"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-2">
-                          Waktu Event *
-                        </label>
-                        <input
-                          type="time"
-                          name="time"
-                          value={formData.time}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        />
-                      </div>
-                    </div>
 
-                    {/* Lokasi */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-2">
-                        Lokasi *
-                      </label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors mb-2"
-                        placeholder="Masukkan lokasi event"
-                      />
-                      {formData.location && (
-                        <div className="w-full h-48 rounded-lg overflow-hidden mt-2 border border-gray-300">
-                          <iframe
-                            title="Google Maps Picker"
-                            width="100%"
-                            height="100%"
-                            style={{ border: 0 }}
-                            loading="lazy"
-                            allowFullScreen
-                            referrerPolicy="no-referrer-when-downgrade"
-                            src={`https://www.google.com/maps?q=${encodeURIComponent(
-                              formData.location
-                            )}&output=embed`}
-                          ></iframe>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                            Tanggal Event *
+                          </label>
+                          <input
+                            type="date"
+                            name="date"
+                            value={formData.date}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          />
                         </div>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        Ketik alamat atau nama tempat untuk melihat preview di peta
-                      </p>
-                    </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                            Waktu Event *
+                          </label>
+                          <input
+                            type="time"
+                            name="time"
+                            value={formData.time}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          />
+                        </div>
+                      </div>
 
-                    {/* Operator */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Operator *
-                      </label>
-                      <input
-                        type="text"
-                        name="operator"
-                        value={formData.operator}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Masukkan nama operator"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Kolom Kanan */}
-                  <div className="space-y-6">
-                    {/* Waktu Kumpul dan Tiba */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Lokasi */}
                       <div>
                         <label className="block text-sm font-medium text-gray-500 mb-2">
-                          Waktu Kumpul di Kantor
+                          Lokasi *
                         </label>
                         <input
-                          type="time"
-                          name="meetupTime"
-                          value={formData.meetupTime}
+                          type="text"
+                          name="location"
+                          value={formData.location}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Masukkan lokasi event"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-2">
-                          Waktu Tiba di Lokasi
-                        </label>
-                        <input
-                          type="time"
-                          name="arrivalTime"
-                          value={formData.arrivalTime}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        />
-                      </div>
-                    </div>
 
-                    {/* Equipment/Barang */}
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-500">
-                          Equipment/Barang
-                        </label>
-                        <button
-                          type="button"
-                          onClick={addEquipmentField}
-                          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                        >
-                          + Tambah Equipment
-                        </button>
-                      </div>
-                      <div className="space-y-2">
-                        {formData.equipment.map((equipmentId, index) => (
-                          <div key={index} className="flex gap-2">
+                      {/* 🔹 Operator multi */}
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Operator *
+                          </label>
+                          <button
+                            type="button"
+                            onClick={addOperatorField}
+                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            + Tambah Operator
+                          </button>
+                        </div>
+
+                        {formData.operator.map((op, i) => (
+                          <div key={i} className="flex gap-2 mb-2">
                             <select
-                              value={equipmentId || ""}
+                              value={op || ""}
                               onChange={(e) =>
-                                handleEquipmentChange(index, e.target.value)
+                                handleOperatorChange(i, e.target.value)
                               }
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                              required
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
-                              <option value="">Pilih barang...</option>
-                              {equipmentOptions.map((eq) => (
+                              <option value="">Pilih operator...</option>
+                              {operatorOptions.map((item) => (
                                 <option
-                                  key={eq.id ?? eq._id}
-                                  value={eq.id ?? eq._id}
+                                  key={item.id ?? item._id}
+                                  value={item.id ?? item._id}
                                 >
-                                  {eq.item_name}
+                                  {item.name ||
+                                    item.operator_name ||
+                                    "Tanpa Nama"}
                                 </option>
                               ))}
                             </select>
-                            {formData.equipment.length > 1 && (
+
+                            {formData.operator.length > 1 && (
                               <button
                                 type="button"
-                                onClick={() => removeEquipmentField(index)}
-                                className="px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                                onClick={() => removeOperatorField(i)}
+                                className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
                               >
-                                <svg
-                                  className="w-5 h-5"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M6 18L18 6M6 6l12 12"
-                                  />
-                                </svg>
+                                ✕
                               </button>
                             )}
                           </div>
                         ))}
-                        {formData.equipment.length === 0 && (
-                          <p className="text-sm text-gray-500 py-2">
-                            Belum ada equipment yang dipilih
-                          </p>
-                        )}
                       </div>
                     </div>
 
-                    {/* Catatan */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Catatan
-                      </label>
-                      <textarea
-                        name="note"
-                        value={formData.note}
-                        onChange={handleInputChange}
-                        rows={4}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
-                        placeholder="Masukkan catatan tambahan..."
-                      />
+                    {/* Kanan */}
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                            Waktu Kumpul *
+                          </label>
+                          <input
+                            type="time"
+                            name="meetupTime"
+                            value={formData.meetupTime}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                            Waktu Tiba *
+                          </label>
+                          <input
+                            type="time"
+                            name="arrivalTime"
+                            value={formData.arrivalTime}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Equipment */}
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <label className="text-sm font-medium text-gray-500">
+                            Equipment/Barang
+                          </label>
+                          <button
+                            type="button"
+                            onClick={addEquipmentField}
+                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            + Tambah
+                          </button>
+                        </div>
+
+                        {formData.equipment.map((eq, i) => (
+                          <div key={i} className="flex gap-2 mb-2">
+                            <select
+                              value={eq || ""}
+                              onChange={(e) =>
+                                handleEquipmentChange(i, e.target.value)
+                              }
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="">Pilih barang...</option>
+                              {equipmentOptions.map((item) => (
+                                <option
+                                  key={item.id ?? item._id}
+                                  value={item.id ?? item._id}
+                                >
+                                  {item.item_name}
+                                </option>
+                              ))}
+                            </select>
+
+                            {formData.equipment.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeEquipmentField(i)}
+                                className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Catatan */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Catatan
+                        </label>
+                        <textarea
+                          name="note"
+                          value={formData.note}
+                          onChange={handleInputChange}
+                          rows={4}
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                          placeholder="Masukkan catatan tambahan..."
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col-reverse md:flex-row gap-3 justify-end pt-8 mt-8 border-t border-gray-200">
-                  <Link
-                    href="/event"
-                    className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center"
-                  >
-                    Batal
-                  </Link>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Menyimpan...
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          className="w-5 h-5 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        Simpan Jadwal
-                      </>
-                    )}
-                  </button>
-                </div>
+                  {/* Tombol */}
+                  <div className="flex justify-end gap-3 p-6 border-t">
+                    <Link
+                      href="/event"
+                      className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                    >
+                      Batal
+                    </Link>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {loading ? "Menyimpan..." : "Simpan Jadwal"}
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-        </div>
+            </div>
           </div>
         </div>
       </AuthenticatedLayout>
