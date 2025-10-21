@@ -24,9 +24,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     };
     updateRole();
     window.addEventListener("storage", updateRole);
-    return () => {
-      window.removeEventListener("storage", updateRole);
-    };
+    return () => window.removeEventListener("storage", updateRole);
   }, []);
 
   useEffect(() => {
@@ -42,16 +40,11 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         setDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (!role) {
-    return null;
-  }
+  if (!role) return null;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -60,47 +53,53 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
   const canAccess = (menu: string) => {
     if (role === "admin") return true;
-    if (role === "staff") {
+    if (role === "staff")
       return ["dashboard", "attendance", "tools", "event"].includes(menu);
-    }
-    if (role === "freelance") {
+    if (role === "freelance")
       return ["attendance", "tools", "event"].includes(menu);
-    }
     return false;
   };
 
   return (
     <>
-      {/* Overlay for mobile when sidebar is open */}
+      {/* Overlay untuk mobile */}
       <div
-        className={`${isOpen ? 'fixed inset-0 bg-black/40 z-30 md:hidden' : 'hidden'}`}
+        className={`${
+          isOpen ? "fixed inset-0 bg-black/40 z-30 md:hidden" : "hidden"
+        }`}
         onClick={() => onClose && onClose()}
       />
 
       <aside
         className={`fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-gray-900 to-black border-r border-gray-700 flex flex-col shadow-2xl z-40 transform transition-transform duration-300 md:fixed md:translate-x-0 md:w-72 md:block ${
-          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
         aria-label="Sidebar"
       >
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0.3))] opacity-5"></div>
 
         <div className="relative flex flex-col h-full px-6 py-6 overflow-y-auto max-h-screen scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
-          {/* Mobile close button */}
-          <div className="md:hidden absolute top-3 right-3">
+          {/* Tombol tutup sidebar di samping tengah untuk mobile */}
+          <div className="md:hidden absolute top-1/2 right-0 -translate-y-1/2">
             <button
               onClick={() => onClose && onClose()}
-              className="p-2 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg transition-all duration-300 flex items-center justify-center"
-              aria-label="Close sidebar"
+              className="p-3 rounded-l-xl bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg flex items-center justify-center transition-all duration-300"
             >
               <svg
-                className="w-5 h-5"
-                viewBox="0 0 24 24"
+                className={`w-4 h-4 text-white/80 transition-transform duration-200 ${
+                  isOpen ? "rotate-180" : ""
+                }`}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
+                viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                {/* Panah horizontal kiri-kanan */}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </div>
@@ -148,7 +147,12 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 strokeWidth={2}
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                {/* Panah dropdown tetap vertikal */}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
