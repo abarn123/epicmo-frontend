@@ -102,7 +102,9 @@ const MediaDashboard = () => {
   const [toolsByCategory, setToolsByCategory] = useState<any[]>([]);
   const [roleUsers, setRoleUsers] = useState<any>({});
   const [statusSummary, setStatusSummary] = useState<any[]>([]);
-  const [borrowingTrend, setBorrowingTrend] = useState<Record<string, number>>({});
+  const [borrowingTrend, setBorrowingTrend] = useState<Record<string, number>>(
+    {}
+  );
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -214,7 +216,8 @@ const MediaDashboard = () => {
         0
       );
       available = statusSummary.reduce(
-        (sum: number, item: any) => sum + (Number(item.total_stock_available) || 0),
+        (sum: number, item: any) =>
+          sum + (Number(item.total_stock_available) || 0),
         0
       );
     } else if (statusSummary && typeof statusSummary === "object") {
@@ -223,49 +226,51 @@ const MediaDashboard = () => {
     }
 
     return {
-      labels: ["borrowed", "available"],
+      labels: ["dipinjam", "tersedia"],
       datasets: [
         {
           label: "Status Alat",
           data: [borrowed, available],
           backgroundColor: [
             "rgba(29, 124, 233, 0.9)", // dipinjam (blue)
-            "rgba(31, 231, 81, 0.9)",  // tersedia (green)
+            "rgba(31, 231, 81, 0.9)", // tersedia (green)
           ],
-          borderColor: [
-            "rgba(29, 124, 233, 0.9)",
-            "rgba(31, 231, 81, 0.9)",
-          ],
+          borderColor: ["rgba(29, 124, 233, 0.9)", "rgba(31, 231, 81, 0.9)"],
           borderWidth: 1,
         },
       ],
     };
   })();
 
-  const allStatuses = ["pending", "borrowed", "return", "rejected"];
-const StatusPeminjaman = {
-  labels: allStatuses,
-  datasets: [
-    {
-      label: "Peminjaman",
-      data: allStatuses.map((status) => borrowingTrend[status] || 0),
-      backgroundColor: [
-        "rgba(128, 103, 30, 0.9)",  // pending = coklat
-        "rgba(15, 71, 253, 0.9)",   // borrowed = biru
-        "rgba(16, 185, 129, 0.9)",  // return = hijau
-        "rgba(239, 18, 18, 0.9)",   // rejected = merah
-      ],
-      borderColor: [
-        "rgba(128, 103, 30, 0.9)",
-        "rgba(15, 71, 253, 0.9)",
-        "rgba(16, 185, 129, 0.9)",
-        "rgba(239, 18, 18, 0.9)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
+  const StatusPeminjaman = (() => {
+    const pending = Number(borrowingTrend["pending"]) || 0;
+    const borrowed = Number(borrowingTrend["borrowed"]) || 0;
+    const returned = Number(borrowingTrend["return"]) || 0;
+    const rejected = Number(borrowingTrend["rejected"]) || 0;
 
+    return {
+      labels: ["menunggu", "dipinjam", "dikembalikan", "ditolak"],
+      datasets: [
+        {
+          label: "Peminjaman",
+          data: [pending, borrowed, returned, rejected],
+          backgroundColor: [
+            "rgba(128, 103, 30, 0.9)", // pending = coklat
+            "rgba(15, 71, 253, 0.9)", // borrowed = biru
+            "rgba(16, 185, 129, 0.9)", // return = hijau
+            "rgba(239, 18, 18, 0.9)", // rejected = merah
+          ],
+          borderColor: [
+            "rgba(128, 103, 30, 0.9)",
+            "rgba(15, 71, 253, 0.9)",
+            "rgba(16, 185, 129, 0.9)",
+            "rgba(239, 18, 18, 0.9)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+  })();
 
   // Helper untuk cek data chart kosong
 
