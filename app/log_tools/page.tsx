@@ -505,6 +505,31 @@ export default function ToolBorrowingSystem() {
 
       // Group records by transaction_id
       const groupedRecords = groupRecords(mappedRecords);
+
+      // Sort transactions from newest to oldest based on transaction_id.
+      // Try numeric comparison first; if not numeric, fall back to Date.parse, then string compare.
+      const toComparable = (id: string | undefined) => {
+        if (!id) return 0;
+        const asNum = Number(id);
+        if (Number.isFinite(asNum)) return asNum;
+        const asDate = Date.parse(id);
+        if (!Number.isNaN(asDate)) return asDate;
+        return id;
+      };
+
+      groupedRecords.sort((a, b) => {
+        const va = toComparable(a.transaction_id);
+        const vb = toComparable(b.transaction_id);
+        // both numbers
+        if (typeof va === "number" && typeof vb === "number") return vb - va;
+        // both strings -> locale compare (desc)
+        if (typeof va === "string" && typeof vb === "string") return vb.localeCompare(va);
+        // mixed types: coerce to number where possible
+        const na = typeof va === "number" ? va : Number(va) || 0;
+        const nb = typeof vb === "number" ? vb : Number(vb) || 0;
+        return nb - na;
+      });
+
       setBorrowRecords(groupedRecords);
     } catch (err: any) {
       console.error("Kesalahan pengambilan data:", err);

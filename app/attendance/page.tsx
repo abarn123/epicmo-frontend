@@ -253,54 +253,58 @@ export default function AttendancePage() {
       );
     }
 
-    // For other errors, show generic error message in the same layout as "Belum ada alat"
+    // For other errors, show the empty-state inside the authenticated layout
     return (
-        <div className="flex-1 min-w-0">
+      <ProtectedRoute>
+        <AuthenticatedLayout>
+          <div className="min-h-screen flex w-full overflow-x-hidden">
+            <div className="flex-1 min-w-0 p-3 sm:p-4 md:p-6 w-full max-w-full">
+              <div className="mx-auto w-full px-0 sm:px-0">
+                {/* Header - hidden on mobile, shown on desktop */}
+                <div className="mb-8 hidden md:block">
+                  <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-white/20">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                      Sistem Absensi
+                    </h1>
+                    <p className="text-gray-600">
+                      Pantau dan kelola data kehadiran setiap acara secara akurat dan efisien.
+                    </p>
+                  </div>
+                </div>
 
-          <div className="p-3 sm:p-4 md:p-6 w-full max-w-full">
-            <div className="mx-auto w-full px-0 sm:px-0">
-              {/* Header - hidden on mobile, shown on desktop */}
-              <div className="mb-8 hidden md:block">
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-white/20">
-                  <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                     Sistem Absensi
-                  </h1>
-                  <p className="text-gray-600">
-                    Pantau dan kelola data kehadiran setiap acara secara akurat dan efisien.                  </p>
+                {/* Centered empty card like user page */}
+                <div className="flex-1">
+                  <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+                    <svg
+                      className="w-16 h-16 mx-auto text-gray-400 mb-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">{attendanceData.length === 0 ? "Belum ada data absensi" : "Tidak ada data yang cocok ditemukan"}</h3>
+                    <p className="text-gray-500 mb-4">{error || (attendanceData.length === 0 ? "Mulai dengan mengisi absensi" : "Coba ubah filter pencarian Anda")}</p>
+                    {attendanceData.length === 0 && (
+                      <a
+                        href="/attendance/data"
+                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
+                      >
+                        Isi Absensi Pertama
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              {/* Content Area with Error Display */}
-              <div className="flex-1">
-                <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-                  <svg
-                    className="w-16 h-16 mx-auto text-gray-400 mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                    />
-                  </svg>
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    Tidak ada data absen
-                  </h3>
-                  <p className="text-gray-500 mb-4">{error}</p>
-                  <button
-                    onClick={() => (window.location.href = "/attendance/data")}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md"
-                  >
-                    Tambah Absen Pertama
-                  </button>
-                </div>
-              </div>
-            </div>  
+            </div>
           </div>
-        </div>
+        </AuthenticatedLayout>
+      </ProtectedRoute>
     );
   }
 

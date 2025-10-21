@@ -18,6 +18,8 @@ export default function AddToolPage() {
     item_condition: "",
     category: "",
   });
+  const [categories, setCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,6 +28,26 @@ export default function AddToolPage() {
       window.location.href = "/login";
     }
   }, [token, authLoading]);
+
+  // Fetch existing categories from /data2 (tools)
+  useEffect(() => {
+    const fetchCategories = async () => {
+      if (!token) return;
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        let data = res.data;
+        if (data && data.data) data = data.data;
+        if (!Array.isArray(data)) return;
+        const cats = Array.from(new Set(data.map((t: any) => t.category || "Lainnya")));
+        setCategories(cats.filter(Boolean));
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+    fetchCategories();
+  }, [token]);
 
   // If authenticated but not admin -> show access denied
   if (!authLoading && role && role.toLowerCase() !== "admin") {
@@ -50,30 +72,31 @@ export default function AddToolPage() {
     }
 
     // Pastikan stock number, dan field lain tidak kosong
+    const categoryToSend = newCategory.trim() ? newCategory.trim() : (formData.category || "Lainnya");
     const payload = {
       item_name: formData.item_name,
       stock: Number(formData.stock),
       item_condition: formData.item_condition,
-      category: formData.category || "Lainnya",
+      category: categoryToSend,
     };
 
-    try {
-  const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/data2/add`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/data2/add`,
+          payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-console.log("Response:", response.data);
+        console.log("Response:", response.data);
 
-    toast.success("Tools berhasil ditambahkan");
-    router.push("/tools");
-  } catch (err: unknown) {
+        toast.success("Tools berhasil ditambahkan");
+        router.push("/tools");
+      } catch (err: unknown) {
     if (err instanceof Error) {
       setError(err.message);
     } else {
@@ -230,16 +253,30 @@ console.log("Response:", response.data);
                       Kategori
                       <span className="text-red-500 ml-1">*</span>
                     </label>
-                    <input
-                      type="text"
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                      required
-                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                      placeholder="Contoh: Elektronik"
-                    />
+                    <div className="space-y-2">
+                      <select
+                        id="category"
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
+                      >
+                        <option value="">Pilih kategori (atau masukkan baru di bawah)</option>
+                        {categories.map((c) => (
+                          <option key={c} value={c} className="text-black">{c}</option>
+                        ))}
+                      </select>
+
+                      <input
+                        type="text"
+                        id="new_category"
+                        name="new_category"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
+                        placeholder="Masukkan kategori baru (opsional)"
+                      />
+                    </div>
                   </div>
                 </div>
 

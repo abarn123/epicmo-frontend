@@ -375,20 +375,6 @@ export default function AttendanceFormPage() {
             {/* Form Inputs */}
             <div className="space-y-4">
               <div>
-                <label
-                  htmlFor="user_id"
-                  className="block text-sm font-medium text-black mb-1"
-                >
-                  User ID
-                </label>
-                <input
-                  type="text"
-                  id="user_id"
-                  name="user_id"
-                  value={formData.user_id}
-                  readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
-                />
               </div>
               <div>
                 <label
