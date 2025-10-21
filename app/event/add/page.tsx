@@ -201,7 +201,7 @@ export default function AddEvent() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="flex min-h-screen bg-gray-50 text-gray-900">
+        <div className="flex min-h-screen bg-gray-50 text-black dark:text-black">
           <div className="flex-1 py-8 px-4 md:pr-8">
             <Head>
               <title>Tambah Jadwal Event</title>
@@ -209,7 +209,7 @@ export default function AddEvent() {
             </Head>
 
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-3xl font-bold mb-6 text-gray-900">
+              <h1 className="text-3xl font-bold mb-6 text-black dark:text-black">
                 Tambah Jadwal Event
               </h1>
 
@@ -222,7 +222,7 @@ export default function AddEvent() {
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <form
                   onSubmit={handleSubmit}
-                  className="text-gray-900 placeholder:text-gray-900"
+                  className="text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                 >
                   <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Kiri */}
@@ -237,7 +237,7 @@ export default function AddEvent() {
                           value={formData.title}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-900"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                           placeholder="Masukkan judul event"
                         />
                       </div>
@@ -253,7 +253,7 @@ export default function AddEvent() {
                             value={formData.date}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                           />
                         </div>
                         <div>
@@ -266,7 +266,7 @@ export default function AddEvent() {
                             value={formData.time}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                           />
                         </div>
                       </div>
@@ -281,7 +281,7 @@ export default function AddEvent() {
                           value={formData.location}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-900"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                           placeholder="Masukkan lokasi event"
                         />
                       </div>
@@ -308,7 +308,7 @@ export default function AddEvent() {
                                 handleOperatorChange(i, e.target.value)
                               }
                               required
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black dark:text-black"
                             >
                               <option value="">Pilih operator...</option>
                               {operatorOptions.map((item) => (
@@ -349,7 +349,7 @@ export default function AddEvent() {
                             value={formData.meetupTime}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                           />
                         </div>
                         <div>
@@ -362,7 +362,7 @@ export default function AddEvent() {
                             value={formData.arrivalTime}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                           />
                         </div>
                       </div>
@@ -387,7 +387,7 @@ export default function AddEvent() {
                               onChange={(e) =>
                                 handleEquipmentChange(i, e.target.value)
                               }
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black dark:text-black"
                             >
                               <option value="">Pilih barang...</option>
                               {equipmentOptions.map((item) => (
@@ -421,7 +421,7 @@ export default function AddEvent() {
                           value={formData.note}
                           onChange={handleInputChange}
                           rows={4}
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none text-gray-900 placeholder:text-gray-900"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
                           placeholder="Masukkan catatan tambahan..."
                         />
                       </div>
