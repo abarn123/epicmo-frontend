@@ -1,6 +1,7 @@
 "use client";
 
 import React, { ReactNode, useState } from "react";
+import Router from 'next/router';
 import { useAuth } from "../context/AuthContext";
 import Sidebar from "./Sidebar";
 
@@ -12,6 +13,23 @@ export default function AuthenticatedLayout({
   children,
 }: AuthenticatedLayoutProps) {
   const { isAuthenticated, loading } = useAuth();
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  // Listen to Next.js route change events to show immediate navigation loading
+  React.useEffect(() => {
+    const handleStart = () => setIsNavigating(true);
+    const handleDone = () => setIsNavigating(false);
+
+    Router.events.on('routeChangeStart', handleStart);
+    Router.events.on('routeChangeComplete', handleDone);
+    Router.events.on('routeChangeError', handleDone);
+
+    return () => {
+      Router.events.off('routeChangeStart', handleStart);
+      Router.events.off('routeChangeComplete', handleDone);
+      Router.events.off('routeChangeError', handleDone);
+    };
+  }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Show loading while checking authentication
@@ -34,6 +52,18 @@ export default function AuthenticatedLayout({
   // If authenticated, show with responsive sidebar + mobile hamburger
   return (
     <div className="min-h-screen flex">
+  {(isNavigating) && (
+        <>
+          {/* thin progress bar */}
+          <div className="fixed left-0 top-0 z-50 w-full">
+            <div className="h-0.5 bg-blue-600 animate-pulse w-full" />
+          </div>
+          {/* subtle overlay spinner */}
+          <div className="fixed inset-0 z-40 pointer-events-none flex items-start justify-center mt-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600" />
+          </div>
+        </>
+      )}
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

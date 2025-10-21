@@ -568,11 +568,20 @@ export default function AddBorrowPage() {
                                     </p>
                                   </div>
                                   <div className="flex items-center">
-                                    <span className="text-sm text-black mr-3">{tool.quantity} pcs</span>
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      max={tool.stock}
+                                      value={tool.quantity}
+                                      onChange={(e) => handleQuantityChange(tool.id, parseInt(e.target.value) || 1)}
+                                      className="w-20 py-1 px-2 border border-gray-300 rounded-md shadow-sm text-sm text-black"
+                                      style={{ color: "#000" }}
+                                    />
+                                    <span className="ml-2 text-sm text-black">pcs</span>
                                     <button
                                       type="button"
                                       onClick={() => handleToolSelection(tool.id, false)}
-                                      className="text-red-500 hover:text-red-700"
+                                      className="ml-3 text-red-500 hover:text-red-700"
                                       title="Hapus dari daftar pinjaman"
                                     >
                                       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
