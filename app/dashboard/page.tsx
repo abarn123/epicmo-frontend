@@ -120,7 +120,7 @@ const MediaDashboard = () => {
         );
 
         const resCondition = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/kondisi-tools`,
+          `${process.env.NEXT_PUBLIC_API_URL}/tools-stock`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -203,26 +203,46 @@ const MediaDashboard = () => {
     ],
   };
 
-  const statusAlat = {
-    labels: statusSummary.map((item) => item.item_condition),
-    datasets: [
-      {
-        label: "Status Alat",
-        data: statusSummary.map((item) => item.total),
-        backgroundColor: [
-          "rgba(29, 124, 233, 0.9)",
-          "rgba(31, 231, 81, 0.9)",
-        ],
-        borderColor: [
-          "rgba(29, 124, 233, 0.9)",
-          "rgba(31, 231, 81, 0.9)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
+  const statusAlat = (() => {
+    // Support both object and array shapes from the backend
+    let dipinjam = 0;
+    let tersedia = 0;
 
-  const allStatuses = ["pending", "borrowed", "return", "rejected"];
+    if (Array.isArray(statusSummary)) {
+      dipinjam = statusSummary.reduce(
+        (sum: number, item: any) => sum + (Number(item.jumlah_yang_di_pinjam) || 0),
+        0
+      );
+      tersedia = statusSummary.reduce(
+        (sum: number, item: any) => sum + (Number(item.total_stok_yang_tersedia) || 0),
+        0
+      );
+    } else if (statusSummary && typeof statusSummary === "object") {
+      dipinjam = Number((statusSummary as any).jumlah_yang_di_pinjam) || 0;
+      tersedia = Number((statusSummary as any).total_stok_yang_tersedia) || 0;
+    }
+
+    return {
+      labels: ["dipinjam", "tersedia"],
+      datasets: [
+        {
+          label: "Status Alat",
+          data: [dipinjam, tersedia],
+          backgroundColor: [
+            "rgba(29, 124, 233, 0.9)", // dipinjam (blue)
+            "rgba(31, 231, 81, 0.9)",  // tersedia (green)
+          ],
+          borderColor: [
+            "rgba(29, 124, 233, 0.9)",
+            "rgba(31, 231, 81, 0.9)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+  })();
+
+  const allStatuses = ["pending", "dipinjam", "return", "rejected"];
 const StatusPeminjaman = {
   labels: allStatuses,
   datasets: [
