@@ -29,34 +29,26 @@ export default function EditEvent() {
     note: "",
   });
 
-  const [equipmentOptions, setEquipmentOptions] = useState<any[]>([]);
   const [operatorOptions, setOperatorOptions] = useState<any[]>([]);
+  const [equipmentOptions, setEquipmentOptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // 🔹 Ambil data operator (disamakan cara kerjanya seperti equipment)
+  // 🔹 Ambil data operator
   const fetchOperators = async (token: string) => {
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data1`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = res.data?.data ?? res.data;
-
-      // Hanya ambil data bertipe "operator" jika ada penanda type
-      const filtered = Array.isArray(data)
-        ? data.filter(
-            (d) =>
-              d.type?.toLowerCase() === "operator" || d.fullname || d.username
-          )
-        : [];
-
-      setOperatorOptions(filtered);
+      setOperatorOptions(Array.isArray(data) ? data : []);
+      return Array.isArray(data) ? data : [];
     } catch (err) {
       console.error("Gagal mengambil operator:", err);
       toast.error("Gagal mengambil data operator");
       setOperatorOptions([]);
+      return [];
     }
   };
 
@@ -75,35 +67,38 @@ export default function EditEvent() {
     }
   };
 
+  // 🔹 Normalisasi operator & equipment
+  const normalizeArray = (val: any) => {
+    if (Array.isArray(val)) return val.map((v) => String(v.id ?? v._id ?? v));
+    if (typeof val === "string" && val.includes(","))
+      return val.split(",").map((s) => s.trim());
+    if (val) return [String(val)];
+    return [""];
+  };
+
   // 🔹 Ambil data event
   const fetchEventData = async (token: string, eventId: string) => {
     try {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       const data = res.data?.data ?? res.data;
 
-      const normalize = (val: any) => {
-        if (Array.isArray(val))
-          return val.map((v) => String(v.id || v._id || v));
-        if (typeof val === "string" && val.includes(","))
-          return val.split(",").map((s) => s.trim());
-        if (val) return [String(val)];
-        return [""];
-      };
-
-      setFormData({
+      setFormData((prev) => ({
+        ...prev,
         title: data.title || "",
         date: data.date?.slice(0, 10) || "",
         time: data.time || "",
         location: data.location || "",
-        operator: normalize(data.operator),
+        operator: normalizeArray(data.operator),
         meetupTime: data.meetupTime || "",
         arrivalTime: data.arrivalTime || "",
-        equipment: normalize(data.equipment),
+        equipment: normalizeArray(data.equipment),
         note: data.note || "",
-      });
+      }));
     } catch (err: any) {
       console.error("Gagal mengambil data event:", err);
       toast.error("Gagal mengambil data event");
@@ -114,7 +109,7 @@ export default function EditEvent() {
     }
   };
 
-  // 🔹 Ambil semua data awal
+  // 🔹 Load semua data awal
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -127,12 +122,12 @@ export default function EditEvent() {
 
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([
-        fetchOperators(token),
-        fetchEquipment(token),
-        fetchEventData(token, eventId),
-      ]);
-      setLoading(false);
+      try {
+        await Promise.all([fetchOperators(token), fetchEquipment(token)]);
+        await fetchEventData(token, eventId);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadData();
@@ -152,13 +147,8 @@ export default function EditEvent() {
     newOperators[index] = value;
     setFormData((prev) => ({ ...prev, operator: newOperators }));
   };
-
   const addOperatorField = () =>
-    setFormData((prev) => ({
-      ...prev,
-      operator: [...prev.operator, ""],
-    }));
-
+    setFormData((prev) => ({ ...prev, operator: [...prev.operator, ""] }));
   const removeOperatorField = (index: number) => {
     if (formData.operator.length > 1) {
       const newOperators = formData.operator.filter((_, i) => i !== index);
@@ -172,13 +162,8 @@ export default function EditEvent() {
     newEquipment[index] = value;
     setFormData((prev) => ({ ...prev, equipment: newEquipment }));
   };
-
   const addEquipmentField = () =>
-    setFormData((prev) => ({
-      ...prev,
-      equipment: [...prev.equipment, ""],
-    }));
-
+    setFormData((prev) => ({ ...prev, equipment: [...prev.equipment, ""] }));
   const removeEquipmentField = (index: number) => {
     if (formData.equipment.length > 1) {
       const newEquipment = formData.equipment.filter((_, i) => i !== index);
@@ -242,7 +227,6 @@ export default function EditEvent() {
     <ProtectedRoute>
       <AuthenticatedLayout>
         <ToastContainer position="top-right" autoClose={3000} />
-
         <div className="flex min-h-screen bg-gray-50">
           <div className="flex-1 py-8 px-4 md:pr-8">
             <Head>
@@ -393,6 +377,7 @@ export default function EditEvent() {
 
                     {/* Kolom Kanan */}
                     <div className="space-y-6">
+                      {/* Equipment */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="block text-sm font-medium text-gray-500">
@@ -440,6 +425,7 @@ export default function EditEvent() {
                         </div>
                       </div>
 
+                      {/* Catatan */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Catatan
@@ -455,6 +441,7 @@ export default function EditEvent() {
                     </div>
                   </div>
 
+                  {/* Tombol */}
                   <div className="flex flex-col-reverse md:flex-row gap-3 justify-end pt-8 mt-8 border-t border-gray-200 p-6">
                     <Link
                       href="/event"
