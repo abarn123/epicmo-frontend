@@ -18,7 +18,7 @@ export default function AddEvent() {
     date: "",
     time: "",
     location: "",
-    operator: [""], // ✅ ubah jadi array
+    operator: [""],
     meetupTime: "",
     arrivalTime: "",
     equipment: [""],
@@ -82,27 +82,25 @@ export default function AddEvent() {
     fetchOperators();
   }, []);
 
-  // 🔹 Input handler umum
+  // Input handler
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Operator handlers (multi)
+  // Operator handler
   const handleOperatorChange = (index: number, value: string) => {
     const newOps = [...formData.operator];
     newOps[index] = value;
     setFormData((prev) => ({ ...prev, operator: newOps }));
   };
 
-  const addOperatorField = () => {
-    setFormData((prev) => ({
-      ...prev,
-      operator: [...prev.operator, ""],
-    }));
-  };
+  const addOperatorField = () =>
+    setFormData((prev) => ({ ...prev, operator: [...prev.operator, ""] }));
 
   const removeOperatorField = (index: number) => {
     if (formData.operator.length > 1) {
@@ -111,19 +109,15 @@ export default function AddEvent() {
     }
   };
 
-  // 🔹 Equipment handlers
+  // Equipment handler
   const handleEquipmentChange = (index: number, value: string) => {
     const newEq = [...formData.equipment];
     newEq[index] = value;
     setFormData((prev) => ({ ...prev, equipment: newEq }));
   };
 
-  const addEquipmentField = () => {
-    setFormData((prev) => ({
-      ...prev,
-      equipment: [...prev.equipment, ""],
-    }));
-  };
+  const addEquipmentField = () =>
+    setFormData((prev) => ({ ...prev, equipment: [...prev.equipment, ""] }));
 
   const removeEquipmentField = (index: number) => {
     if (formData.equipment.length > 1) {
@@ -132,7 +126,7 @@ export default function AddEvent() {
     }
   };
 
-  // 🔹 Submit handler
+  // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -155,7 +149,7 @@ export default function AddEvent() {
         date: formData.date,
         time: formData.time,
         location: formData.location,
-        operator: operatorIds, // ✅ kirim array operator
+        operator: operatorIds,
         meetupTime: formData.meetupTime,
         arrivalTime: formData.arrivalTime,
         equipment: equipmentIds,
@@ -185,11 +179,8 @@ export default function AddEvent() {
         }
       );
 
-      if (response.data.status) {
-        router.push("/event");
-      } else {
-        throw new Error(response.data.message || "Gagal menambahkan event");
-      }
+      if (response.data.status) router.push("/event");
+      else throw new Error(response.data.message || "Gagal menambahkan event");
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
@@ -210,7 +201,7 @@ export default function AddEvent() {
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-gray-50 text-gray-900">
           <div className="flex-1 py-8 px-4 md:pr-8">
             <Head>
               <title>Tambah Jadwal Event</title>
@@ -218,7 +209,9 @@ export default function AddEvent() {
             </Head>
 
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-3xl font-bold mb-6">Tambah Jadwal Event</h1>
+              <h1 className="text-3xl font-bold mb-6 text-gray-900">
+                Tambah Jadwal Event
+              </h1>
 
               {error && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -227,12 +220,15 @@ export default function AddEvent() {
               )}
 
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <form onSubmit={handleSubmit}>
+                <form
+                  onSubmit={handleSubmit}
+                  className="text-gray-900 placeholder:text-gray-900"
+                >
                   <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Kiri */}
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Judul Event *
                         </label>
                         <input
@@ -241,14 +237,14 @@ export default function AddEvent() {
                           value={formData.title}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-900"
                           placeholder="Masukkan judul event"
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
                             Tanggal Event *
                           </label>
                           <input
@@ -257,11 +253,11 @@ export default function AddEvent() {
                             value={formData.date}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
                             Waktu Event *
                           </label>
                           <input
@@ -270,14 +266,13 @@ export default function AddEvent() {
                             value={formData.time}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
                           />
                         </div>
                       </div>
 
-                      {/* Lokasi */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Lokasi *
                         </label>
                         <input
@@ -286,12 +281,12 @@ export default function AddEvent() {
                           value={formData.location}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-900"
                           placeholder="Masukkan lokasi event"
                         />
                       </div>
 
-                      {/* 🔹 Operator multi */}
+                      {/* Operator */}
                       <div>
                         <div className="flex justify-between mb-2">
                           <label className="block text-sm font-medium text-gray-700">
@@ -305,7 +300,6 @@ export default function AddEvent() {
                             + Tambah Operator
                           </button>
                         </div>
-
                         {formData.operator.map((op, i) => (
                           <div key={i} className="flex gap-2 mb-2">
                             <select
@@ -314,7 +308,7 @@ export default function AddEvent() {
                                 handleOperatorChange(i, e.target.value)
                               }
                               required
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                             >
                               <option value="">Pilih operator...</option>
                               {operatorOptions.map((item) => (
@@ -328,7 +322,6 @@ export default function AddEvent() {
                                 </option>
                               ))}
                             </select>
-
                             {formData.operator.length > 1 && (
                               <button
                                 type="button"
@@ -347,7 +340,7 @@ export default function AddEvent() {
                     <div className="space-y-6">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
                             Waktu Kumpul *
                           </label>
                           <input
@@ -356,11 +349,11 @@ export default function AddEvent() {
                             value={formData.meetupTime}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
                             Waktu Tiba *
                           </label>
                           <input
@@ -369,15 +362,14 @@ export default function AddEvent() {
                             value={formData.arrivalTime}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-900"
                           />
                         </div>
                       </div>
 
-                      {/* Equipment */}
                       <div>
                         <div className="flex justify-between mb-2">
-                          <label className="text-sm font-medium text-gray-500">
+                          <label className="text-sm font-medium text-gray-700">
                             Equipment/Barang
                           </label>
                           <button
@@ -388,7 +380,6 @@ export default function AddEvent() {
                             + Tambah
                           </button>
                         </div>
-
                         {formData.equipment.map((eq, i) => (
                           <div key={i} className="flex gap-2 mb-2">
                             <select
@@ -396,7 +387,7 @@ export default function AddEvent() {
                               onChange={(e) =>
                                 handleEquipmentChange(i, e.target.value)
                               }
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                             >
                               <option value="">Pilih barang...</option>
                               {equipmentOptions.map((item) => (
@@ -408,7 +399,6 @@ export default function AddEvent() {
                                 </option>
                               ))}
                             </select>
-
                             {formData.equipment.length > 1 && (
                               <button
                                 type="button"
@@ -422,7 +412,6 @@ export default function AddEvent() {
                         ))}
                       </div>
 
-                      {/* Catatan */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Catatan
@@ -432,14 +421,13 @@ export default function AddEvent() {
                           value={formData.note}
                           onChange={handleInputChange}
                           rows={4}
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none text-gray-900 placeholder:text-gray-900"
                           placeholder="Masukkan catatan tambahan..."
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Tombol */}
                   <div className="flex justify-end gap-3 p-6 border-t">
                     <Link
                       href="/event"
