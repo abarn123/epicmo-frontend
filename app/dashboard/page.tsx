@@ -205,29 +205,29 @@ const MediaDashboard = () => {
 
   const statusAlat = (() => {
     // Support both object and array shapes from the backend
-    let dipinjam = 0;
-    let tersedia = 0;
+    let borrowed = 0;
+    let available = 0;
 
     if (Array.isArray(statusSummary)) {
-      dipinjam = statusSummary.reduce(
-        (sum: number, item: any) => sum + (Number(item.jumlah_yang_di_pinjam) || 0),
+      borrowed = statusSummary.reduce(
+        (sum: number, item: any) => sum + (Number(item.borrowed_quantity) || 0),
         0
       );
-      tersedia = statusSummary.reduce(
-        (sum: number, item: any) => sum + (Number(item.total_stok_yang_tersedia) || 0),
+      available = statusSummary.reduce(
+        (sum: number, item: any) => sum + (Number(item.total_stock_available) || 0),
         0
       );
     } else if (statusSummary && typeof statusSummary === "object") {
-      dipinjam = Number((statusSummary as any).jumlah_yang_di_pinjam) || 0;
-      tersedia = Number((statusSummary as any).total_stok_yang_tersedia) || 0;
+      borrowed = Number((statusSummary as any).borrowed_quantity) || 0;
+      available = Number((statusSummary as any).total_stock_available) || 0;
     }
 
     return {
-      labels: ["dipinjam", "tersedia"],
+      labels: ["borrowed", "available"],
       datasets: [
         {
           label: "Status Alat",
-          data: [dipinjam, tersedia],
+          data: [borrowed, available],
           backgroundColor: [
             "rgba(29, 124, 233, 0.9)", // dipinjam (blue)
             "rgba(31, 231, 81, 0.9)",  // tersedia (green)
@@ -242,7 +242,7 @@ const MediaDashboard = () => {
     };
   })();
 
-  const allStatuses = ["pending", "dipinjam", "return", "rejected"];
+  const allStatuses = ["pending", "borrowed", "return", "rejected"];
 const StatusPeminjaman = {
   labels: allStatuses,
   datasets: [
