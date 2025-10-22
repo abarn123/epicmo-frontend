@@ -1,7 +1,7 @@
 "use client";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthenticatedLayout from "../components/AuthenticatedLayout";
-import { FiSearch, FiDownload, FiCalendar, FiFilter, FiX } from "react-icons/fi";
+import { FiSearch, FiDownload, FiCalendar, FiFilter, FiX, FiClock, FiCalendar as FiCal, FiFileText } from "react-icons/fi";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ interface AttendanceRecord {
   date: string;
   time: string;
   status: "ready" | "finish";
+  notes?: string;
 }
 
 export default function AttendancePage() {
@@ -23,6 +24,7 @@ export default function AttendancePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const [currentDateTime, setCurrentDateTime] = useState("");
   const itemsPerPage = 5;
   const router = useRouter();
 
@@ -30,6 +32,33 @@ export default function AttendancePage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewSrc, setPreviewSrc] = useState<string>("");
   const [previewName, setPreviewName] = useState<string>("");
+
+  // Modal state for notes detail
+  const [notesModalOpen, setNotesModalOpen] = useState(false);
+  const [selectedNotes, setSelectedNotes] = useState<string>("");
+  const [selectedName, setSelectedName] = useState<string>("");
+
+  // Fungsi untuk update tanggal dan waktu saat ini
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      const formattedDateTime = now.toLocaleString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      setCurrentDateTime(formattedDateTime);
+    };
+
+    updateDateTime();
+    const interval = setInterval(updateDateTime, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Fungsi untuk memformat waktu dari berbagai kemungkinan format
   const formatTimeFromAPI = (timeString: string | undefined) => {
@@ -62,6 +91,27 @@ export default function AttendancePage() {
     } catch {
       return timeString;
     }
+  };
+
+  // Fungsi untuk memotong teks catatan
+  const truncateNotes = (text: string, maxWords: number = 5, maxChars: number = 60) => {
+    if (!text) return "";
+    
+    const words = text.split(" ");
+    const truncatedByWords = words.slice(0, maxWords).join(" ");
+    
+    if (truncatedByWords.length > maxChars) {
+      return text.substring(0, maxChars);
+    }
+    
+    return truncatedByWords;
+  };
+
+  // Fungsi untuk cek apakah catatan perlu dipotong
+  const shouldTruncateNotes = (text: string, maxWords: number = 5, maxChars: number = 60) => {
+    if (!text) return false;
+    const words = text.split(" ");
+    return words.length > maxWords || text.length > maxChars;
   };
 
   useEffect(() => {
@@ -113,6 +163,7 @@ export default function AttendancePage() {
                 ? formatTimeFromAPI(dateFromAPI)
                 : "-",
               status: item.status || "present",
+              notes: item.notes || item.note || item.description || "",
             };
           }
         );
@@ -322,7 +373,17 @@ export default function AttendancePage() {
                    Sistem Absensi
                 </h1>
                 <p className="text-gray-600">
-                  Pantau dan kelola data kehadiran setiap acara secara akurat dan efisien.                </p>
+                  Pantau dan kelola data kehadiran setiap acara secara akurat dan efisien.
+                </p>
+                
+                {/* Note: Tanggal dan Waktu Saat Ini */}
+                <div className="mt-4 p-3 bg-blue-50/80 border border-blue-200 rounded-lg">
+                  <div className="flex items-center text-sm text-blue-800">
+                    <FiClock className="mr-2 flex-shrink-0" />
+                    <span className="font-medium">Waktu saat ini:</span>
+                    <span className="ml-2">{currentDateTime}</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -379,6 +440,15 @@ export default function AttendancePage() {
                   </a>
                 </div>
               </div>
+
+              {/* Note: Tanggal dan Waktu untuk Mobile */}
+              <div className="mt-4 md:hidden p-3 bg-blue-50/80 border border-blue-200 rounded-lg">
+                <div className="flex items-center text-sm text-blue-800">
+                  <FiClock className="mr-2 flex-shrink-0" />
+                  <span className="font-medium">Waktu saat ini:</span>
+                  <span className="ml-2 text-xs">{currentDateTime}</span>
+                </div>
+              </div>
             </div>
 
             {/* Content Area */}
@@ -424,44 +494,44 @@ export default function AttendancePage() {
                     {currentItems.map((record, idx) => (
                       <div
                         key={record.id}
-                        className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-4"
+                        className="bg-white rounded-xl shadow-sm p-4"
                       >
-                        <div className="h-12 w-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0">
-                          <img
-                            src={
-                              record.photo.startsWith("http")
-                                ? record.photo
-                                : record.photo.length > 100 && !record.photo.startsWith("data:")
-                                ? `data:image/jpeg;base64,${record.photo}`
-                                : record.photo || "/images/employee1.jpg"
-                            }
-                            alt={record.name}
-                            className="h-full w-full object-cover cursor-pointer"
-                            onClick={() => {
-                              setPreviewSrc(
+                        <div className="flex items-start gap-4 mb-3">
+                          <div className="h-12 w-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0">
+                            <img
+                              src={
                                 record.photo.startsWith("http")
                                   ? record.photo
                                   : record.photo.length > 100 && !record.photo.startsWith("data:")
                                   ? `data:image/jpeg;base64,${record.photo}`
-                                  : record.photo
-                              );
-                              setPreviewName(record.name || String(record.id));
-                              setPreviewOpen(true);
-                            }}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = "/images/employee1.jpg";
-                            }}
-                          />
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <div className="text-sm font-semibold text-gray-900 truncate">{record.name}</div>
-                            <div className="text-xs text-gray-500">{record.date}</div>
+                                  : record.photo || "/images/employee1.jpg"
+                              }
+                              alt={record.name}
+                              className="h-full w-full object-cover cursor-pointer"
+                              onClick={() => {
+                                setPreviewSrc(
+                                  record.photo.startsWith("http")
+                                    ? record.photo
+                                    : record.photo.length > 100 && !record.photo.startsWith("data:")
+                                    ? `data:image/jpeg;base64,${record.photo}`
+                                    : record.photo
+                                );
+                                setPreviewName(record.name || String(record.id));
+                                setPreviewOpen(true);
+                              }}
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "/images/employee1.jpg";
+                              }}
+                            />
                           </div>
-                          <div className="mt-1 flex items-center justify-between">
-                            <div className="text-sm text-gray-600">{record.time}</div>
-                            <div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="text-sm font-semibold text-gray-900 truncate">{record.name}</div>
+                              <div className="text-xs text-gray-500">{record.date}</div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div className="text-sm text-gray-600">{record.time}</div>
                               <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full shadow-sm ${getStatusColor(record.status)}`}>
                                 {record.status === "ready" && "Sudah siap"}
                                 {record.status === "finish" && "Telah selesai"}
@@ -469,6 +539,35 @@ export default function AttendancePage() {
                             </div>
                           </div>
                         </div>
+                        
+                        {/* Catatan section untuk mobile */}
+                        {record.notes && (
+                          <div className="mt-3 pt-3 border-t border-gray-100">
+                            <div className="flex items-start gap-2">
+                              <FiFileText className="text-blue-500 mt-0.5 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-gray-500 mb-1">Catatan:</p>
+                                <p className="text-sm text-gray-700 break-words">
+                                  {shouldTruncateNotes(record.notes) 
+                                    ? `${truncateNotes(record.notes)}...` 
+                                    : record.notes}
+                                </p>
+                                {shouldTruncateNotes(record.notes) && (
+                                  <button
+                                    onClick={() => {
+                                      setSelectedNotes(record.notes || "");
+                                      setSelectedName(record.name);
+                                      setNotesModalOpen(true);
+                                    }}
+                                    className="text-xs text-blue-600 hover:text-blue-700 mt-1 font-medium"
+                                  >
+                                    Lihat selengkapnya
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -487,6 +586,7 @@ export default function AttendancePage() {
                               <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal</th>
                               <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Waktu</th>
                               <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                              <th className="px-3 md:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Catatan</th>
                             </tr>
                           </thead>
                           <tbody className="bg-white/60 backdrop-blur-sm divide-y divide-gray-100">
@@ -525,6 +625,34 @@ export default function AttendancePage() {
                                     {record.status === "finish" && "Telah selesai"}
                                   </span>
                                 </td>
+                                <td className="px-3 md:px-4 py-4 max-w-xs">
+                                  {record.notes ? (
+                                    <div className="flex items-start gap-2">
+                                      <FiFileText className="text-blue-500 mt-0.5 flex-shrink-0" size={14} />
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm text-gray-700 break-words">
+                                          {shouldTruncateNotes(record.notes) 
+                                            ? `${truncateNotes(record.notes)}...` 
+                                            : record.notes}
+                                        </p>
+                                        {shouldTruncateNotes(record.notes) && (
+                                          <button
+                                            onClick={() => {
+                                              setSelectedNotes(record.notes || "");
+                                              setSelectedName(record.name);
+                                              setNotesModalOpen(true);
+                                            }}
+                                            className="text-xs text-blue-600 hover:text-blue-700 mt-1 font-medium hover:underline"
+                                          >
+                                            Selengkapnya
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <span className="text-sm text-gray-400 italic">-</span>
+                                  )}
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -559,47 +687,97 @@ export default function AttendancePage() {
           </div>
         </div>
       </div>
+
       {/* Image Preview Modal */}
       {previewOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn">
-    <div className="relative bg-white rounded-2xl shadow-2xl w-11/12 sm:w-[420px] p-5 sm:p-6 border border-gray-200 animate-scaleIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn">
+          <div className="relative bg-white rounded-2xl shadow-2xl w-11/12 sm:w-[420px] p-5 sm:p-6 border border-gray-200 animate-scaleIn">
+            
+            {/* Tombol close */}
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition"
+              onClick={() => setPreviewOpen(false)}
+              aria-label="Tutup preview"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
+
+            {/* Judul foto */}
+            <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">
+              Preview Foto
+            </h2>
+
+            {/* Gambar */}
+            <div className="flex justify-center mb-5">
+              <img
+                src={previewSrc}
+                alt={previewName}
+                className="max-w-full max-h-[70vh] object-contain rounded-lg border border-gray-200 shadow-sm"
+              />
+            </div>
+
+            {/* Tombol download */}
+            <div className="flex justify-center">
+              <a
+                href={previewSrc}
+                download={`foto-${previewName}.jpg`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+              >
+                <FiDownload className="w-5 h-5" />
+                Download Foto
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notes Detail Modal */}
+{notesModalOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn p-4">
+    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 border border-gray-200 animate-scaleIn max-h-[85vh] overflow-hidden flex flex-col">
       
       {/* Tombol close */}
       <button
-        className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition"
-        onClick={() => setPreviewOpen(false)}
-        aria-label="Tutup preview"
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"
+        onClick={() => setNotesModalOpen(false)}
+        aria-label="Tutup catatan"
       >
         <FiX className="w-6 h-6" />
       </button>
 
-      {/* Judul foto */}
-      <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">
-        Preview Foto
-      </h2>
-
-      {/* Gambar */}
-      <div className="flex justify-center mb-5">
-        <img
-          src={previewSrc}
-          alt={previewName}
-          className="max-w-full max-h-[70vh] object-contain rounded-lg border border-gray-200 shadow-sm"
-        />
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-5 pr-8">
+        <div className="p-2 bg-blue-100 rounded-lg">
+          <FiFileText className="text-blue-600 w-6 h-6" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-800 leading-tight">
+            Catatan Lengkap
+          </h2>
+          <p className="text-sm text-gray-500">{selectedName}</p>
+        </div>
       </div>
 
-      {/* Tombol download */}
-      <div className="flex justify-center">
-        <a
-          href={previewSrc}
-          download={`foto-${previewName}.jpg`}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg font-medium"        >
-          <FiDownload className="w-5 h-5" />
-          Download Foto
-        </a>
+      {/* Konten Catatan */}
+      <div className="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed break-words">
+          {selectedNotes || "Tidak ada catatan tersedia."}
+        </p>
+      </div>
+
+      {/* Tombol Footer */}
+      <div className="mt-6 flex justify-end">
+        <button
+          onClick={() => setNotesModalOpen(false)}
+          className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200"
+        >
+          Tutup
+        </button>
       </div>
     </div>
   </div>
 )}
+
 
         </div>
       </AuthenticatedLayout>

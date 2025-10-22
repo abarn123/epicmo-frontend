@@ -7,6 +7,7 @@ import {
   FiClock,
   FiCalendar,
   FiRefreshCw,
+  FiEdit3,
 } from "react-icons/fi";
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -20,11 +21,7 @@ interface AttendanceFormData {
   date: string;
   time: string;
   status: "ready" | "finish";
-}
-
-interface UserData {
-  user_id: string;
-  name: string;
+  note: string;
 }
 
 export default function AttendanceFormPage() {
@@ -41,6 +38,7 @@ export default function AttendanceFormPage() {
     date: new Date().toISOString().split("T")[0],
     time: "",
     status: "ready",
+    note: "",
   });
 
   // Update formData user_id dan name jika context berubah
@@ -55,27 +53,24 @@ export default function AttendanceFormPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [loadingUsers, setLoadingUsers] = useState(true);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
 
-  // Check available cameras
+  // Cek kamera tersedia
   useEffect(() => {
     const checkCameras = async () => {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const videoDevices = devices.filter((d) => d.kind === "videoinput");
         setHasMultipleCameras(videoDevices.length > 1);
       } catch (err) {
         console.error("Error checking cameras:", err);
       }
     };
-
     checkCameras();
   }, []);
 
-  // Update time every second
+  // Update waktu setiap detik
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -93,32 +88,21 @@ export default function AttendanceFormPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Camera setup
+  // Setup kamera
   useEffect(() => {
     let mediaStream: MediaStream | null = null;
-
     const initializeCamera = async () => {
       try {
-        // Stop existing stream
-        if (mediaStream) {
-          mediaStream.getTracks().forEach(track => track.stop());
-        }
-
+        if (mediaStream) mediaStream.getTracks().forEach((t) => t.stop());
         const constraints: MediaStreamConstraints = {
           audio: false,
-          video: {
-            facingMode: facingMode,
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-          },
+          video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
         };
-
         mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
-          // Only mirror for front camera
-          videoRef.current.style.transform = facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+          videoRef.current.style.transform =
+            facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
         }
         setStream(mediaStream);
       } catch (err) {
@@ -126,32 +110,23 @@ export default function AttendanceFormPage() {
         setError("Akses kamera gagal. Pastikan izin diberikan.");
       }
     };
-
     initializeCamera();
-
-    return () => {
-      mediaStream?.getTracks().forEach((track) => track.stop());
-    };
+    return () => mediaStream?.getTracks().forEach((t) => t.stop());
   }, [facingMode]);
 
   const switchCamera = () => {
-    setFacingMode(prev => prev === "user" ? "environment" : "user");
+    setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
     setCapturedPhoto(null);
-    setFormData(prev => ({ ...prev, photo: "" }));
+    setFormData((prev) => ({ ...prev, photo: "" }));
   };
 
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
-
     const context = canvasRef.current.getContext("2d");
     if (!context) return;
-
     canvasRef.current.width = videoRef.current.videoWidth;
     canvasRef.current.height = videoRef.current.videoHeight;
-
     context.save();
-    
-    // Only mirror for front camera
     if (facingMode === "user") {
       context.scale(-1, 1);
       context.drawImage(
@@ -170,9 +145,7 @@ export default function AttendanceFormPage() {
         canvasRef.current.height
       );
     }
-    
     context.restore();
-
     const photoData = canvasRef.current.toDataURL("image/jpeg");
     setCapturedPhoto(photoData);
     setFormData((prev) => ({ ...prev, photo: photoData }));
@@ -195,16 +168,62 @@ export default function AttendanceFormPage() {
     return true;
   };
 
+  // ✅ Fungsi untuk format catatan dengan auto line break
+  const formatNoteWithAutoLineBreak = (text: string): string => {
+    if (!text) return "";
+
+    const words = text.split(" ");
+    const lines: string[] = [];
+    let currentLine = "";
+    let wordCount = 0;
+
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+
+      // Cek apakah sudah 5 kata atau lebih dari 80 karakter
+      wordCount++;
+
+      if (wordCount > 5 || testLine.length > 80) {
+        if (currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+          wordCount = 1;
+        } else {
+          // Jika satu kata saja sudah lebih dari 80 karakter, potong
+          if (word.length > 80) {
+            for (let j = 0; j < word.length; j += 80) {
+              lines.push(word.substring(j, j + 80));
+            }
+            currentLine = "";
+            wordCount = 0;
+          } else {
+            currentLine = word;
+          }
+        }
+      } else {
+        currentLine = testLine;
+      }
+    }
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    return lines.join("\n");
+  };
+
+  // Kirim data ke API
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
     setLoading(true);
     setError(null);
-
     try {
       const base64Photo = formData.photo.split(",")[1] || formData.photo;
+
+      // ✅ Format catatan sebelum dikirim
+      const formattedNote = formatNoteWithAutoLineBreak(formData.note);
 
       const payload = {
         user_id: formData.user_id,
@@ -212,10 +231,11 @@ export default function AttendanceFormPage() {
         date: formData.date,
         time: formData.time,
         status: formData.status,
+        note: formattedNote, // ✅ Kirim catatan yang sudah diformat
         photo: base64Photo,
       };
 
-      const response = await axios.post(
+      const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/data4/add`,
         payload,
         {
@@ -223,37 +243,25 @@ export default function AttendanceFormPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          timeout: 10000,
         }
       );
-
-      if (response.status >= 200 && response.status < 300) {
+      if (res.status >= 200 && res.status < 300) {
         setSuccess(true);
         setTimeout(() => router.push("/attendance"), 1500);
       }
     } catch (err: any) {
-      let errorMessage = "Terjadi kesalahan";
-      if (err.response) {
-        errorMessage =
-          err.response.data?.message ||
-          `Error ${err.response.status}: ${err.response.statusText}`;
-      } else if (err.request) {
-        errorMessage = "Tidak ada respon dari server";
-      } else {
-        errorMessage = err.message || "Error saat mengirim data";
-      }
-      setError(errorMessage);
+      setError(err?.response?.data?.message || "Gagal menyimpan absensi");
     } finally {
       setLoading(false);
     }
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
-    // Jangan izinkan user mengubah user_id dan name
-    if (name === "id" || name === "name") return;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -262,19 +270,7 @@ export default function AttendanceFormPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full text-center">
           <div className="text-green-500 mb-4">
-            <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <FiCheck className="w-16 h-16 mx-auto" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             Absensi Berhasil!
@@ -297,13 +293,35 @@ export default function AttendanceFormPage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         <div className="p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Formulir Absensi
-            </h2>
-            <p className="text-gray-600">
-              Silakan lengkapi formulir absensi harian Anda
-            </p>
+          {/* Header with Back Button */}
+          <div className="relative flex items-center mb-6">
+            <a
+              href="/attendance"
+              className="absolute left-0 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+              aria-label="Kembali"
+            >
+              <svg
+                className="w-6 h-6 text-gray-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+            </a>
+            <div className="flex-1 text-center">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Formulir Absensi
+              </h2>
+              <p className="text-gray-600">
+                Silakan lengkapi formulir absensi harian Anda
+              </p>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -324,7 +342,7 @@ export default function AttendanceFormPage() {
                   </button>
                 )}
               </div>
-              
+
               <div className="relative bg-gray-100 rounded-lg overflow-hidden h-64 flex items-center justify-center border-2 border-gray-300">
                 {capturedPhoto ? (
                   <img
@@ -342,15 +360,8 @@ export default function AttendanceFormPage() {
                   />
                 )}
                 <canvas ref={canvasRef} className="hidden" />
-                
-                {/* Camera overlay frame */}
-                {!capturedPhoto && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-48 border-2 border-white border-dashed rounded-lg bg-transparent"></div>
-                  </div>
-                )}
               </div>
-              
+
               <div className="mt-3 flex justify-center gap-3">
                 {capturedPhoto ? (
                   <button
@@ -375,8 +386,6 @@ export default function AttendanceFormPage() {
             {/* Form Inputs */}
             <div className="space-y-4">
               <div>
-              </div>
-              <div>
                 <label
                   htmlFor="name"
                   className="block text-sm font-medium text-black mb-1"
@@ -386,7 +395,6 @@ export default function AttendanceFormPage() {
                 <input
                   type="text"
                   id="name"
-                  name="name"
                   value={formData.name}
                   readOnly
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
@@ -402,9 +410,7 @@ export default function AttendanceFormPage() {
                     Tanggal
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiCalendar className="text-gray-400" />
-                    </div>
+                    <FiCalendar className="absolute left-3 top-2.5 text-gray-400" />
                     <input
                       type="date"
                       id="date"
@@ -412,7 +418,7 @@ export default function AttendanceFormPage() {
                       required
                       value={formData.date}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-black"
                     />
                   </div>
                 </div>
@@ -425,17 +431,14 @@ export default function AttendanceFormPage() {
                     Waktu
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiClock className="text-gray-400" />
-                    </div>
+                    <FiClock className="absolute left-3 top-2.5 text-gray-400" />
                     <input
                       type="text"
                       id="time"
                       name="time"
-                      required
                       readOnly
                       value={formData.time}
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-black"
+                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-black"
                     />
                   </div>
                 </div>
@@ -451,14 +454,38 @@ export default function AttendanceFormPage() {
                 <select
                   id="status"
                   name="status"
-                  required
                   value={formData.status}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-black"
                 >
                   <option value="ready">Sudah siap</option>
                   <option value="finish">Telah selesai</option>
                 </select>
+              </div>
+
+              {/* ✅ Field catatan dengan info auto line break */}
+              <div>
+                <label
+                  htmlFor="note"
+                  className="block text-sm font-medium text-black mb-1"
+                >
+                  Catatan (Opsional)
+                </label>
+                <div className="relative">
+                  <FiEdit3 className="absolute left-3 top-3 text-gray-400" />
+                  <textarea
+                    id="note"
+                    name="note"
+                    rows={4}
+                    placeholder="Tulis keterangan tambahan di sini..."
+                    value={formData.note}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-black resize-none"
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  💡 Catatan otomatis turun baris setiap 5 kata atau 80 karakter
+                </p>
               </div>
             </div>
 
@@ -492,12 +519,12 @@ export default function AttendanceFormPage() {
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
+                    />
                   </svg>
                   Memproses...
                 </>
