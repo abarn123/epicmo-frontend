@@ -732,51 +732,51 @@ export default function AttendancePage() {
       )}
 
       {/* Notes Detail Modal */}
-{notesModalOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn p-4">
-    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 border border-gray-200 animate-scaleIn max-h-[85vh] overflow-hidden flex flex-col">
-      
-      {/* Tombol close */}
-      <button
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"
-        onClick={() => setNotesModalOpen(false)}
-        aria-label="Tutup catatan"
-      >
-        <FiX className="w-6 h-6" />
-      </button>
+      {notesModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn p-4">
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 border border-gray-200 animate-scaleIn max-h-[85vh] overflow-hidden flex flex-col">
+            
+            {/* Tombol close */}
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"
+              onClick={() => setNotesModalOpen(false)}
+              aria-label="Tutup catatan"
+            >
+              <FiX className="w-6 h-6" />
+            </button>
 
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-5 pr-8">
-        <div className="p-2 bg-blue-100 rounded-lg">
-          <FiFileText className="text-blue-600 w-6 h-6" />
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-5 pr-8">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <FiFileText className="text-blue-600 w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-800 leading-tight">
+                  Catatan Lengkap
+                </h2>
+                <p className="text-sm text-gray-500">{selectedName}</p>
+              </div>
+            </div>
+
+            {/* Konten Catatan */}
+            <div className="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed break-words">
+                {selectedNotes || "Tidak ada catatan tersedia."}
+              </p>
+            </div>
+
+            {/* Tombol Footer */}
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setNotesModalOpen(false)}
+                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
         </div>
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800 leading-tight">
-            Catatan Lengkap
-          </h2>
-          <p className="text-sm text-gray-500">{selectedName}</p>
-        </div>
-      </div>
-
-      {/* Konten Catatan */}
-      <div className="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-4 border border-gray-200">
-        <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed break-words">
-          {selectedNotes || "Tidak ada catatan tersedia."}
-        </p>
-      </div>
-
-      {/* Tombol Footer */}
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={() => setNotesModalOpen(false)}
-          className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200"
-        >
-          Tutup
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
 
         </div>
