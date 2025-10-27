@@ -254,7 +254,7 @@ function BorrowTableRow({
                 Tolak
               </button>
             </>
-          ) : record.status === "borrowed" ? (
+          ) : record.status === "borrowed" && role === "freelance" ? (
             <button
               onClick={handleReturn}
               className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
@@ -382,7 +382,7 @@ function BorrowCard({ record, refresh }: { record: GroupedBorrowRecord; refresh:
             <button onClick={handleApprove} className="px-3 py-1 bg-green-600 text-white rounded-md text-sm">Setujui</button>
             <button onClick={handleReject} className="px-3 py-1 bg-red-600 text-white rounded-md text-sm">Tolak</button>
           </>
-        ) : record.status === 'borrowed' ? (
+        ) : record.status === 'borrowed' && role === 'freelance' ? (
           <button onClick={handleReturn} className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">Kembalikan</button>
         ) : null}
       </div>
