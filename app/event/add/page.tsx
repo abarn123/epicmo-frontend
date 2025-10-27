@@ -30,7 +30,7 @@ export default function AddEvent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch Equipment
+  // ===================== FETCH EQUIPMENT =====================
   useEffect(() => {
     const fetchEquipment = async () => {
       try {
@@ -39,50 +39,48 @@ export default function AddEvent() {
           setError("Token tidak ditemukan, silakan login kembali");
           return;
         }
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/data2`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        let data = response.data;
+
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        let data = res.data;
         if (data && data.data) data = data.data;
         setEquipmentOptions(Array.isArray(data) ? data : []);
       } catch {
         setError("Gagal memuat data equipment");
-        setEquipmentOptions([]);
       }
     };
+
     fetchEquipment();
   }, []);
 
-  // Fetch Operator
+  // ===================== FETCH OPERATOR =====================
   useEffect(() => {
-    const fetchOperators = async () => {
+    const fetchOperator = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
           setError("Token tidak ditemukan, silakan login kembali");
           return;
         }
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/data1`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        let data = response.data;
+
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data1`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        let data = res.data;
         if (data && data.data) data = data.data;
         setOperatorOptions(Array.isArray(data) ? data : []);
       } catch {
         setError("Gagal memuat data operator");
-        setOperatorOptions([]);
       }
     };
-    fetchOperators();
+
+    fetchOperator();
   }, []);
 
-  // Input handler
+  // ===================== HANDLER UMUM =====================
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -92,7 +90,7 @@ export default function AddEvent() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Operator handler
+  // ===================== OPERATOR =====================
   const handleOperatorChange = (index: number, value: string) => {
     const newOps = [...formData.operator];
     newOps[index] = value;
@@ -109,7 +107,17 @@ export default function AddEvent() {
     }
   };
 
-  // Equipment handler
+  // filtered operators to prevent duplicate selection across selects
+  const filteredOperatorOptions = (currentValue: string) => {
+    const selectedIds = formData.operator.filter(Boolean).map((v) => String(v));
+    return operatorOptions.filter((item) => {
+      const idStr = String(item.id ?? item._id);
+      // keep option if not selected elsewhere OR if it's the current select's value
+      return !selectedIds.includes(idStr) || idStr === String(currentValue);
+    });
+  };
+
+  // ===================== EQUIPMENT =====================
   const handleEquipmentChange = (index: number, value: string) => {
     const newEq = [...formData.equipment];
     newEq[index] = value;
@@ -126,7 +134,16 @@ export default function AddEvent() {
     }
   };
 
-  // Submit
+  // convert IDs to string for reliable comparison in selects
+  const filteredEquipment = (currentValue: string) => {
+    const selectedIds = formData.equipment.filter(Boolean).map((v) => String(v));
+    return equipmentOptions.filter((item) => {
+      const idStr = String(item.id ?? item._id);
+      return !selectedIds.includes(idStr) || idStr === String(currentValue);
+    });
+  };
+
+  // ===================== SUBMIT =====================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -165,7 +182,7 @@ export default function AddEvent() {
         !newEvent.meetupTime ||
         !newEvent.arrivalTime
       ) {
-        throw new Error("Semua field yang wajib diisi harus dilengkapi");
+        throw new Error("Semua field wajib harus diisi");
       }
 
       const response = await axios.post(
@@ -192,6 +209,7 @@ export default function AddEvent() {
     }
   };
 
+  // ===================== RENDER =====================
   if (!authLoading && role && role.toLowerCase() !== "admin") {
     return (
       <AccessDenied message="Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini." />
@@ -209,7 +227,7 @@ export default function AddEvent() {
             </Head>
 
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-3xl font-bold mb-6 text-black dark:text-black">
+              <h1 className="text-3xl font-bold mb-6 text-black">
                 Tambah Jadwal Event
               </h1>
 
@@ -220,12 +238,9 @@ export default function AddEvent() {
               )}
 
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <form
-                  onSubmit={handleSubmit}
-                  className="text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
-                >
+                <form onSubmit={handleSubmit}>
                   <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Kiri */}
+                    {/* === KIRI === */}
                     <div className="space-y-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -237,7 +252,7 @@ export default function AddEvent() {
                           value={formData.title}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                           placeholder="Masukkan judul event"
                         />
                       </div>
@@ -253,7 +268,7 @@ export default function AddEvent() {
                             value={formData.date}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                           />
                         </div>
                         <div>
@@ -266,7 +281,7 @@ export default function AddEvent() {
                             value={formData.time}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                           />
                         </div>
                       </div>
@@ -281,7 +296,7 @@ export default function AddEvent() {
                           value={formData.location}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                           placeholder="Masukkan lokasi event"
                         />
                       </div>
@@ -308,13 +323,13 @@ export default function AddEvent() {
                                 handleOperatorChange(i, e.target.value)
                               }
                               required
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black dark:text-black"
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="">Pilih operator...</option>
-                              {operatorOptions.map((item) => (
+                              {filteredOperatorOptions(op).map((item) => (
                                 <option
-                                  key={item.id ?? item._id}
-                                  value={item.id ?? item._id}
+                                  key={String(item.id ?? item._id)}
+                                  value={String(item.id ?? item._id)}
                                 >
                                   {item.name ||
                                     item.operator_name ||
@@ -336,7 +351,7 @@ export default function AddEvent() {
                       </div>
                     </div>
 
-                    {/* Kanan */}
+                    {/* === KANAN === */}
                     <div className="space-y-6">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -349,7 +364,7 @@ export default function AddEvent() {
                             value={formData.meetupTime}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                           />
                         </div>
                         <div>
@@ -362,15 +377,16 @@ export default function AddEvent() {
                             value={formData.arrivalTime}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                           />
                         </div>
                       </div>
 
+                      {/* Equipment */}
                       <div>
                         <div className="flex justify-between mb-2">
                           <label className="text-sm font-medium text-gray-700">
-                            Equipment/Barang
+                            Equipment / Barang
                           </label>
                           <button
                             type="button"
@@ -387,17 +403,17 @@ export default function AddEvent() {
                               onChange={(e) =>
                                 handleEquipmentChange(i, e.target.value)
                               }
-                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black dark:text-black"
+                              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="">Pilih barang...</option>
-                              {equipmentOptions.map((item) => (
-                                <option
-                                  key={item.id ?? item._id}
-                                  value={item.id ?? item._id}
-                                >
-                                  {item.item_name}
-                                </option>
-                              ))}
+                              {filteredEquipment(eq).map((item) => {
+                                const idStr = String(item.id ?? item._id);
+                                return (
+                                  <option key={idStr} value={idStr}>
+                                    {item.item_name || item.name || "Tanpa Nama"}
+                                  </option>
+                                );
+                              })}
                             </select>
                             {formData.equipment.length > 1 && (
                               <button
@@ -412,6 +428,7 @@ export default function AddEvent() {
                         ))}
                       </div>
 
+                      {/* Catatan */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Catatan
@@ -421,13 +438,14 @@ export default function AddEvent() {
                           value={formData.note}
                           onChange={handleInputChange}
                           rows={4}
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none text-black placeholder:text-black dark:text-black dark:placeholder:text-black"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
                           placeholder="Masukkan catatan tambahan..."
                         />
                       </div>
                     </div>
                   </div>
 
+                  {/* Tombol */}
                   <div className="flex justify-end gap-3 p-6 border-t">
                     <Link
                       href="/event"

@@ -12,6 +12,7 @@ import axios from "axios";
 export default function AddToolPage() {
   const router = useRouter();
   const { token, loading: authLoading, role } = useAuth();
+
   const [formData, setFormData] = useState({
     item_name: "",
     stock: "",
@@ -29,18 +30,23 @@ export default function AddToolPage() {
     }
   }, [token, authLoading]);
 
-  // Fetch existing categories from /data2 (tools)
+  // Fetch kategori dari data2
   useEffect(() => {
     const fetchCategories = async () => {
       if (!token) return;
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/data2`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         let data = res.data;
         if (data && data.data) data = data.data;
         if (!Array.isArray(data)) return;
-        const cats = Array.from(new Set(data.map((t: any) => t.category || "Lainnya")));
+        const cats = Array.from(
+          new Set(data.map((t: any) => t.category || "Lainnya"))
+        );
         setCategories(cats.filter(Boolean));
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -49,9 +55,10 @@ export default function AddToolPage() {
     fetchCategories();
   }, [token]);
 
-  // If authenticated but not admin -> show access denied
   if (!authLoading && role && role.toLowerCase() !== "admin") {
-    return <AccessDenied message={"Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini."} />;
+    return (
+      <AccessDenied message="Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini." />
+    );
   }
 
   const handleChange = (
@@ -71,47 +78,74 @@ export default function AddToolPage() {
       return;
     }
 
-    // Pastikan stock number, dan field lain tidak kosong
-    const categoryToSend = newCategory.trim() ? newCategory.trim() : (formData.category || "Lainnya");
+    // --- ✅ VALIDASI WAJIB DIISI ---
+    if (!formData.item_name.trim()) {
+      setError("Nama alat tidak boleh kosong");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!formData.stock || Number(formData.stock) < 0) {
+      setError("Stok tidak valid");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!formData.item_condition) {
+      setError("Kondisi harus dipilih");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!newCategory.trim() && !formData.category.trim()) {
+      setError("Kategori harus dipilih atau diisi baru");
+      setSubmitting(false);
+      return;
+    }
+
+    const categoryToSend = newCategory.trim()
+      ? newCategory.trim()
+      : formData.category;
+
     const payload = {
-      item_name: formData.item_name,
+      item_name: formData.item_name.trim(),
       stock: Number(formData.stock),
       item_condition: formData.item_condition,
       category: categoryToSend,
     };
 
-      try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/data2/add`,
-          payload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/data2/add`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-        console.log("Response:", response.data);
-
-        toast.success("Tools berhasil ditambahkan");
-        router.push("/tools");
-      } catch (err: unknown) {
-    if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError("An unknown error occurred");
+      console.log("Response:", response.data);
+      toast.success("Tool berhasil ditambahkan");
+      router.push("/tools");
+    } catch (err: unknown) {
+      console.error("Error saat menambahkan tool:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Terjadi kesalahan tak dikenal");
+      }
+    } finally {
+      setSubmitting(false);
     }
-  } finally {
-    setSubmitting(false);
-  }
-};
+  };
 
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
         <div className="min-h-screen bg-gray-50">
-          {/* Header with Back Button */}
+          {/* Header */}
           <div className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center">
               <button
@@ -138,7 +172,7 @@ export default function AddToolPage() {
             </div>
           </div>
 
-          {/* Main Content */}
+          {/* Form */}
           <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
               {/* Form Header */}
@@ -151,7 +185,6 @@ export default function AddToolPage() {
                 </p>
               </div>
 
-              {/* Form Body */}
               <form
                 onSubmit={handleSubmit}
                 className="divide-y divide-gray-200"
@@ -176,65 +209,50 @@ export default function AddToolPage() {
                 )}
 
                 <div className="px-6 py-6 space-y-6">
-                  {/* Nama Field */}
+                  {/* Nama */}
                   <div>
-                    <label
-                      htmlFor="item_name"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Nama
-                      <span className="text-red-500 ml-1">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nama<span className="text-red-500 ml-1">*</span>
                     </label>
                     <input
                       type="text"
-                      id="item_name"
                       name="item_name"
                       value={formData.item_name}
                       onChange={handleChange}
                       required
-                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                       placeholder="Contoh: Kamera"
+                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
                     />
                   </div>
 
-                  {/* Stok Field */}
+                  {/* Stok */}
                   <div>
-                    <label
-                      htmlFor="stok"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Stok
-                      <span className="text-red-500 ml-1">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Stok<span className="text-red-500 ml-1">*</span>
                     </label>
                     <input
                       type="number"
-                      id="stock"
                       name="stock"
                       value={formData.stock}
                       onChange={handleChange}
                       required
                       min={0}
-                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                       placeholder="Jumlah stok"
+                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
                     />
                   </div>
 
-                  {/* Kondisi Field */}
+                  {/* Kondisi */}
                   <div>
-                    <label
-                      htmlFor="kondisi"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Kondisi
-                      <span className="text-red-500 ml-1">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Kondisi<span className="text-red-500 ml-1">*</span>
                     </label>
                     <select
-                      id="item_condition"
                       name="item_condition"
                       value={formData.item_condition}
                       onChange={handleChange}
                       required
-                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
+                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
                     >
                       <option value="" disabled>
                         Pilih kondisi
@@ -244,55 +262,52 @@ export default function AddToolPage() {
                     </select>
                   </div>
 
-                  {/* Kategori Field */}
+                  {/* Kategori */}
                   <div>
-                    <label
-                      htmlFor="kategori"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Kategori
-                      <span className="text-red-500 ml-1">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Kategori<span className="text-red-500 ml-1">*</span>
                     </label>
                     <div className="space-y-2">
                       <select
-                        id="category"
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
-                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
                       >
-                        <option value="">Pilih kategori (atau masukkan baru di bawah)</option>
+                        <option value="">
+                          Pilih kategori (atau masukkan baru di bawah)
+                        </option>
                         {categories.map((c) => (
-                          <option key={c} value={c} className="text-black">{c}</option>
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
                         ))}
                       </select>
-
                       <input
                         type="text"
-                        id="new_category"
                         name="new_category"
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
-                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
                         placeholder="Masukkan kategori baru (opsional)"
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Form Footer */}
+                {/* Footer */}
                 <div className="px-6 py-4 bg-gray-50 text-right">
                   <div className="flex justify-end space-x-3">
                     <Link
                       href="/tools"
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                     >
-                      Cancel
+                      Batal
                     </Link>
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                     >
                       {submitting ? (
                         <>
