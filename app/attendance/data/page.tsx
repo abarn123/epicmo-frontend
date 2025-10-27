@@ -89,29 +89,38 @@ export default function AttendanceFormPage() {
   }, []);
 
   // Setup kamera
-  useEffect(() => {
-    let mediaStream: MediaStream | null = null;
-    const initializeCamera = async () => {
-      try {
-        if (mediaStream) mediaStream.getTracks().forEach((t) => t.stop());
-        const constraints: MediaStreamConstraints = {
-          audio: false,
-          video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
-        };
-        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-          videoRef.current.style.transform =
-            facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
-        }
-        setStream(mediaStream);
-      } catch (err) {
-        console.error("Camera error:", err);
-        setError("Akses kamera gagal. Pastikan izin diberikan.");
+  // Reusable camera starter so we can restart camera on retake
+  const startCamera = async () => {
+    try {
+      // stop previous stream if any
+      if (stream) {
+        stream.getTracks().forEach((t) => t.stop());
       }
+      const constraints: MediaStreamConstraints = {
+        audio: false,
+        video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+      };
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+        videoRef.current.style.transform =
+          facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+      }
+      setStream(mediaStream);
+      setError(null);
+    } catch (err) {
+      console.error("Camera error:", err);
+      setError("Akses kamera gagal. Pastikan izin diberikan.");
+      setStream(null);
+    }
+  };
+
+  useEffect(() => {
+    startCamera();
+    return () => {
+      if (stream) stream.getTracks().forEach((t) => t.stop());
     };
-    initializeCamera();
-    return () => mediaStream?.getTracks().forEach((t) => t.stop());
+    
   }, [facingMode]);
 
   const switchCamera = () => {
@@ -154,14 +163,17 @@ export default function AttendanceFormPage() {
   const retakePhoto = () => {
     setCapturedPhoto(null);
     setFormData((prev) => ({ ...prev, photo: "" }));
+    //reset kamera fiks
+    startCamera();
   };
 
   const validateForm = (): boolean => {
-    if (!formData.photo) {
+    
+    if (!capturedPhoto && !formData.photo) {
       setError("Foto wajib diambil");
       return false;
     }
-    if (!formData.user_id.trim()) {
+    if (!formData.user_id || !formData.user_id.trim()) {
       setError("User ID tidak ditemukan. Silakan login ulang.");
       return false;
     }
@@ -462,8 +474,6 @@ export default function AttendanceFormPage() {
                   <option value="finish">Telah selesai</option>
                 </select>
               </div>
-
-              {/* ✅ Field catatan dengan info auto line break */}
               <div>
                 <label
                   htmlFor="note"
@@ -483,9 +493,6 @@ export default function AttendanceFormPage() {
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-black resize-none"
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  💡 Catatan otomatis turun baris setiap 5 kata atau 80 karakter
-                </p>
               </div>
             </div>
 
