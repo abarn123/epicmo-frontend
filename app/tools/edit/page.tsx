@@ -20,74 +20,96 @@ type Tool = {
 export default function EditToolPage() {
   const params = useSearchParams();
   const toolId = params.get("id");
-  const { token } = useAuth();
-  const { role } = useAuth();
+  const { token, role } = useAuth();
 
   const [tool, setTool] = useState<Tool | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchToolData = () => {
+  // Kategori
+  const [categories, setCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState<string>("");
+
+  /** Fetch Data Alat berdasarkan ID **/
+  const fetchToolData = async () => {
     if (!toolId) {
       setError("ID alat tidak ditemukan");
       setLoading(false);
       return;
     }
-    setLoading(true);
-    setError(null);
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/data2/${toolId}`, {
-        timeout: 5000,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const data = res.data?.data || res.data;
-        setTool({
-          id: data.id,
-          name: data.item_name || data.name || "",
-          quantity: data.stock ?? data.quantity ?? 0,
-          status: data.item_condition ?? data.status ?? "",
-          category: data.category ?? "",
-        });
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching tool data:", err);
-        if (axios.isAxiosError(err) && err.response?.status === 401) {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/data2/${toolId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000,
+        }
+      );
+      const data = res.data?.data || res.data;
+      setTool({
+        id: data.id,
+        name: data.item_name || data.name || "",
+        quantity: data.stock ?? data.quantity ?? 0,
+        status: data.item_condition ?? data.status ?? "",
+        category: data.category ?? "",
+      });
+    } catch (err: any) {
+      console.error("Error fetching tool data:", err);
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 401) {
           toast.error("Sesi kedaluwarsa. Silakan login kembali.");
           setError("User is not authenticated");
-        } else if (axios.isAxiosError(err) && err.response?.status === 404) {
+        } else if (err.response?.status === 404) {
           toast.error("Alat tidak ditemukan");
           setError("Alat tidak ditemukan");
-        } else if (axios.isAxiosError(err) && err.response?.status === 500) {
+        } else if (err.response?.status === 500) {
           toast.error("Server error. Silakan coba lagi.");
           setError("Server error. Silakan coba lagi.");
-        } else if (axios.isAxiosError(err) && err.code === "ECONNABORTED") {
+        } else if (err.code === "ECONNABORTED") {
           toast.error("Request timeout. Silakan coba lagi.");
           setError("Request timeout. Silakan coba lagi.");
         } else {
           toast.error("Gagal mengambil data alat");
           setError("Gagal mengambil data alat");
         }
-        setLoading(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /** Fetch semua kategori yang tersedia **/
+  const fetchCategories = async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/data2`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      let data = res.data;
+      if (data && data.data) data = data.data;
+      if (!Array.isArray(data)) return;
+      const cats = Array.from(
+        new Set(data.map((t: any) => t.category || "Lainnya"))
+      );
+      setCategories(cats.filter(Boolean));
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+    }
   };
 
   useEffect(() => {
     fetchToolData();
+    fetchCategories();
   }, [toolId, token]);
 
-  useEffect(() => {
-    if (tool) {
-      console.log("Tool data loaded:", tool);
-    }
-  }, [tool]);
-
+  /** Handle perubahan input **/
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setTool((prev) => (prev ? { ...prev, [name]: value } : null));
@@ -99,9 +121,12 @@ export default function EditToolPage() {
     setTool((prev) => (prev ? { ...prev, [name]: numValue } : null));
   };
 
+  /** Submit update **/
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!tool) return;
+
+    const categoryToSend = newCategory.trim() || tool.category || "Lainnya";
 
     setSubmitting(true);
     try {
@@ -112,30 +137,23 @@ export default function EditToolPage() {
           item_name: tool.name,
           stock: tool.quantity,
           item_condition: tool.status,
-          category: tool.category,
+          category: categoryToSend,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       toast.success("Alat berhasil diperbarui");
       window.location.href = "/tools";
     } catch (err) {
       console.error("Error updating tool:", err);
-      if (axios.isAxiosError(err) && err.response?.status === 401) {
-        toast.error("Sesi kedaluwarsa. Silakan login kembali.");
-      } else if (axios.isAxiosError(err) && err.response?.status === 500) {
-        toast.error("Server error. Silakan coba lagi.");
-      } else {
-        toast.error("Gagal memperbarui alat");
-      }
+      toast.error("Gagal memperbarui alat");
     } finally {
       setSubmitting(false);
     }
   };
 
+  /** Kondisi Akses **/
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -148,7 +166,9 @@ export default function EditToolPage() {
   }
 
   if (role && role.toLowerCase() !== "admin") {
-    return <AccessDenied message={"Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini."} />;
+    return (
+      <AccessDenied message="Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini." />
+    );
   }
 
   if (error) {
@@ -177,27 +197,12 @@ export default function EditToolPage() {
             <p className="text-gray-600 mb-6">
               Anda harus login terlebih dahulu untuk mengakses halaman ini.
             </p>
-            <div className="space-y-3">
-              <button
-                onClick={() => (window.location.href = "/login")}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full flex items-center justify-center"
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                  />
-                </svg>
-                Login
-              </button>
-            </div>
+            <button
+              onClick={() => (window.location.href = "/login")}
+              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 transition shadow-md w-full"
+            >
+              Login
+            </button>
           </div>
         </div>
       );
@@ -238,17 +243,17 @@ export default function EditToolPage() {
 
   if (!tool) return null;
 
+  /** UI utama **/
   return (
     <ProtectedRoute>
       <AuthenticatedLayout>
         <div className="min-h-screen bg-gray-50">
-          {/* Header with Back Button */}
+          {/* Header */}
           <div className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center">
               <button
                 onClick={() => window.history.back()}
                 className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                aria-label="Go back"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -267,10 +272,9 @@ export default function EditToolPage() {
             </div>
           </div>
 
-          {/* Main Content */}
+          {/* Form */}
           <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              {/* Form Header */}
               <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-blue-50">
                 <h2 className="text-lg font-semibold text-gray-800">
                   Informasi Alat
@@ -280,119 +284,106 @@ export default function EditToolPage() {
                 </p>
               </div>
 
-              {/* Form Body */}
-              <form onSubmit={handleSubmit} className="divide-y divide-gray-200">
+              <form
+                onSubmit={handleSubmit}
+                className="divide-y divide-gray-200"
+              >
                 <div className="px-6 py-6 space-y-6">
-                  {/* Name Field */}
+                  {/* Nama */}
                   <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Nama Alat
-                      <span className="text-red-500 ml-1">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nama Alat<span className="text-red-500 ml-1">*</span>
                     </label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={tool.name || ""}
-                        onChange={handleChange}
-                        required
-                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                        placeholder="Masukkan nama alat"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Quantity Field */}
-                  <div>
-                    <label
-                      htmlFor="quantity"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Jumlah
-                      <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <input
-                        type="number"
-                        id="quantity"
-                        name="quantity"
-                        min="0"
-                        value={tool.quantity || 0}
-                        onChange={handleNumberChange}
-                        required
-                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                        placeholder="Masukkan jumlah alat"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Status Field */}
-                  <div>
-                    <label
-                      htmlFor="status"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Kondisi
-                      <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <select
-                      id="status"
-                      name="status"
-                      value={tool.status || ""}
+                    <input
+                      type="text"
+                      name="name"
+                      value={tool.name}
                       onChange={handleChange}
                       required
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md shadow-sm sm:text-sm text-black"
+                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
+                    />
+                  </div>
+
+                  {/* Jumlah */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Jumlah<span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="quantity"
+                      min="0"
+                      value={tool.quantity}
+                      onChange={handleNumberChange}
+                      required
+                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
+                    />
+                  </div>
+
+                  {/* Kondisi */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Kondisi<span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <select
+                      name="status"
+                      value={tool.status}
+                      onChange={handleChange}
+                      required
+                      className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
                     >
-                      {!["new", "second"].includes((tool.status || "").toLowerCase()) &&
-                        tool.status && (
-                          <option value={tool.status}>{tool.status}</option>
-                        )}
                       <option value="new">Baru</option>
                       <option value="second">Bekas</option>
                     </select>
                   </div>
 
-                  {/* Category Field */}
+                  {/* Kategori */}
                   <div>
-                    <label
-                      htmlFor="category"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Kategori
-                      <span className="text-red-500 ml-1">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Kategori<span className="text-red-500 ml-1">*</span>
                     </label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="space-y-2">
+                      <select
+                        name="category"
+                        value={tool.category}
+                        onChange={handleChange}
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
+                      >
+                        <option value="">
+                          Pilih kategori (atau isi baru di bawah)
+                        </option>
+                        {categories.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
                       <input
                         type="text"
-                        id="category"
-                        name="category"
-                        value={tool.category || ""}
-                        onChange={handleChange}
-                        required
-                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 transition duration-150 ease-in-out sm:text-sm bg-white text-gray-800"
-                        placeholder="Masukkan kategori alat"
+                        id="new_category"
+                        name="new_category"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-gray-800"
+                        placeholder="Masukkan kategori baru (opsional)"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Form Footer */}
+                {/* Footer */}
                 <div className="px-6 py-4 bg-gray-50 text-right">
                   <div className="flex justify-end space-x-3">
                     <Link
                       href="/tools"
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                     >
                       Batal
                     </Link>
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                     >
                       {submitting ? (
                         <>
